@@ -1,0 +1,364 @@
+@import "tailwindcss";
+
+/* ============================================================
+   MLINI — Arcane Academy (default theme)
+   Calm learning UI + rare prestige accents.
+   Cosmetic skins override these tokens later.
+   ============================================================ */
+
+:root,
+[data-theme="arcane-academy"],
+[data-theme="arcane-tech"] {
+  /* --- Concentration (~80%) — night blue, not terminal black --- */
+  --ml-bg-0: #0a1018;
+  --ml-bg-1: #0f1722;
+  --ml-surface-1: #141d29;
+  --ml-surface-2: #1a2533;
+  --ml-surface-hover: #203041;
+  --ml-surface-warm: #171f2a;
+
+  /* --- Text (readable for long sessions) --- */
+  --ml-text: #e2e8ee;
+  --ml-text-body: #b8c5d1;
+  --ml-text-secondary: #9aabbb;
+  --ml-text-muted: #788a9d;
+  --ml-text-inverse: #0a1018;
+
+  /* --- Borders hierarchy --- */
+  --ml-border: rgba(154, 171, 187, 0.12);
+  --ml-border-strong: rgba(154, 171, 187, 0.24);
+  --ml-border-accent: rgba(52, 189, 176, 0.4);
+
+  /* --- Interaction teal (functional, sparingly) --- */
+  --ml-accent: #34bdb0;
+  --ml-accent-muted: #248f86;
+  --ml-accent-soft: rgba(52, 189, 176, 0.1);
+  --ml-accent-bright: #5fd4c8;
+
+  /* --- Prestige bronze (rare) --- */
+  --ml-reward: #b58a48;
+  --ml-reward-soft: rgba(181, 138, 72, 0.12);
+  --ml-reward-muted: #8f6c38;
+
+  /* --- Signals --- */
+  --ml-success: #4cbf8a;
+  --ml-success-soft: rgba(76, 191, 138, 0.1);
+  --ml-danger: #d07076;
+  --ml-danger-soft: rgba(208, 112, 118, 0.1);
+  --ml-warning: #b58a48;
+
+  /* --- Node states --- */
+  --ml-node-locked: #2c3848;
+  --ml-node-available: rgba(52, 189, 176, 0.3);
+  --ml-node-active: var(--ml-accent);
+  --ml-node-completed: var(--ml-success);
+  --ml-node-major: var(--ml-accent-bright);
+  --ml-node-boss: var(--ml-reward);
+
+  --ml-connection-locked: rgba(120, 138, 157, 0.22);
+  --ml-connection-available: rgba(52, 189, 176, 0.22);
+  --ml-connection-completed: rgba(76, 191, 138, 0.4);
+
+  /* --- Frames --- */
+  --ml-frame-basic: var(--ml-border);
+  --ml-frame-focus: var(--ml-border-accent);
+  --ml-frame-boss: rgba(181, 138, 72, 0.42);
+  --ml-frame-radius: 5px;
+  --ml-frame-radius-lg: 8px;
+
+  /* --- Type scale --- */
+  --ml-text-xs: 0.8125rem; /* 13px — HUD min */
+  --ml-text-sm: 0.875rem; /* 14px */
+  --ml-text-md: 0.9375rem; /* 15px */
+  --ml-text-base: 1.0625rem; /* 17px body */
+  --ml-text-lg: 1.125rem; /* 18px */
+  --ml-text-xl: 1.25rem; /* 20px */
+  --ml-text-2xl: 1.75rem; /* 28px mission title */
+  --ml-leading-body: 1.65;
+
+  /* --- Spacing --- */
+  --ml-space-1: 0.25rem;
+  --ml-space-2: 0.5rem;
+  --ml-space-3: 0.75rem;
+  --ml-space-4: 1rem;
+  --ml-space-5: 1.25rem;
+  --ml-space-6: 1.5rem;
+  --ml-space-7: 1.75rem;
+  --ml-space-8: 2rem;
+
+  /* --- Backward-compatible aliases --- */
+  --ink: var(--ml-bg-0);
+  --ink-soft: var(--ml-bg-1);
+  --panel: var(--ml-surface-1);
+  --panel-elevated: var(--ml-surface-2);
+  --line: var(--ml-border);
+  --fog: var(--ml-text);
+  --mist: var(--ml-text-body);
+  --signal: var(--ml-accent);
+  --signal-dim: var(--ml-accent-muted);
+  --signal-bright: var(--ml-accent-bright);
+  --amber: var(--ml-reward);
+  --danger: var(--ml-danger);
+  --background: var(--ml-bg-0);
+  --foreground: var(--ml-text);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-panel: var(--panel);
+  --color-panel-elevated: var(--panel-elevated);
+  --color-line: var(--line);
+  --color-fog: var(--fog);
+  --color-mist: var(--mist);
+  --color-signal: var(--signal);
+  --color-signal-dim: var(--signal-dim);
+  --color-signal-bright: var(--signal-bright);
+  --color-amber: var(--amber);
+  --color-danger: var(--danger);
+
+  --color-ml-bg-0: var(--ml-bg-0);
+  --color-ml-bg-1: var(--ml-bg-1);
+  --color-ml-surface-1: var(--ml-surface-1);
+  --color-ml-surface-2: var(--ml-surface-2);
+  --color-ml-surface-hover: var(--ml-surface-hover);
+  --color-ml-surface-warm: var(--ml-surface-warm);
+  --color-ml-text: var(--ml-text);
+  --color-ml-text-body: var(--ml-text-body);
+  --color-ml-text-secondary: var(--ml-text-secondary);
+  --color-ml-text-muted: var(--ml-text-muted);
+  --color-ml-border: var(--ml-border);
+  --color-ml-border-strong: var(--ml-border-strong);
+  --color-ml-accent: var(--ml-accent);
+  --color-ml-accent-muted: var(--ml-accent-muted);
+  --color-ml-accent-soft: var(--ml-accent-soft);
+  --color-ml-reward: var(--ml-reward);
+  --color-ml-reward-soft: var(--ml-reward-soft);
+  --color-ml-success: var(--ml-success);
+  --color-ml-danger: var(--ml-danger);
+  --color-ml-warning: var(--ml-warning);
+  --color-ml-node-locked: var(--ml-node-locked);
+  --color-ml-node-active: var(--ml-node-active);
+  --color-ml-node-completed: var(--ml-node-completed);
+  --color-ml-node-boss: var(--ml-node-boss);
+
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+
+  --radius-ml: var(--ml-frame-radius);
+  --radius-ml-lg: var(--ml-frame-radius-lg);
+}
+
+body {
+  background: var(--ml-bg-0);
+  color: var(--ml-text-body);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: var(--ml-text-base);
+  line-height: var(--ml-leading-body);
+  min-height: 100vh;
+}
+
+.font-display {
+  font-family: var(--font-display), Georgia, "Times New Roman", serif;
+  letter-spacing: -0.015em;
+  color: var(--ml-text);
+}
+
+.font-mono {
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+/* Small human section labels — NOT military caps */
+.ml-section-label {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: var(--ml-text-sm);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--ml-text-muted);
+}
+
+/* Rare HUD labels — mono, sparingly */
+.ml-hud {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--ml-text-xs);
+  letter-spacing: 0.04em;
+  color: var(--ml-text-muted);
+}
+
+.ml-label {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: var(--ml-text-sm);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--ml-text-muted);
+}
+
+.ml-label-accent {
+  color: var(--ml-accent);
+}
+
+.map-grid {
+  background-image:
+    linear-gradient(rgba(154, 171, 187, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(154, 171, 187, 0.035) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at center, black 28%, transparent 72%);
+  opacity: 0.7;
+}
+
+.ml-frame {
+  position: relative;
+  border: 1px solid var(--ml-frame-basic);
+  border-radius: var(--ml-frame-radius);
+  background: color-mix(in srgb, var(--ml-surface-warm) 92%, transparent);
+}
+
+.ml-frame::before,
+.ml-frame::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-color: color-mix(in srgb, var(--ml-reward) 35%, var(--ml-border-strong));
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+.ml-frame::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+
+.ml-frame::after {
+  right: -1px;
+  bottom: -1px;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+}
+
+.ml-frame-boss {
+  border-color: var(--ml-frame-boss);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ml-reward) 10%, transparent);
+}
+
+.ml-frame-boss::before,
+.ml-frame-boss::after {
+  border-color: var(--ml-reward);
+  opacity: 0.8;
+}
+
+.ml-rule {
+  border: 0;
+  border-top: 1px solid var(--ml-border);
+  margin: 0;
+}
+
+.ml-rule-prestige {
+  border: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--ml-reward) 45%, transparent),
+    transparent
+  );
+  margin: 0;
+}
+
+.ml-assignment {
+  border: 1px solid var(--ml-border-strong);
+  border-radius: var(--ml-frame-radius-lg);
+  background: color-mix(in srgb, var(--ml-surface-warm) 80%, transparent);
+  padding: var(--ml-space-5) var(--ml-space-5);
+}
+
+.ml-node {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.ml-node-locked {
+  background: var(--ml-node-locked);
+}
+
+.ml-node-available {
+  background: transparent;
+  border-color: var(--ml-node-available);
+}
+
+.ml-node-active {
+  background: var(--ml-node-active);
+  border-color: var(--ml-node-active);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ml-accent) 28%, transparent);
+  transform: scale(1.12);
+}
+
+.ml-node-completed {
+  background: var(--ml-node-completed);
+  border-color: var(--ml-node-completed);
+}
+
+.ml-node-boss {
+  width: 10px;
+  height: 10px;
+  background: transparent;
+  border: 1px solid var(--ml-node-boss);
+  transform: rotate(45deg);
+  border-radius: 1px;
+}
+
+.ml-node-boss.is-active {
+  background: color-mix(in srgb, var(--ml-reward) 30%, transparent);
+}
+
+.ml-node-boss.is-completed {
+  background: var(--ml-reward);
+  border-color: var(--ml-reward);
+}
+
+.ml-connection {
+  height: 1px;
+  width: 6px;
+  background: var(--ml-connection-locked);
+}
+
+.ml-connection-available {
+  background: var(--ml-connection-available);
+}
+
+.ml-connection-completed {
+  background: var(--ml-connection-completed);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--ml-accent) 28%, transparent);
+  color: var(--ml-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .ml-node-active {
+    transform: none;
+  }
+}

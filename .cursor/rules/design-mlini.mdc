@@ -1,0 +1,23 @@
+---
+description: Design & UX Mlini — lire docs/DESIGN_SYSTEM.md avant de modifier l’UI ou les missions
+alwaysApply: true
+---
+
+# Design Mlini
+
+Avant de changer l’UI, le layout mission, ou le contenu pédagogique, lire :
+
+- `docs/DESIGN_SYSTEM.md` (tokens Arcane Academy — source de vérité visuelle)
+- `docs/design/MISSION-UX.md` (si mission / playground)
+- `docs/design/PEDAGOGY.md` (si briefing / feedback / réussite)
+- `docs/design/PRODUCT.md` (si scope / nouvelles features)
+
+## Interdits rapides
+
+- Ne pas recentrer les missions dans un `max-w-*` avec scroll de page desktop
+- Ne pas transformer l’UI en cockpit sci-fi / dashboard SaaS / purple neon
+- Ne pas inventer de hex arbitraires — utiliser les tokens `--ml-*`
+- Body lisible ≥ ~16–17px ; monospace seulement pour le technique
+- Ne pas exposer la clé NVIDIA (`NVIDIA_API_KEY`) au frontend
+- L’or / bronze (`--ml-reward`) reste rare ; le teal a un sens fonctionnel
+- Théorie / concepts après la pratique, pas avant
