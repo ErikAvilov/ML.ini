@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Lightbulb, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { useLocale } from "@/i18n/locale-context";
+import { LEAD } from "@/data/narrative/canon";
 import type { MissionHint } from "@/lib/types";
 
 interface HintPanelProps {
@@ -18,6 +20,7 @@ export function HintPanel({
   objective,
   compact = false,
 }: HintPanelProps) {
+  const { locale, messages, t } = useLocale();
   const [revealed, setRevealed] = useState(0);
   const [aiHint, setAiHint] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -34,7 +37,7 @@ export function HintPanel({
         const res = await fetch("/api/ai/hint", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ instruction, objective }),
+          body: JSON.stringify({ instruction, objective, locale }),
         });
         const data = (await res.json()) as { hint?: string };
         setAiHint(data.hint ?? nextHint.body);
@@ -58,7 +61,7 @@ export function HintPanel({
       <div className="mb-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Lightbulb className="h-4 w-4 text-ml-reward" />
-          <span className="ml-section-label">Indices</span>
+          <span className="ml-section-label">{messages.hints}</span>
         </div>
         <div className="flex gap-1">
           {hints.map((h) => (
@@ -67,7 +70,10 @@ export function HintPanel({
               className={`h-1 w-5 ${
                 revealed >= h.level ? "bg-ml-reward" : "bg-ml-border"
               }`}
-              title={`Niveau ${h.level}`}
+              title={t(messages.hintLevel, {
+                level: h.level,
+                title: "",
+              }).replace(/\s·\s*$/, "")}
             />
           ))}
         </div>
@@ -81,8 +87,22 @@ export function HintPanel({
               className="border-l-2 border-ml-reward/40 pl-3 text-[length:var(--ml-text-sm)] text-ml-text"
             >
               <p className="mb-1 text-[length:var(--ml-text-xs)] font-medium text-ml-reward">
-                Indice {hint.level} · {hint.title}
+                {hint.fromMira ? (
+                  <span className="tracking-[0.14em] uppercase">
+                    {LEAD.displayName}
+                  </span>
+                ) : (
+                  t(messages.hintLevel, {
+                    level: hint.level,
+                    title: hint.title,
+                  })
+                )}
               </p>
+              {hint.fromMira && (
+                <p className="mb-1 text-[length:var(--ml-text-xs)] text-ml-text-muted">
+                  {hint.title}
+                </p>
+              )}
               <p className="leading-[var(--ml-leading-body)] text-ml-text-body">
                 {hint.aiAssisted && aiHint && i === shown.length - 1
                   ? aiHint
@@ -101,12 +121,12 @@ export function HintPanel({
           disabled={loading}
           className="w-full normal-case tracking-normal"
         >
-          {loading ? "Analyse…" : "Demander un indice"}
+          {loading ? messages.analyzing : messages.askHint}
           <ChevronRight className="h-3.5 w-3.5" />
         </Button>
       ) : (
         <p className="text-center text-[length:var(--ml-text-sm)] text-ml-text-muted">
-          Tous les indices révélés
+          {messages.allHintsRevealed}
         </p>
       )}
     </div>

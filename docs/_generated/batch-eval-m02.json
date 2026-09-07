@@ -1,0 +1,802 @@
+[
+  {
+    "missionId": "mission-02",
+    "missionTitle": "Signal in the Noise",
+    "promptId": "m02-terrible",
+    "promptLabel": "M02 terrible",
+    "instruction": "Is this urgent?",
+    "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+    "isolated": {
+      "mode": "PARALLEL_ISOLATED",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "latencyMs": 17443,
+      "requestCount": 8,
+      "usage": {
+        "inputTokens": 703,
+        "outputTokens": 1264,
+        "totalTokens": 1967
+      },
+      "results": [
+        {
+          "testId": "t1",
+          "message": "THIS IS URGENT!!! My package is two days late!",
+          "rawOutput": "Yes, this is urgent. Please provide your order number so I can investigate the delay.",
+          "evaluation": {
+            "raw": "Yes, this is urgent. Please provide your order number so I can investigate the delay.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "NORMAL",
+            "message": "THIS IS URGENT!!! My package is two days late!",
+            "testId": "t1",
+            "failHint": "Delivery delay is NORMAL — even when the customer shouts URGENT.",
+            "errorKind": "format",
+            "parsedFields": null
+          },
+          "passed": false
+        },
+        {
+          "testId": "t2",
+          "message": "Hi, I seem to have been charged twice for order #4821.",
+          "rawOutput": "Is this urgent?",
+          "evaluation": {
+            "raw": "Is this urgent?",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "URGENT",
+            "message": "Hi, I seem to have been charged twice for order #4821.",
+            "testId": "t2",
+            "failHint": "Duplicate payment is on Veyra's urgent list.",
+            "errorKind": "format",
+            "parsedFields": null
+          },
+          "passed": false
+        },
+        {
+          "testId": "t3",
+          "message": "I forgot my password and I really need access right now.",
+          "rawOutput": "Yes, it’s urgent.",
+          "evaluation": {
+            "raw": "Yes, it’s urgent.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "NORMAL",
+            "message": "I forgot my password and I really need access right now.",
+            "testId": "t3",
+            "failHint": "Forgotten password is NORMAL under Veyra policy — urgency of tone does not change that.",
+            "errorKind": "format",
+            "parsedFields": null
+          },
+          "passed": false
+        },
+        {
+          "testId": "t4",
+          "message": "I don't recognise this €149 payment on my account.",
+          "rawOutput": "Yes, it appears urgent.",
+          "evaluation": {
+            "raw": "Yes, it appears urgent.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "URGENT",
+            "message": "I don't recognise this €149 payment on my account.",
+            "testId": "t4",
+            "failHint": "Unrecognized payment is treated as a security priority.",
+            "errorKind": "format",
+            "parsedFields": null
+          },
+          "passed": false
+        },
+        {
+          "testId": "t5",
+          "message": "Your service is awful. I want a refund immediately.",
+          "rawOutput": "Yes, this is urgent.",
+          "evaluation": {
+            "raw": "Yes, this is urgent.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "NORMAL",
+            "message": "Your service is awful. I want a refund immediately.",
+            "testId": "t5",
+            "failHint": "Refund requests are NORMAL, no matter how angry the customer is.",
+            "errorKind": "format",
+            "parsedFields": null
+          },
+          "passed": false
+        },
+        {
+          "testId": "t6",
+          "message": "I received a login alert from a country I've never visited.",
+          "rawOutput": "Yes, this is urgent.",
+          "evaluation": {
+            "raw": "Yes, this is urgent.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "URGENT",
+            "message": "I received a login alert from a country I've never visited.",
+            "testId": "t6",
+            "failHint": "Suspected account security issues are URGENT — even when phrased calmly.",
+            "errorKind": "format",
+            "parsedFields": null
+          },
+          "passed": false
+        },
+        {
+          "testId": "t7-hidden",
+          "message": "No rush, but I noticed the same order was charged three times.",
+          "rawOutput": "No, it’s not urgent.",
+          "evaluation": {
+            "raw": "No, it’s not urgent.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "URGENT",
+            "message": "No rush, but I noticed the same order was charged three times.",
+            "testId": "t7-hidden",
+            "failHint": "Calm tone does not cancel a duplicate-charge problem.",
+            "errorKind": "format",
+            "parsedFields": null
+          },
+          "passed": false
+        },
+        {
+          "testId": "t8-hidden",
+          "message": "URGENT PLEASE HELP!!! My blue shirt arrived in green.",
+          "rawOutput": "Yes, it is urgent.",
+          "evaluation": {
+            "raw": "Yes, it is urgent.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "NORMAL",
+            "message": "URGENT PLEASE HELP!!! My blue shirt arrived in green.",
+            "testId": "t8-hidden",
+            "failHint": "Wrong product / wrong color is NORMAL — the word URGENT in the message is not the policy.",
+            "errorKind": "format",
+            "parsedFields": null
+          },
+          "passed": false
+        }
+      ],
+      "passed": 0,
+      "total": 8,
+      "allPassed": false,
+      "warnings": []
+    },
+    "batch": {
+      "mode": "SINGLE_BATCH",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "latencyMs": 18238,
+      "requestCount": 1,
+      "usage": {
+        "inputTokens": 536,
+        "outputTokens": 1015,
+        "totalTokens": 1551
+      },
+      "results": [
+        {
+          "testId": "t1",
+          "message": "THIS IS URGENT!!! My package is two days late!",
+          "rawOutput": "Yes",
+          "evaluation": {
+            "raw": "Yes",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "NORMAL",
+            "message": "THIS IS URGENT!!! My package is two days late!",
+            "testId": "t1",
+            "failHint": "Delivery delay is NORMAL — even when the customer shouts URGENT.",
+            "errorKind": "format",
+            "parsedFields": null
+          },
+          "passed": false
+        },
+        {
+          "testId": "t2",
+          "message": "Hi, I seem to have been charged twice for order #4821.",
+          "rawOutput": "No",
+          "evaluation": {
+            "raw": "No",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "URGENT",
+            "message": "Hi, I seem to have been charged twice for order #4821.",
+            "testId": "t2",
+            "failHint": "Duplicate payment is on Veyra's urgent list.",
+            "errorKind": "format",
+            "parsedFields": null
+          },
+          "passed": false
+        },
+        {
+          "testId": "t3",
+          "message": "I forgot my password and I really need access right now.",
+          "rawOutput": "Yes",
+          "evaluation": {
+            "raw": "Yes",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "NORMAL",
+            "message": "I forgot my password and I really need access right now.",
+            "testId": "t3",
+            "failHint": "Forgotten password is NORMAL under Veyra policy — urgency of tone does not change that.",
+            "errorKind": "format",
+            "parsedFields": null
+          },
+          "passed": false
+        },
+        {
+          "testId": "t4",
+          "message": "I don't recognise this €149 payment on my account.",
+          "rawOutput": "No",
+          "evaluation": {
+            "raw": "No",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "URGENT",
+            "message": "I don't recognise this €149 payment on my account.",
+            "testId": "t4",
+            "failHint": "Unrecognized payment is treated as a security priority.",
+            "errorKind": "format",
+            "parsedFields": null
+          },
+          "passed": false
+        },
+        {
+          "testId": "t5",
+          "message": "Your service is awful. I want a refund immediately.",
+          "rawOutput": "Yes",
+          "evaluation": {
+            "raw": "Yes",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "NORMAL",
+            "message": "Your service is awful. I want a refund immediately.",
+            "testId": "t5",
+            "failHint": "Refund requests are NORMAL, no matter how angry the customer is.",
+            "errorKind": "format",
+            "parsedFields": null
+          },
+          "passed": false
+        },
+        {
+          "testId": "t6",
+          "message": "I received a login alert from a country I've never visited.",
+          "rawOutput": "Yes",
+          "evaluation": {
+            "raw": "Yes",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "URGENT",
+            "message": "I received a login alert from a country I've never visited.",
+            "testId": "t6",
+            "failHint": "Suspected account security issues are URGENT — even when phrased calmly.",
+            "errorKind": "format",
+            "parsedFields": null
+          },
+          "passed": false
+        },
+        {
+          "testId": "t7-hidden",
+          "message": "No rush, but I noticed the same order was charged three times.",
+          "rawOutput": "No",
+          "evaluation": {
+            "raw": "No",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "URGENT",
+            "message": "No rush, but I noticed the same order was charged three times.",
+            "testId": "t7-hidden",
+            "failHint": "Calm tone does not cancel a duplicate-charge problem.",
+            "errorKind": "format",
+            "parsedFields": null
+          },
+          "passed": false
+        },
+        {
+          "testId": "t8-hidden",
+          "message": "URGENT PLEASE HELP!!! My blue shirt arrived in green.",
+          "rawOutput": "Yes",
+          "evaluation": {
+            "raw": "Yes",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "NORMAL",
+            "message": "URGENT PLEASE HELP!!! My blue shirt arrived in green.",
+            "testId": "t8-hidden",
+            "failHint": "Wrong product / wrong color is NORMAL — the word URGENT in the message is not the policy.",
+            "errorKind": "format",
+            "parsedFields": null
+          },
+          "passed": false
+        }
+      ],
+      "passed": 0,
+      "total": 8,
+      "allPassed": false,
+      "warnings": []
+    },
+    "perTest": [
+      {
+        "testId": "t1",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "Yes, this is urgent. Please provide your order number so I can investigate the delay.",
+        "batchRaw": "Yes"
+      },
+      {
+        "testId": "t2",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "Is this urgent?",
+        "batchRaw": "No"
+      },
+      {
+        "testId": "t3",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "Yes, it’s urgent.",
+        "batchRaw": "Yes"
+      },
+      {
+        "testId": "t4",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "Yes, it appears urgent.",
+        "batchRaw": "No"
+      },
+      {
+        "testId": "t5",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "Yes, this is urgent.",
+        "batchRaw": "Yes"
+      },
+      {
+        "testId": "t6",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "Yes, this is urgent.",
+        "batchRaw": "Yes"
+      },
+      {
+        "testId": "t7-hidden",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "No, it’s not urgent.",
+        "batchRaw": "No"
+      },
+      {
+        "testId": "t8-hidden",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "Yes, it is urgent.",
+        "batchRaw": "Yes"
+      }
+    ],
+    "suiteFalsePass": false,
+    "suiteFalseFail": false,
+    "falsePassTestIds": [],
+    "falseFailTestIds": []
+  },
+  {
+    "missionId": "mission-02",
+    "missionTitle": "Signal in the Noise",
+    "promptId": "m02-complete-policy",
+    "promptLabel": "M02 complete policy",
+    "instruction": "Classify each support message as URGENT or NORMAL using ONLY Veyra policy.\n\nVeyra Support Policy — PRIORITY:\nURGENT: duplicate payment; unauthorized/unrecognized payment; account locked after repeated failed attempts; suspected security issue.\nNORMAL: delivery delay; refund request; wrong product/size; forgotten password; missing delivered package; general complaints.\nEmotion alone never determines priority.\n\nReply with exactly one word: URGENT or NORMAL. No other text.",
+    "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+    "isolated": {
+      "mode": "PARALLEL_ISOLATED",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "latencyMs": 6658,
+      "requestCount": 8,
+      "usage": {
+        "inputTokens": 1471,
+        "outputTokens": 609,
+        "totalTokens": 2080
+      },
+      "results": [
+        {
+          "testId": "t1",
+          "message": "THIS IS URGENT!!! My package is two days late!",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": "NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "NORMAL",
+            "message": "THIS IS URGENT!!! My package is two days late!",
+            "testId": "t1",
+            "failHint": "Delivery delay is NORMAL — even when the customer shouts URGENT.",
+            "errorKind": null,
+            "parsedFields": null
+          },
+          "passed": true
+        },
+        {
+          "testId": "t2",
+          "message": "Hi, I seem to have been charged twice for order #4821.",
+          "rawOutput": "URGENT",
+          "evaluation": {
+            "raw": "URGENT",
+            "normalized": "URGENT",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "URGENT",
+            "message": "Hi, I seem to have been charged twice for order #4821.",
+            "testId": "t2",
+            "failHint": "Duplicate payment is on Veyra's urgent list.",
+            "errorKind": null,
+            "parsedFields": null
+          },
+          "passed": true
+        },
+        {
+          "testId": "t3",
+          "message": "I forgot my password and I really need access right now.",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": "NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "NORMAL",
+            "message": "I forgot my password and I really need access right now.",
+            "testId": "t3",
+            "failHint": "Forgotten password is NORMAL under Veyra policy — urgency of tone does not change that.",
+            "errorKind": null,
+            "parsedFields": null
+          },
+          "passed": true
+        },
+        {
+          "testId": "t4",
+          "message": "I don't recognise this €149 payment on my account.",
+          "rawOutput": "URGENT",
+          "evaluation": {
+            "raw": "URGENT",
+            "normalized": "URGENT",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "URGENT",
+            "message": "I don't recognise this €149 payment on my account.",
+            "testId": "t4",
+            "failHint": "Unrecognized payment is treated as a security priority.",
+            "errorKind": null,
+            "parsedFields": null
+          },
+          "passed": true
+        },
+        {
+          "testId": "t5",
+          "message": "Your service is awful. I want a refund immediately.",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": "NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "NORMAL",
+            "message": "Your service is awful. I want a refund immediately.",
+            "testId": "t5",
+            "failHint": "Refund requests are NORMAL, no matter how angry the customer is.",
+            "errorKind": null,
+            "parsedFields": null
+          },
+          "passed": true
+        },
+        {
+          "testId": "t6",
+          "message": "I received a login alert from a country I've never visited.",
+          "rawOutput": "URGENT",
+          "evaluation": {
+            "raw": "URGENT",
+            "normalized": "URGENT",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "URGENT",
+            "message": "I received a login alert from a country I've never visited.",
+            "testId": "t6",
+            "failHint": "Suspected account security issues are URGENT — even when phrased calmly.",
+            "errorKind": null,
+            "parsedFields": null
+          },
+          "passed": true
+        },
+        {
+          "testId": "t7-hidden",
+          "message": "No rush, but I noticed the same order was charged three times.",
+          "rawOutput": "URGENT",
+          "evaluation": {
+            "raw": "URGENT",
+            "normalized": "URGENT",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "URGENT",
+            "message": "No rush, but I noticed the same order was charged three times.",
+            "testId": "t7-hidden",
+            "failHint": "Calm tone does not cancel a duplicate-charge problem.",
+            "errorKind": null,
+            "parsedFields": null
+          },
+          "passed": true
+        },
+        {
+          "testId": "t8-hidden",
+          "message": "URGENT PLEASE HELP!!! My blue shirt arrived in green.",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": "NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "NORMAL",
+            "message": "URGENT PLEASE HELP!!! My blue shirt arrived in green.",
+            "testId": "t8-hidden",
+            "failHint": "Wrong product / wrong color is NORMAL — the word URGENT in the message is not the policy.",
+            "errorKind": null,
+            "parsedFields": null
+          },
+          "passed": true
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "allPassed": true,
+      "warnings": []
+    },
+    "batch": {
+      "mode": "SINGLE_BATCH",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "latencyMs": 18736,
+      "requestCount": 1,
+      "usage": {
+        "inputTokens": 632,
+        "outputTokens": 859,
+        "totalTokens": 1491
+      },
+      "results": [
+        {
+          "testId": "t1",
+          "message": "THIS IS URGENT!!! My package is two days late!",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": "NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "NORMAL",
+            "message": "THIS IS URGENT!!! My package is two days late!",
+            "testId": "t1",
+            "failHint": "Delivery delay is NORMAL — even when the customer shouts URGENT.",
+            "errorKind": null,
+            "parsedFields": null
+          },
+          "passed": true
+        },
+        {
+          "testId": "t2",
+          "message": "Hi, I seem to have been charged twice for order #4821.",
+          "rawOutput": "URGENT",
+          "evaluation": {
+            "raw": "URGENT",
+            "normalized": "URGENT",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "URGENT",
+            "message": "Hi, I seem to have been charged twice for order #4821.",
+            "testId": "t2",
+            "failHint": "Duplicate payment is on Veyra's urgent list.",
+            "errorKind": null,
+            "parsedFields": null
+          },
+          "passed": true
+        },
+        {
+          "testId": "t3",
+          "message": "I forgot my password and I really need access right now.",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": "NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "NORMAL",
+            "message": "I forgot my password and I really need access right now.",
+            "testId": "t3",
+            "failHint": "Forgotten password is NORMAL under Veyra policy — urgency of tone does not change that.",
+            "errorKind": null,
+            "parsedFields": null
+          },
+          "passed": true
+        },
+        {
+          "testId": "t4",
+          "message": "I don't recognise this €149 payment on my account.",
+          "rawOutput": "URGENT",
+          "evaluation": {
+            "raw": "URGENT",
+            "normalized": "URGENT",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "URGENT",
+            "message": "I don't recognise this €149 payment on my account.",
+            "testId": "t4",
+            "failHint": "Unrecognized payment is treated as a security priority.",
+            "errorKind": null,
+            "parsedFields": null
+          },
+          "passed": true
+        },
+        {
+          "testId": "t5",
+          "message": "Your service is awful. I want a refund immediately.",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": "NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "NORMAL",
+            "message": "Your service is awful. I want a refund immediately.",
+            "testId": "t5",
+            "failHint": "Refund requests are NORMAL, no matter how angry the customer is.",
+            "errorKind": null,
+            "parsedFields": null
+          },
+          "passed": true
+        },
+        {
+          "testId": "t6",
+          "message": "I received a login alert from a country I've never visited.",
+          "rawOutput": "URGENT",
+          "evaluation": {
+            "raw": "URGENT",
+            "normalized": "URGENT",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "URGENT",
+            "message": "I received a login alert from a country I've never visited.",
+            "testId": "t6",
+            "failHint": "Suspected account security issues are URGENT — even when phrased calmly.",
+            "errorKind": null,
+            "parsedFields": null
+          },
+          "passed": true
+        },
+        {
+          "testId": "t7-hidden",
+          "message": "No rush, but I noticed the same order was charged three times.",
+          "rawOutput": "URGENT",
+          "evaluation": {
+            "raw": "URGENT",
+            "normalized": "URGENT",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "URGENT",
+            "message": "No rush, but I noticed the same order was charged three times.",
+            "testId": "t7-hidden",
+            "failHint": "Calm tone does not cancel a duplicate-charge problem.",
+            "errorKind": null,
+            "parsedFields": null
+          },
+          "passed": true
+        },
+        {
+          "testId": "t8-hidden",
+          "message": "URGENT PLEASE HELP!!! My blue shirt arrived in green.",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": "NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "NORMAL",
+            "message": "URGENT PLEASE HELP!!! My blue shirt arrived in green.",
+            "testId": "t8-hidden",
+            "failHint": "Wrong product / wrong color is NORMAL — the word URGENT in the message is not the policy.",
+            "errorKind": null,
+            "parsedFields": null
+          },
+          "passed": true
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "allPassed": true,
+      "warnings": []
+    },
+    "perTest": [
+      {
+        "testId": "t1",
+        "kind": "PASS_AGREE",
+        "isolatedPass": true,
+        "batchPass": true,
+        "isolatedRaw": "NORMAL",
+        "batchRaw": "NORMAL"
+      },
+      {
+        "testId": "t2",
+        "kind": "PASS_AGREE",
+        "isolatedPass": true,
+        "batchPass": true,
+        "isolatedRaw": "URGENT",
+        "batchRaw": "URGENT"
+      },
+      {
+        "testId": "t3",
+        "kind": "PASS_AGREE",
+        "isolatedPass": true,
+        "batchPass": true,
+        "isolatedRaw": "NORMAL",
+        "batchRaw": "NORMAL"
+      },
+      {
+        "testId": "t4",
+        "kind": "PASS_AGREE",
+        "isolatedPass": true,
+        "batchPass": true,
+        "isolatedRaw": "URGENT",
+        "batchRaw": "URGENT"
+      },
+      {
+        "testId": "t5",
+        "kind": "PASS_AGREE",
+        "isolatedPass": true,
+        "batchPass": true,
+        "isolatedRaw": "NORMAL",
+        "batchRaw": "NORMAL"
+      },
+      {
+        "testId": "t6",
+        "kind": "PASS_AGREE",
+        "isolatedPass": true,
+        "batchPass": true,
+        "isolatedRaw": "URGENT",
+        "batchRaw": "URGENT"
+      },
+      {
+        "testId": "t7-hidden",
+        "kind": "PASS_AGREE",
+        "isolatedPass": true,
+        "batchPass": true,
+        "isolatedRaw": "URGENT",
+        "batchRaw": "URGENT"
+      },
+      {
+        "testId": "t8-hidden",
+        "kind": "PASS_AGREE",
+        "isolatedPass": true,
+        "batchPass": true,
+        "isolatedRaw": "NORMAL",
+        "batchRaw": "NORMAL"
+      }
+    ],
+    "suiteFalsePass": false,
+    "suiteFalseFail": false,
+    "falsePassTestIds": [],
+    "falseFailTestIds": []
+  }
+]

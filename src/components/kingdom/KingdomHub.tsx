@@ -2,16 +2,19 @@
 
 import { PlayerStatsBar } from "@/components/kingdom/PlayerStatsBar";
 import { MissionPath } from "@/components/kingdom/MissionPath";
-import { kingdomConstruireAvecIA } from "@/data/kingdoms/construire-avec-ia";
-import { missions } from "@/data/missions";
+import { createKingdomConstruireAvecIA } from "@/data/kingdoms/construire-avec-ia";
+import { getMissions } from "@/data/missions";
 import { useProgress } from "@/lib/progress-context";
 import { getMissionStatus } from "@/lib/progression";
+import { useLocale } from "@/i18n/locale-context";
 
 export function KingdomHub() {
   const { progress, ready } = useProgress();
-  const kingdom = kingdomConstruireAvecIA;
+  const { locale, messages, t } = useLocale();
+  const kingdom = createKingdomConstruireAvecIA(locale);
+  const allMissions = getMissions(locale);
   const kingdomMissions = kingdom.missionIds
-    .map((id) => missions.find((m) => m.id === id))
+    .map((id) => allMissions.find((m) => m.id === id))
     .filter((m): m is NonNullable<typeof m> => Boolean(m));
 
   const completed = ready
@@ -24,6 +27,7 @@ export function KingdomHub() {
     if (!ready) return m.order === 1;
     return getMissionStatus(m.id, progress, m.order) === "available";
   });
+  const boss = kingdomMissions.find((m) => m.kind === "boss");
 
   return (
     <div className="relative overflow-hidden">
@@ -39,7 +43,7 @@ export function KingdomHub() {
       <div className="relative mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
         <div className="mb-8 max-w-2xl">
           <p className="mb-3 font-mono text-[11px] tracking-[0.22em] text-signal uppercase">
-            Royaume · Accès libre
+            {messages.kingdomFreeAccess}
           </p>
           <h1 className="font-display text-4xl leading-[1.05] text-fog sm:text-5xl">
             {kingdom.name}
@@ -54,7 +58,7 @@ export function KingdomHub() {
           <PlayerStatsBar />
           <div className="rounded-xl border border-line bg-panel/70 p-4 backdrop-blur-md">
             <p className="font-mono text-[10px] tracking-[0.18em] text-mist uppercase">
-              Progression du Royaume
+              {messages.kingdomProgress}
             </p>
             <p className="mt-2 font-display text-2xl text-fog">
               {completed}{" "}
@@ -67,7 +71,7 @@ export function KingdomHub() {
               />
             </div>
             <p className="mt-3 text-xs text-mist">
-              Mission active :{" "}
+              {messages.activeMission}{" "}
               <span className="text-signal">
                 {active?.title ?? "—"}
               </span>
@@ -77,9 +81,13 @@ export function KingdomHub() {
 
         <div className="mb-4 flex items-end justify-between gap-4">
           <div>
-            <h2 className="font-display text-xl text-fog">Carte d&apos;expédition</h2>
+            <h2 className="font-display text-xl text-fog">
+              {messages.expeditionMap}
+            </h2>
             <p className="mt-1 text-sm text-mist">
-              Suis le chemin jusqu&apos;au Boss — Cœur du Système.
+              {t(messages.expeditionHint, {
+                boss: boss?.title ?? "",
+              })}
             </p>
           </div>
         </div>

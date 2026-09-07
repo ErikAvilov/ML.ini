@@ -23,7 +23,8 @@ interface ProgressContextValue {
   completeMissionAndUnlock: (
     missionId: string,
     nextMissionId: string | null,
-    xpReward: number
+    xpReward: number,
+    rewards?: { skillId?: string; capabilityId?: string }
   ) => PlayerProgress;
   resetProgress: () => void;
 }
@@ -107,12 +108,18 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   );
 
   const completeMissionAndUnlock = useCallback(
-    (missionId: string, nextMissionId: string | null, xpReward: number) => {
+    (
+      missionId: string,
+      nextMissionId: string | null,
+      xpReward: number,
+      rewards?: { skillId?: string; capabilityId?: string }
+    ) => {
       const next = completeMission(
         memoryProgress,
         missionId,
         nextMissionId,
-        xpReward
+        xpReward,
+        rewards
       );
       writeProgress(next);
       return next;

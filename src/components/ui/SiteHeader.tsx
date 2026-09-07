@@ -4,9 +4,12 @@ import Link from "next/link";
 import { Hexagon, Flame, Sparkles, User } from "lucide-react";
 import { useProgress } from "@/lib/progress-context";
 import { xpProgressInLevel } from "@/lib/validation";
+import { useLocale } from "@/i18n/locale-context";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 
 export function SiteHeader() {
   const { progress } = useProgress();
+  const { messages, t } = useLocale();
   const xp = xpProgressInLevel(progress.xp);
 
   return (
@@ -26,16 +29,17 @@ export function SiteHeader() {
             href="/royaume"
             className="hidden text-[length:var(--ml-text-sm)] text-ml-text-muted transition hover:text-ml-text sm:inline"
           >
-            Royaume
+            {messages.kingdomNav}
           </Link>
         </div>
 
         <div className="flex items-center gap-3 sm:gap-4">
+          <LanguageSwitcher />
           <div className="hidden items-center gap-1.5 font-mono text-[length:var(--ml-text-xs)] text-ml-text-secondary sm:flex">
             <Sparkles className="h-3.5 w-3.5 text-ml-accent" />
-            <span>{progress.xp} XP</span>
+            <span>{t(messages.xpShort, { xp: progress.xp })}</span>
             <span className="text-ml-text-muted">·</span>
-            <span>Niv. {xp.level}</span>
+            <span>{t(messages.level, { level: xp.level })}</span>
           </div>
           <div className="flex items-center gap-1 font-mono text-[length:var(--ml-text-xs)] text-ml-reward">
             <Flame className="h-3.5 w-3.5" />
@@ -44,7 +48,7 @@ export function SiteHeader() {
           <span
             className="flex h-8 w-8 items-center justify-center border border-ml-border bg-ml-surface-1 text-ml-text-muted"
             style={{ borderRadius: "var(--ml-frame-radius)" }}
-            title="Profil (bientôt)"
+            title={messages.profileSoon}
           >
             <User className="h-3.5 w-3.5" />
           </span>

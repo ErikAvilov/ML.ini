@@ -9,8 +9,15 @@ export const DEFAULT_PROGRESS: PlayerProgress = {
   streak: 3,
   completedMissions: [],
   unlockedMissions: ["mission-01"],
+  unlockedSkills: [],
+  unlockedCapabilities: [],
   lastPlayedAt: null,
 };
+
+export interface MissionRewardMeta {
+  skillId?: string;
+  capabilityId?: string;
+}
 
 export function loadProgress(): PlayerProgress {
   if (typeof window === "undefined") return { ...DEFAULT_PROGRESS };
@@ -26,6 +33,8 @@ export function loadProgress(): PlayerProgress {
         ? parsed.unlockedMissions
         : ["mission-01"],
       completedMissions: parsed.completedMissions ?? [],
+      unlockedSkills: parsed.unlockedSkills ?? [],
+      unlockedCapabilities: parsed.unlockedCapabilities ?? [],
     };
   } catch {
     return { ...DEFAULT_PROGRESS };
@@ -44,7 +53,6 @@ export function getMissionStatus(
 ): MissionStatus {
   if (progress.completedMissions.includes(missionId)) return "completed";
   if (progress.unlockedMissions.includes(missionId)) return "available";
-  // Mission 1 always available as fallback
   if (order === 1) return "available";
   return "locked";
 }
@@ -53,7 +61,8 @@ export function completeMission(
   progress: PlayerProgress,
   missionId: string,
   nextMissionId: string | null,
-  xpReward: number
+  xpReward: number,
+  rewards?: MissionRewardMeta
 ): PlayerProgress {
   if (progress.completedMissions.includes(missionId)) {
     return progress;
@@ -64,6 +73,12 @@ export function completeMission(
   unlockedMissions.add(missionId);
   if (nextMissionId) unlockedMissions.add(nextMissionId);
 
+  const unlockedSkills = new Set(progress.unlockedSkills);
+  if (rewards?.skillId) unlockedSkills.add(rewards.skillId);
+
+  const unlockedCapabilities = new Set(progress.unlockedCapabilities);
+  if (rewards?.capabilityId) unlockedCapabilities.add(rewards.capabilityId);
+
   const xp = progress.xp + xpReward;
 
   return {
@@ -72,6 +87,8 @@ export function completeMission(
     level: levelFromXp(xp),
     completedMissions,
     unlockedMissions: Array.from(unlockedMissions),
+    unlockedSkills: Array.from(unlockedSkills),
+    unlockedCapabilities: Array.from(unlockedCapabilities),
     lastPlayedAt: new Date().toISOString(),
   };
 }

@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ProgressNode } from "@/components/ui/ProgressNode";
 import { getMissionStatus } from "@/lib/progression";
 import { useProgress } from "@/lib/progress-context";
+import { useLocale } from "@/i18n/locale-context";
 import type { MissionDefinition, MissionStatus } from "@/lib/types";
 
 interface MissionNavBarProps {
@@ -14,6 +15,7 @@ interface MissionNavBarProps {
 
 export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
   const { progress, ready } = useProgress();
+  const { messages } = useLocale();
   const total = missions.length;
   const sorted = [...missions].sort((a, b) => a.order - b.order);
 
@@ -39,7 +41,7 @@ export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
           style={{ borderRadius: "var(--ml-frame-radius)" }}
         >
           <ChevronLeft className="h-4 w-4" />
-          <span className="hidden sm:inline">Royaume</span>
+          <span className="hidden sm:inline">{messages.kingdomNav}</span>
         </Link>
 
         <div className="mx-auto flex min-w-0 flex-1 items-center justify-center gap-3">
@@ -56,7 +58,7 @@ export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
             </span>
             <div
               className="flex items-center gap-0.5"
-              aria-label="Progression des missions"
+              aria-label={messages.kingdomProgress}
             >
               {sorted.map((m, i) => {
                 const st = statusOf(m);
@@ -92,7 +94,7 @@ export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
               href={`/missions/${prev.slug}`}
               className="p-1.5 text-ml-text-secondary transition hover:bg-ml-surface-hover hover:text-ml-text"
               style={{ borderRadius: "var(--ml-frame-radius)" }}
-              aria-label="Mission précédente"
+              aria-label={messages.prevMission}
             >
               <ChevronLeft className="h-4 w-4" />
             </Link>
@@ -106,7 +108,7 @@ export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
               href={`/missions/${next.slug}`}
               className="p-1.5 text-ml-text-secondary transition hover:bg-ml-surface-hover hover:text-ml-text"
               style={{ borderRadius: "var(--ml-frame-radius)" }}
-              aria-label="Mission suivante"
+              aria-label={messages.nextMission}
             >
               <ChevronRight className="h-4 w-4" />
             </Link>

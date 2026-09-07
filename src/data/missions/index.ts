@@ -1,34 +1,53 @@
-import { mission01 } from "./mission-01";
-import { mission02 } from "./mission-02";
-import {
-  mission03,
-  mission04,
-  mission05,
-  mission06,
-  mission07,
-  mission08,
-  mission09,
-  mission10,
-} from "./mission-placeholders";
+import type { Locale } from "@/i18n/config";
+import { DEFAULT_LOCALE } from "@/i18n/config";
 import type { MissionDefinition } from "@/lib/types";
+import { createMission01 } from "./mission-01";
+import { createMission02 } from "./mission-02";
+import { createMission03 } from "./mission-03";
+import {
+  createMission04,
+  createMission05,
+  createMission06,
+  createMission07,
+  createMission08,
+  createMission09,
+  createMission10,
+} from "./mission-placeholders";
 
-export const missions: MissionDefinition[] = [
-  mission01,
-  mission02,
-  mission03,
-  mission04,
-  mission05,
-  mission06,
-  mission07,
-  mission08,
-  mission09,
-  mission10,
+const factories = [
+  createMission01,
+  createMission02,
+  createMission03,
+  createMission04,
+  createMission05,
+  createMission06,
+  createMission07,
+  createMission08,
+  createMission09,
+  createMission10,
 ];
 
-export function getMissionBySlug(slug: string): MissionDefinition | undefined {
-  return missions.find((m) => m.slug === slug);
+export function getMissions(locale: Locale = DEFAULT_LOCALE): MissionDefinition[] {
+  return factories.map((create) => create(locale));
 }
 
-export function getMissionById(id: string): MissionDefinition | undefined {
-  return missions.find((m) => m.id === id);
+/** @deprecated Prefer getMissions(locale) — kept for static params (slugs are locale-invariant). */
+export const missions = getMissions(DEFAULT_LOCALE);
+
+export function getMissionBySlug(
+  slug: string,
+  locale: Locale = DEFAULT_LOCALE
+): MissionDefinition | undefined {
+  return getMissions(locale).find((m) => m.slug === slug);
+}
+
+export function getMissionById(
+  id: string,
+  locale: Locale = DEFAULT_LOCALE
+): MissionDefinition | undefined {
+  return getMissions(locale).find((m) => m.id === id);
+}
+
+export function getMissionSlugs(): string[] {
+  return getMissions(DEFAULT_LOCALE).map((m) => m.slug);
 }

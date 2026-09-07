@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Check, Lock, Skull, Play } from "lucide-react";
+import { useLocale } from "@/i18n/locale-context";
 import type { MissionDefinition, MissionStatus } from "@/lib/types";
 
 interface MissionNodeProps {
@@ -25,6 +26,7 @@ const positionClass = [
 ];
 
 export function MissionNode({ mission, status, index }: MissionNodeProps) {
+  const { messages } = useLocale();
   const isBoss = mission.kind === "boss";
   const href =
     status === "locked"
@@ -79,12 +81,12 @@ export function MissionNode({ mission, status, index }: MissionNodeProps) {
               </span>
               {status === "available" && (
                 <span className="rounded bg-signal/15 px-1.5 py-0.5 text-[9px] tracking-wider text-signal uppercase">
-                  Active
+                  {messages.missionActiveBadge}
                 </span>
               )}
               {status === "completed" && (
                 <span className="rounded bg-signal/10 px-1.5 py-0.5 text-[9px] tracking-wider text-signal uppercase">
-                  Cleared
+                  {messages.missionClearedBadge}
                 </span>
               )}
             </div>
@@ -97,7 +99,7 @@ export function MissionNode({ mission, status, index }: MissionNodeProps) {
             </h3>
             <p className="mt-1 line-clamp-2 text-xs text-mist">
               {status === "locked"
-                ? "Verrouillée — continue ton chemin."
+                ? messages.lockedHint
                 : mission.brief}
             </p>
             {status !== "locked" && (

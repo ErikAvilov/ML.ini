@@ -18,15 +18,31 @@ La théorie arrive **après** la pratique (ex. overlay Mission Cleared).
 
 Avant de cliquer RUN, le joueur doit comprendre :
 
-1. Il travaille sur un **système fictif d’entreprise**
-2. Une **IA est déjà connectée**
-3. Il écrit l’**instruction du système** (réutilisable)
-4. Cette instruction s’applique à **plusieurs messages**
-5. Son job : rendre le comportement **fiable**
-6. Il **ne discute pas** simplement avec ChatGPT
+1. Il vient d’arriver chez **Veyra** (équipe **Automation**)
+2. Il travaille sur **Project MILDRED**
+3. Une **IA est déjà connectée**
+4. Il écrit l’**instruction de MILDRED** (réutilisable)
+5. Cette instruction s’applique à **plusieurs messages**
+6. Son job : rendre le comportement **fiable**
+7. Il **ne discute pas** simplement avec ChatGPT
 
-Label éditeur : **Instruction du système**  
-Sous-titre : « Écrite par toi · utilisée automatiquement sur chaque message »
+Label éditeur : **Instruction de MILDRED**  
+Sous-titre : « Écrite par toi · réutilisée automatiquement sur chaque message »
+
+## Écran de réussite
+
+Ordre pédagogique :
+
+1. Réaction Mira  
+2. Mission complete + XP  
+3. MILDRED upgraded (avant / maintenant + capability ONLINE)  
+4. What you just learned (langage clair)  
+5. Skill unlocked  
+6. Termes techniques (optionnel, replié)  
+
+Données : `mission.completion` (`MissionCompletionContent`).  
+Canon fiction : [`docs/NARRATIVE.md`](../NARRATIVE.md).
+
 
 ## Briefing type (esprit Boot.dev, design Mlini)
 

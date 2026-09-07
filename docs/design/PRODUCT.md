@@ -49,13 +49,14 @@ src/data/missions/     # définitions pédagogiques (données, pas JSX massif)
 src/data/kingdoms/     # royaumes
 src/components/mission/  # shell mission, briefing, playground
 src/components/kingdom/  # hub / carte
-src/lib/               # progression, validation, ai-client (NVIDIA)
+src/lib/               # progression, validation, ai-client (OpenAI)
 src/app/api/ai/        # classify, hint — clé API serveur uniquement
 ```
 
 ## Variables d’environnement
 
-- `NVIDIA_API_KEY` dans `.env` ou `.env.local` (jamais dans le frontend / Git)
-- Optionnel : `NVIDIA_MODEL` (défaut `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning`)
+- `OPENAI_API_KEY` dans `.env` ou `.env.local` (jamais dans le frontend / Git)
+- Optionnel : `OPENAI_MODEL` (défaut `gpt-5.6-luna`)
+- Optionnel : `OPENAI_REASONING_EFFORT` (défaut `low`)
 - Voir `.env.example`
-- Clé : [build.nvidia.com](https://build.nvidia.com) (préfixe `nvapi-`)
+- Clé : [platform.openai.com/api-keys](https://platform.openai.com/api-keys)

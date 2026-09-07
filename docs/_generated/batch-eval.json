@@ -1,0 +1,2792 @@
+[
+  {
+    "missionId": "mission-03",
+    "missionTitle": "Speak Machine",
+    "promptId": "m03-terrible",
+    "promptLabel": "1. Terrible instruction",
+    "instruction": "Analyze the message.",
+    "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+    "isolated": {
+      "mode": "PARALLEL_ISOLATED",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "latencyMs": 25363,
+      "requestCount": 6,
+      "usage": {
+        "inputTokens": 523,
+        "outputTokens": 1801,
+        "totalTokens": 2324
+      },
+      "results": [
+        {
+          "testId": "t1",
+          "message": "Amazing service, thank you! Everything arrived perfectly.",
+          "rawOutput": "**Sentiment:** Positive  \n**Intent:** Express gratitude and confirm satisfaction with the service and delivery.  \n**Key phrases:** “Amazing service,” “thank you,” “Everything arrived perfectly.”  \n**Overall assessment:** The customer is highly pleased with the experience and is providing positive feedback.",
+          "evaluation": {
+            "raw": "**Sentiment:** Positive  \n**Intent:** Express gratitude and confirm satisfaction with the service and delivery.  \n**Key phrases:** “Amazing service,” “thank you,” “Everything arrived perfectly.”  \n**Overall assessment:** The customer is highly pleased with the experience and is providing positive feedback.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "message": "Amazing service, thank you! Everything arrived perfectly.",
+            "testId": "t1",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t2",
+          "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+          "rawOutput": "**Analysis of the customer message**\n\n- **Sentiment:** Negative  \n- **Primary emotions:** Frustration, disappointment, irritation  \n- **Underlying issue:** Perceived repeated delay of a package, indicating a reliability problem  \n- **Customer intent:** To express dissatisfaction and likely seek a resolution (e.g., explanation, expedited delivery, compensation)  \n- **Suggested response focus:** Empathize with the frustration, acknowledge the repeated delay, provide a clear explanation or status update, and outline steps to prevent future delays or remedy the current situation.",
+          "evaluation": {
+            "raw": "**Analysis of the customer message**\n\n- **Sentiment:** Negative  \n- **Primary emotions:** Frustration, disappointment, irritation  \n- **Underlying issue:** Perceived repeated delay of a package, indicating a reliability problem  \n- **Customer intent:** To express dissatisfaction and likely seek a resolution (e.g., explanation, expedited delivery, compensation)  \n- **Suggested response focus:** Empathize with the frustration, acknowledge the repeated delay, provide a clear explanation or status update, and outline steps to prevent future delays or remedy the current situation.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+            "testId": "t2",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t3",
+          "message": "What time will my package arrive?",
+          "rawOutput": "The customer is inquiring about the expected delivery time of their package.",
+          "evaluation": {
+            "raw": "The customer is inquiring about the expected delivery time of their package.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "message": "What time will my package arrive?",
+            "testId": "t3",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t4",
+          "message": "Transaction #48192 appears twice on my statement.",
+          "rawOutput": "I’m sorry you’re seeing a duplicate charge. To investigate this, could you please provide a few more details?\n\n1. **Exact transaction date(s)** – when did the charge appear on your statement?\n2. **Amount** – is the amount the same for both entries?\n3. **Merchant name** – how is the transaction described on the statement (e.g., “ABC Store,” “XYZ Services”)?\n4. **Payment method** – was this charged to a credit card, debit card, bank account, or another method?\n5. **Any reference or authorization codes** – sometimes the statement includes additional identifiers that can help locate the original authorization.\n\nWith that information I can guide you on how to verify whether the two entries are truly duplicates or if one might be an authorized pending transaction that will drop off. If you prefer, you can also contact the merchant directly using the details on your receipt or their website, and ask them to confirm whether two separate purchases were made. \n\nLet me know the details above, and I’ll help you take the next steps.",
+          "evaluation": {
+            "raw": "I’m sorry you’re seeing a duplicate charge. To investigate this, could you please provide a few more details?\n\n1. **Exact transaction date(s)** – when did the charge appear on your statement?\n2. **Amount** – is the amount the same for both entries?\n3. **Merchant name** – how is the transaction described on the statement (e.g., “ABC Store,” “XYZ Services”)?\n4. **Payment method** – was this charged to a credit card, debit card, bank account, or another method?\n5. **Any reference or authorization codes** – sometimes the statement includes additional identifiers that can help locate the original authorization.\n\nWith that information I can guide you on how to verify whether the two entries are truly duplicates or if one might be an authorized pending transaction that will drop off. If you prefer, you can also contact the merchant directly using the details on your receipt or their website, and ask them to confirm whether two separate purchases were made. \n\nLet me know the details above, and I’ll help you take the next steps.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "Transaction #48192 appears twice on my statement.",
+            "testId": "t4",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t5",
+          "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+          "rawOutput": "**Analysis of the customer message**\n\n- **Primary concern:** The customer reports an unrecognized payment, indicating possible fraudulent activity.\n- **Emotional tone:** Worried and anxious, suggesting a high level of urgency.\n- **Implicit request:** Assistance in verifying the legitimacy of the payment and securing the account from unauthorized access.\n- **Key issues to address:**\n  1. Confirmation of the disputed transaction (date, amount, merchant).\n  2. Review of recent account activity for any suspicious behavior.\n  3. Guidance on steps to protect the account (e.g., password reset, two‑factor authentication).\n  4. Information on next steps for dispute resolution or charge reversal.",
+          "evaluation": {
+            "raw": "**Analysis of the customer message**\n\n- **Primary concern:** The customer reports an unrecognized payment, indicating possible fraudulent activity.\n- **Emotional tone:** Worried and anxious, suggesting a high level of urgency.\n- **Implicit request:** Assistance in verifying the legitimacy of the payment and securing the account from unauthorized access.\n- **Key issues to address:**\n  1. Confirmation of the disputed transaction (date, amount, merchant).\n  2. Review of recent account activity for any suspicious behavior.\n  3. Guidance on steps to protect the account (e.g., password reset, two‑factor authentication).\n  4. Information on next steps for dispute resolution or charge reversal.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+            "testId": "t5",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t6-hidden",
+          "message": "Please refund this damaged item. This quality is unacceptable.",
+          "rawOutput": "The customer is requesting a refund for a damaged item and expresses dissatisfaction with its quality, indicating a negative sentiment and a clear intent to seek compensation.",
+          "evaluation": {
+            "raw": "The customer is requesting a refund for a damaged item and expresses dissatisfaction with its quality, indicating a negative sentiment and a clear intent to seek compensation.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "Please refund this damaged item. This quality is unacceptable.",
+            "testId": "t6-hidden",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        }
+      ],
+      "passed": 0,
+      "total": 6,
+      "allPassed": false,
+      "warnings": []
+    },
+    "batch": {
+      "mode": "SINGLE_BATCH",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "latencyMs": 24274,
+      "requestCount": 1,
+      "usage": {
+        "inputTokens": 460,
+        "outputTokens": 830,
+        "totalTokens": 1290
+      },
+      "results": [
+        {
+          "testId": "t1",
+          "message": "Amazing service, thank you! Everything arrived perfectly.",
+          "rawOutput": "The customer expresses gratitude and satisfaction with the service and delivery.",
+          "evaluation": {
+            "raw": "The customer expresses gratitude and satisfaction with the service and delivery.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "message": "Amazing service, thank you! Everything arrived perfectly.",
+            "testId": "t1",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t2",
+          "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+          "rawOutput": "The customer expresses frustration and disappointment about a late package.",
+          "evaluation": {
+            "raw": "The customer expresses frustration and disappointment about a late package.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+            "testId": "t2",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t3",
+          "message": "What time will my package arrive?",
+          "rawOutput": "The customer asks about the expected arrival time of the package.",
+          "evaluation": {
+            "raw": "The customer asks about the expected arrival time of the package.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "message": "What time will my package arrive?",
+            "testId": "t3",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t4",
+          "message": "Transaction #48192 appears twice on my statement.",
+          "rawOutput": "The customer reports a duplicate transaction on their statement.",
+          "evaluation": {
+            "raw": "The customer reports a duplicate transaction on their statement.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "Transaction #48192 appears twice on my statement.",
+            "testId": "t4",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t5",
+          "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+          "rawOutput": "The customer reports an unrecognized payment and expresses concern about account security.",
+          "evaluation": {
+            "raw": "The customer reports an unrecognized payment and expresses concern about account security.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+            "testId": "t5",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t6-hidden",
+          "message": "Please refund this damaged item. This quality is unacceptable.",
+          "rawOutput": "The customer requests a refund for a damaged item and expresses dissatisfaction with quality.",
+          "evaluation": {
+            "raw": "The customer requests a refund for a damaged item and expresses dissatisfaction with quality.",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "Please refund this damaged item. This quality is unacceptable.",
+            "testId": "t6-hidden",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        }
+      ],
+      "passed": 0,
+      "total": 6,
+      "allPassed": false,
+      "warnings": []
+    },
+    "perTest": [
+      {
+        "testId": "t1",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "**Sentiment:** Positive  \n**Intent:** Express gratitude and confirm satisfaction with the service and delivery.  \n**Key phrases:** “Amazing service,” “thank you,” “Everything arrived perfectly.”  \n**Overall assessment:** The customer is highly pleased with the experience and is providing positive feedback.",
+        "batchRaw": "The customer expresses gratitude and satisfaction with the service and delivery.",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t2",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "**Analysis of the customer message**\n\n- **Sentiment:** Negative  \n- **Primary emotions:** Frustration, disappointment, irritation  \n- **Underlying issue:** Perceived repeated delay of a package, indicating a reliability problem  \n- **Customer intent:** To express dissatisfaction and likely seek a resolution (e.g., explanation, expedited delivery, compensation)  \n- **Suggested response focus:** Empathize with the frustration, acknowledge the repeated delay, provide a clear explanation or status update, and outline steps to prevent future delays or remedy the current situation.",
+        "batchRaw": "The customer expresses frustration and disappointment about a late package.",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t3",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "The customer is inquiring about the expected delivery time of their package.",
+        "batchRaw": "The customer asks about the expected arrival time of the package.",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t4",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "I’m sorry you’re seeing a duplicate charge. To investigate this, could you please provide a few more details?\n\n1. **Exact transaction date(s)** – when did the charge appear on your statement?\n2. **Amount** – is the amount the same for both entries?\n3. **Merchant name** – how is the transaction described on the statement (e.g., “ABC Store,” “XYZ Services”)?\n4. **Payment method** – was this charged to a credit card, debit card, bank account, or another method?\n5. **Any reference or authorization codes** – sometimes the statement includes additional identifiers that can help locate the original authorization.\n\nWith that information I can guide you on how to verify whether the two entries are truly duplicates or if one might be an authorized pending transaction that will drop off. If you prefer, you can also contact the merchant directly using the details on your receipt or their website, and ask them to confirm whether two separate purchases were made. \n\nLet me know the details above, and I’ll help you take the next steps.",
+        "batchRaw": "The customer reports a duplicate transaction on their statement.",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t5",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "**Analysis of the customer message**\n\n- **Primary concern:** The customer reports an unrecognized payment, indicating possible fraudulent activity.\n- **Emotional tone:** Worried and anxious, suggesting a high level of urgency.\n- **Implicit request:** Assistance in verifying the legitimacy of the payment and securing the account from unauthorized access.\n- **Key issues to address:**\n  1. Confirmation of the disputed transaction (date, amount, merchant).\n  2. Review of recent account activity for any suspicious behavior.\n  3. Guidance on steps to protect the account (e.g., password reset, two‑factor authentication).\n  4. Information on next steps for dispute resolution or charge reversal.",
+        "batchRaw": "The customer reports an unrecognized payment and expresses concern about account security.",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t6-hidden",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "The customer is requesting a refund for a damaged item and expresses dissatisfaction with its quality, indicating a negative sentiment and a clear intent to seek compensation.",
+        "batchRaw": "The customer requests a refund for a damaged item and expresses dissatisfaction with quality.",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      }
+    ],
+    "suiteFalsePass": false,
+    "suiteFalseFail": false,
+    "falsePassTestIds": [],
+    "falseFailTestIds": []
+  },
+  {
+    "missionId": "mission-03",
+    "missionTitle": "Speak Machine",
+    "promptId": "m03-vague-priority-only",
+    "promptLabel": "2. Vague instruction (priority labels only)",
+    "instruction": "Return URGENT or NORMAL depending on the client's request.",
+    "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+    "isolated": {
+      "mode": "PARALLEL_ISOLATED",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "latencyMs": 10245,
+      "requestCount": 6,
+      "usage": {
+        "inputTokens": 577,
+        "outputTokens": 531,
+        "totalTokens": 1108
+      },
+      "results": [
+        {
+          "testId": "t1",
+          "message": "Amazing service, thank you! Everything arrived perfectly.",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "message": "Amazing service, thank you! Everything arrived perfectly.",
+            "testId": "t1",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t2",
+          "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+          "rawOutput": "URGENT",
+          "evaluation": {
+            "raw": "URGENT",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+            "testId": "t2",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": false,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": false,
+          "contractOk": false
+        },
+        {
+          "testId": "t3",
+          "message": "What time will my package arrive?",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "message": "What time will my package arrive?",
+            "testId": "t3",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t4",
+          "message": "Transaction #48192 appears twice on my statement.",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "Transaction #48192 appears twice on my statement.",
+            "testId": "t4",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": false,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": false,
+          "contractOk": false
+        },
+        {
+          "testId": "t5",
+          "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+          "rawOutput": "URGENT",
+          "evaluation": {
+            "raw": "URGENT",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+            "testId": "t5",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t6-hidden",
+          "message": "Please refund this damaged item. This quality is unacceptable.",
+          "rawOutput": "URGENT",
+          "evaluation": {
+            "raw": "URGENT",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "Please refund this damaged item. This quality is unacceptable.",
+            "testId": "t6-hidden",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": false,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": false,
+          "contractOk": false
+        }
+      ],
+      "passed": 0,
+      "total": 6,
+      "allPassed": false,
+      "warnings": []
+    },
+    "batch": {
+      "mode": "SINGLE_BATCH",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "latencyMs": 16361,
+      "requestCount": 1,
+      "usage": {
+        "inputTokens": 469,
+        "outputTokens": 683,
+        "totalTokens": 1152
+      },
+      "results": [
+        {
+          "testId": "t1",
+          "message": "Amazing service, thank you! Everything arrived perfectly.",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "message": "Amazing service, thank you! Everything arrived perfectly.",
+            "testId": "t1",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t2",
+          "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+            "testId": "t2",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t3",
+          "message": "What time will my package arrive?",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "message": "What time will my package arrive?",
+            "testId": "t3",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t4",
+          "message": "Transaction #48192 appears twice on my statement.",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "Transaction #48192 appears twice on my statement.",
+            "testId": "t4",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": false,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": false,
+          "contractOk": false
+        },
+        {
+          "testId": "t5",
+          "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+          "rawOutput": "URGENT",
+          "evaluation": {
+            "raw": "URGENT",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+            "testId": "t5",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t6-hidden",
+          "message": "Please refund this damaged item. This quality is unacceptable.",
+          "rawOutput": "URGENT",
+          "evaluation": {
+            "raw": "URGENT",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "Please refund this damaged item. This quality is unacceptable.",
+            "testId": "t6-hidden",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": false,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": false,
+          "contractOk": false
+        }
+      ],
+      "passed": 0,
+      "total": 6,
+      "allPassed": false,
+      "warnings": []
+    },
+    "perTest": [
+      {
+        "testId": "t1",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "NORMAL",
+        "batchRaw": "NORMAL",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t2",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "URGENT",
+        "batchRaw": "NORMAL",
+        "isolatedContentOk": false,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t3",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "NORMAL",
+        "batchRaw": "NORMAL",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t4",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "NORMAL",
+        "batchRaw": "NORMAL",
+        "isolatedContentOk": false,
+        "batchContentOk": false,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t5",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "URGENT",
+        "batchRaw": "URGENT",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t6-hidden",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "URGENT",
+        "batchRaw": "URGENT",
+        "isolatedContentOk": false,
+        "batchContentOk": false,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      }
+    ],
+    "suiteFalsePass": false,
+    "suiteFalseFail": false,
+    "falsePassTestIds": [],
+    "falseFailTestIds": []
+  },
+  {
+    "missionId": "mission-03",
+    "missionTitle": "Speak Machine",
+    "promptId": "m03-partial-policy",
+    "promptLabel": "3. Partially specified (policy, no format)",
+    "instruction": "Determine urgency according to Veyra policy and return URGENT or NORMAL.\n\nVeyra Support Policy — PRIORITY:\nURGENT: duplicate payment; unauthorized/unrecognized payment; account locked after repeated failed attempts; suspected security issue.\nNORMAL: delivery delay; refund request; wrong product/size; forgotten password; missing delivered package; general complaints.\nEmotion alone never determines priority.",
+    "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+    "isolated": {
+      "mode": "PARALLEL_ISOLATED",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "latencyMs": 6242,
+      "requestCount": 6,
+      "usage": {
+        "inputTokens": 985,
+        "outputTokens": 413,
+        "totalTokens": 1398
+      },
+      "results": [
+        {
+          "testId": "t1",
+          "message": "Amazing service, thank you! Everything arrived perfectly.",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "message": "Amazing service, thank you! Everything arrived perfectly.",
+            "testId": "t1",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t2",
+          "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+            "testId": "t2",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t3",
+          "message": "What time will my package arrive?",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "message": "What time will my package arrive?",
+            "testId": "t3",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t4",
+          "message": "Transaction #48192 appears twice on my statement.",
+          "rawOutput": "URGENT",
+          "evaluation": {
+            "raw": "URGENT",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "Transaction #48192 appears twice on my statement.",
+            "testId": "t4",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t5",
+          "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+          "rawOutput": "URGENT",
+          "evaluation": {
+            "raw": "URGENT",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+            "testId": "t5",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t6-hidden",
+          "message": "Please refund this damaged item. This quality is unacceptable.",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "Please refund this damaged item. This quality is unacceptable.",
+            "testId": "t6-hidden",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        }
+      ],
+      "passed": 0,
+      "total": 6,
+      "allPassed": false,
+      "warnings": []
+    },
+    "batch": {
+      "mode": "SINGLE_BATCH",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "latencyMs": 9451,
+      "requestCount": 1,
+      "usage": {
+        "inputTokens": 537,
+        "outputTokens": 578,
+        "totalTokens": 1115
+      },
+      "results": [
+        {
+          "testId": "t1",
+          "message": "Amazing service, thank you! Everything arrived perfectly.",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "message": "Amazing service, thank you! Everything arrived perfectly.",
+            "testId": "t1",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t2",
+          "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+            "testId": "t2",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t3",
+          "message": "What time will my package arrive?",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "message": "What time will my package arrive?",
+            "testId": "t3",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t4",
+          "message": "Transaction #48192 appears twice on my statement.",
+          "rawOutput": "URGENT",
+          "evaluation": {
+            "raw": "URGENT",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "Transaction #48192 appears twice on my statement.",
+            "testId": "t4",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t5",
+          "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+          "rawOutput": "URGENT",
+          "evaluation": {
+            "raw": "URGENT",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+            "testId": "t5",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t6-hidden",
+          "message": "Please refund this damaged item. This quality is unacceptable.",
+          "rawOutput": "NORMAL",
+          "evaluation": {
+            "raw": "NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "Please refund this damaged item. This quality is unacceptable.",
+            "testId": "t6-hidden",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        }
+      ],
+      "passed": 0,
+      "total": 6,
+      "allPassed": false,
+      "warnings": []
+    },
+    "perTest": [
+      {
+        "testId": "t1",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "NORMAL",
+        "batchRaw": "NORMAL",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t2",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "NORMAL",
+        "batchRaw": "NORMAL",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t3",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "NORMAL",
+        "batchRaw": "NORMAL",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t4",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "URGENT",
+        "batchRaw": "URGENT",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t5",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "URGENT",
+        "batchRaw": "URGENT",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t6-hidden",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "NORMAL",
+        "batchRaw": "NORMAL",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      }
+    ],
+    "suiteFalsePass": false,
+    "suiteFalseFail": false,
+    "falsePassTestIds": [],
+    "falseFailTestIds": []
+  },
+  {
+    "missionId": "mission-03",
+    "missionTitle": "Speak Machine",
+    "promptId": "m03-complete-policy",
+    "promptLabel": "4. Complete policy instruction (no exact format)",
+    "instruction": "Depending on the client's request, determine its SENTIMENT and PRIORITY according to company policy.\n\nVeyra Sentiment Rules — SENTIMENT:\nPOSITIVE: explicit praise; explicit satisfaction; explicit thanks in a clearly positive context.\nNEGATIVE: explicit complaint; explicit dissatisfaction; anger or criticism.\nNEUTRAL: factual question or statement with no explicit praise and no explicit complaint.\nIf there is no clear praise and no clear complaint, choose NEUTRAL.\n\nVeyra Support Policy — PRIORITY:\nURGENT: duplicate payment; unauthorized/unrecognized payment; account locked after repeated failed attempts; suspected security issue.\nNORMAL: delivery delay; refund request; wrong product/size; forgotten password; missing delivered package; general complaints.\nEmotion alone never determines priority.\n\nOutput sentiment and priority for each message.",
+    "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+    "isolated": {
+      "mode": "PARALLEL_ISOLATED",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "latencyMs": 15976,
+      "requestCount": 6,
+      "usage": {
+        "inputTokens": 1525,
+        "outputTokens": 1229,
+        "totalTokens": 2754
+      },
+      "results": [
+        {
+          "testId": "t1",
+          "message": "Amazing service, thank you! Everything arrived perfectly.",
+          "rawOutput": "Sentiment: POSITIVE, Priority: NORMAL",
+          "evaluation": {
+            "raw": "Sentiment: POSITIVE, Priority: NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "message": "Amazing service, thank you! Everything arrived perfectly.",
+            "testId": "t1",
+            "failHint": "MILDRED understood the customer. The next application still couldn't read the response.",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": true,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": true,
+          "contractOk": false
+        },
+        {
+          "testId": "t2",
+          "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+          "rawOutput": "NEGATIVE\nNORMAL",
+          "evaluation": {
+            "raw": "NEGATIVE\nNORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+            "testId": "t2",
+            "failHint": "MILDRED understood the customer. The next application still couldn't read the response.",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": true,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": true,
+          "contractOk": false
+        },
+        {
+          "testId": "t3",
+          "message": "What time will my package arrive?",
+          "rawOutput": "Sentiment: NEUTRAL  \nPriority: NORMAL",
+          "evaluation": {
+            "raw": "Sentiment: NEUTRAL  \nPriority: NORMAL",
+            "normalized": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "message": "What time will my package arrive?",
+            "testId": "t3",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "NEUTRAL",
+              "PRIORITY": "NORMAL"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        },
+        {
+          "testId": "t4",
+          "message": "Transaction #48192 appears twice on my statement.",
+          "rawOutput": "Sentiment: NEUTRAL  \nPriority: URGENT",
+          "evaluation": {
+            "raw": "Sentiment: NEUTRAL  \nPriority: URGENT",
+            "normalized": "SENTIMENT: NEUTRAL\nPRIORITY: URGENT",
+            "isValidCategory": true,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "Transaction #48192 appears twice on my statement.",
+            "testId": "t4",
+            "failHint": "Reporting a duplicate charge is a problem — treat it as NEGATIVE.",
+            "errorKind": "sentiment",
+            "parsedFields": {
+              "SENTIMENT": "NEUTRAL",
+              "PRIORITY": "URGENT"
+            },
+            "contentOk": false,
+            "contractOk": true,
+            "fieldMismatches": [
+              "SENTIMENT"
+            ]
+          },
+          "passed": false,
+          "contentOk": false,
+          "contractOk": true
+        },
+        {
+          "testId": "t5",
+          "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+          "rawOutput": "SENTIMENT: NEGATIVE, PRIORITY: URGENT",
+          "evaluation": {
+            "raw": "SENTIMENT: NEGATIVE, PRIORITY: URGENT",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+            "testId": "t5",
+            "failHint": "MILDRED understood the customer. The next application still couldn't read the response.",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": true,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": true,
+          "contractOk": false
+        },
+        {
+          "testId": "t6-hidden",
+          "message": "Please refund this damaged item. This quality is unacceptable.",
+          "rawOutput": "NEGATIVE, NORMAL",
+          "evaluation": {
+            "raw": "NEGATIVE, NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "Please refund this damaged item. This quality is unacceptable.",
+            "testId": "t6-hidden",
+            "failHint": "MILDRED understood the customer. The next application still couldn't read the response.",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": true,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": true,
+          "contractOk": false
+        }
+      ],
+      "passed": 1,
+      "total": 6,
+      "allPassed": false,
+      "warnings": []
+    },
+    "batch": {
+      "mode": "SINGLE_BATCH",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "latencyMs": 24385,
+      "requestCount": 1,
+      "usage": {
+        "inputTokens": 627,
+        "outputTokens": 1409,
+        "totalTokens": 2036
+      },
+      "results": [
+        {
+          "testId": "t1",
+          "message": "Amazing service, thank you! Everything arrived perfectly.",
+          "rawOutput": "POSITIVE NORMAL",
+          "evaluation": {
+            "raw": "POSITIVE NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "message": "Amazing service, thank you! Everything arrived perfectly.",
+            "testId": "t1",
+            "failHint": "MILDRED understood the customer. The next application still couldn't read the response.",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": true,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": true,
+          "contractOk": false
+        },
+        {
+          "testId": "t2",
+          "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+          "rawOutput": "NEGATIVE NORMAL",
+          "evaluation": {
+            "raw": "NEGATIVE NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+            "testId": "t2",
+            "failHint": "MILDRED understood the customer. The next application still couldn't read the response.",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": true,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": true,
+          "contractOk": false
+        },
+        {
+          "testId": "t3",
+          "message": "What time will my package arrive?",
+          "rawOutput": "NEUTRAL NORMAL",
+          "evaluation": {
+            "raw": "NEUTRAL NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "message": "What time will my package arrive?",
+            "testId": "t3",
+            "failHint": "MILDRED understood the customer. The next application still couldn't read the response.",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": true,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": true,
+          "contractOk": false
+        },
+        {
+          "testId": "t4",
+          "message": "Transaction #48192 appears twice on my statement.",
+          "rawOutput": "NEUTRAL URGENT",
+          "evaluation": {
+            "raw": "NEUTRAL URGENT",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "Transaction #48192 appears twice on my statement.",
+            "testId": "t4",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": false,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": false,
+          "contractOk": false
+        },
+        {
+          "testId": "t5",
+          "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+          "rawOutput": "NEUTRAL URGENT",
+          "evaluation": {
+            "raw": "NEUTRAL URGENT",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+            "testId": "t5",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": false,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": false,
+          "contractOk": false
+        },
+        {
+          "testId": "t6-hidden",
+          "message": "Please refund this damaged item. This quality is unacceptable.",
+          "rawOutput": "NEGATIVE NORMAL",
+          "evaluation": {
+            "raw": "NEGATIVE NORMAL",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "Please refund this damaged item. This quality is unacceptable.",
+            "testId": "t6-hidden",
+            "failHint": "MILDRED understood the customer. The next application still couldn't read the response.",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": true,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": true,
+          "contractOk": false
+        }
+      ],
+      "passed": 0,
+      "total": 6,
+      "allPassed": false,
+      "warnings": []
+    },
+    "perTest": [
+      {
+        "testId": "t1",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "Sentiment: POSITIVE, Priority: NORMAL",
+        "batchRaw": "POSITIVE NORMAL",
+        "isolatedContentOk": true,
+        "batchContentOk": true,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t2",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "NEGATIVE\nNORMAL",
+        "batchRaw": "NEGATIVE NORMAL",
+        "isolatedContentOk": true,
+        "batchContentOk": true,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t3",
+        "kind": "FALSE_FAIL",
+        "isolatedPass": true,
+        "batchPass": false,
+        "isolatedRaw": "Sentiment: NEUTRAL  \nPriority: NORMAL",
+        "batchRaw": "NEUTRAL NORMAL",
+        "isolatedContentOk": true,
+        "batchContentOk": true,
+        "isolatedContractOk": true,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t4",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "Sentiment: NEUTRAL  \nPriority: URGENT",
+        "batchRaw": "NEUTRAL URGENT",
+        "isolatedContentOk": false,
+        "batchContentOk": false,
+        "isolatedContractOk": true,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t5",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "SENTIMENT: NEGATIVE, PRIORITY: URGENT",
+        "batchRaw": "NEUTRAL URGENT",
+        "isolatedContentOk": true,
+        "batchContentOk": false,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t6-hidden",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "NEGATIVE, NORMAL",
+        "batchRaw": "NEGATIVE NORMAL",
+        "isolatedContentOk": true,
+        "batchContentOk": true,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      }
+    ],
+    "suiteFalsePass": false,
+    "suiteFalseFail": false,
+    "falsePassTestIds": [],
+    "falseFailTestIds": [
+      "t3"
+    ]
+  },
+  {
+    "missionId": "mission-03",
+    "missionTitle": "Speak Machine",
+    "promptId": "m03-complete-format",
+    "promptLabel": "5. Complete policy + exact formatting",
+    "instruction": "Depending on the client's request, determine its SENTIMENT and PRIORITY according to company policy.\n\nReturn exactly two lines and nothing else:\nSENTIMENT: <POSITIVE|NEUTRAL|NEGATIVE>\nPRIORITY: <URGENT|NORMAL>\n\nVeyra Sentiment Rules — SENTIMENT:\nPOSITIVE: explicit praise; explicit satisfaction; explicit thanks in a clearly positive context.\nNEGATIVE: explicit complaint; explicit dissatisfaction; anger or criticism.\nNEUTRAL: factual question or statement with no explicit praise and no explicit complaint.\nIf there is no clear praise and no clear complaint, choose NEUTRAL.\n\nVeyra Support Policy — PRIORITY:\nURGENT: duplicate payment; unauthorized/unrecognized payment; account locked after repeated failed attempts; suspected security issue.\nNORMAL: delivery delay; refund request; wrong product/size; forgotten password; missing delivered package; general complaints.\nEmotion alone never determines priority.\n\nDo not output anything else.",
+    "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+    "isolated": {
+      "mode": "PARALLEL_ISOLATED",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "latencyMs": 10837,
+      "requestCount": 6,
+      "usage": {
+        "inputTokens": 1753,
+        "outputTokens": 1014,
+        "totalTokens": 2767
+      },
+      "results": [
+        {
+          "testId": "t1",
+          "message": "Amazing service, thank you! Everything arrived perfectly.",
+          "rawOutput": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+          "evaluation": {
+            "raw": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "normalized": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "message": "Amazing service, thank you! Everything arrived perfectly.",
+            "testId": "t1",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "POSITIVE",
+              "PRIORITY": "NORMAL"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        },
+        {
+          "testId": "t2",
+          "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+          "rawOutput": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+          "evaluation": {
+            "raw": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "normalized": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+            "testId": "t2",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "NEGATIVE",
+              "PRIORITY": "NORMAL"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        },
+        {
+          "testId": "t3",
+          "message": "What time will my package arrive?",
+          "rawOutput": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+          "evaluation": {
+            "raw": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "normalized": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "message": "What time will my package arrive?",
+            "testId": "t3",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "NEUTRAL",
+              "PRIORITY": "NORMAL"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        },
+        {
+          "testId": "t4",
+          "message": "Transaction #48192 appears twice on my statement.",
+          "rawOutput": "SENTIMENT: NEUTRAL\nPRIORITY: URGENT",
+          "evaluation": {
+            "raw": "SENTIMENT: NEUTRAL\nPRIORITY: URGENT",
+            "normalized": "SENTIMENT: NEUTRAL\nPRIORITY: URGENT",
+            "isValidCategory": true,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "Transaction #48192 appears twice on my statement.",
+            "testId": "t4",
+            "failHint": "Reporting a duplicate charge is a problem — treat it as NEGATIVE.",
+            "errorKind": "sentiment",
+            "parsedFields": {
+              "SENTIMENT": "NEUTRAL",
+              "PRIORITY": "URGENT"
+            },
+            "contentOk": false,
+            "contractOk": true,
+            "fieldMismatches": [
+              "SENTIMENT"
+            ]
+          },
+          "passed": false,
+          "contentOk": false,
+          "contractOk": true
+        },
+        {
+          "testId": "t5",
+          "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+          "rawOutput": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+          "evaluation": {
+            "raw": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "normalized": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+            "testId": "t5",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "NEGATIVE",
+              "PRIORITY": "URGENT"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        },
+        {
+          "testId": "t6-hidden",
+          "message": "Please refund this damaged item. This quality is unacceptable.",
+          "rawOutput": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+          "evaluation": {
+            "raw": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "normalized": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "Please refund this damaged item. This quality is unacceptable.",
+            "testId": "t6-hidden",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "NEGATIVE",
+              "PRIORITY": "NORMAL"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        }
+      ],
+      "passed": 5,
+      "total": 6,
+      "allPassed": false,
+      "warnings": []
+    },
+    "batch": {
+      "mode": "SINGLE_BATCH",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "latencyMs": 18715,
+      "requestCount": 1,
+      "usage": {
+        "inputTokens": 665,
+        "outputTokens": 1149,
+        "totalTokens": 1814
+      },
+      "results": [
+        {
+          "testId": "t1",
+          "message": "Amazing service, thank you! Everything arrived perfectly.",
+          "rawOutput": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+          "evaluation": {
+            "raw": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "normalized": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "message": "Amazing service, thank you! Everything arrived perfectly.",
+            "testId": "t1",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "POSITIVE",
+              "PRIORITY": "NORMAL"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        },
+        {
+          "testId": "t2",
+          "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+          "rawOutput": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+          "evaluation": {
+            "raw": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "normalized": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+            "testId": "t2",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "NEGATIVE",
+              "PRIORITY": "NORMAL"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        },
+        {
+          "testId": "t3",
+          "message": "What time will my package arrive?",
+          "rawOutput": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+          "evaluation": {
+            "raw": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "normalized": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "message": "What time will my package arrive?",
+            "testId": "t3",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "NEUTRAL",
+              "PRIORITY": "NORMAL"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        },
+        {
+          "testId": "t4",
+          "message": "Transaction #48192 appears twice on my statement.",
+          "rawOutput": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+          "evaluation": {
+            "raw": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "normalized": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "Transaction #48192 appears twice on my statement.",
+            "testId": "t4",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "NEGATIVE",
+              "PRIORITY": "URGENT"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        },
+        {
+          "testId": "t5",
+          "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+          "rawOutput": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+          "evaluation": {
+            "raw": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "normalized": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+            "testId": "t5",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "NEGATIVE",
+              "PRIORITY": "URGENT"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        },
+        {
+          "testId": "t6-hidden",
+          "message": "Please refund this damaged item. This quality is unacceptable.",
+          "rawOutput": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+          "evaluation": {
+            "raw": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "normalized": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "Please refund this damaged item. This quality is unacceptable.",
+            "testId": "t6-hidden",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "NEGATIVE",
+              "PRIORITY": "NORMAL"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        }
+      ],
+      "passed": 6,
+      "total": 6,
+      "allPassed": true,
+      "warnings": []
+    },
+    "perTest": [
+      {
+        "testId": "t1",
+        "kind": "PASS_AGREE",
+        "isolatedPass": true,
+        "batchPass": true,
+        "isolatedRaw": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+        "batchRaw": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+        "isolatedContentOk": true,
+        "batchContentOk": true,
+        "isolatedContractOk": true,
+        "batchContractOk": true
+      },
+      {
+        "testId": "t2",
+        "kind": "PASS_AGREE",
+        "isolatedPass": true,
+        "batchPass": true,
+        "isolatedRaw": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+        "batchRaw": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+        "isolatedContentOk": true,
+        "batchContentOk": true,
+        "isolatedContractOk": true,
+        "batchContractOk": true
+      },
+      {
+        "testId": "t3",
+        "kind": "PASS_AGREE",
+        "isolatedPass": true,
+        "batchPass": true,
+        "isolatedRaw": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+        "batchRaw": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+        "isolatedContentOk": true,
+        "batchContentOk": true,
+        "isolatedContractOk": true,
+        "batchContractOk": true
+      },
+      {
+        "testId": "t4",
+        "kind": "FALSE_PASS",
+        "isolatedPass": false,
+        "batchPass": true,
+        "isolatedRaw": "SENTIMENT: NEUTRAL\nPRIORITY: URGENT",
+        "batchRaw": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+        "isolatedContentOk": false,
+        "batchContentOk": true,
+        "isolatedContractOk": true,
+        "batchContractOk": true
+      },
+      {
+        "testId": "t5",
+        "kind": "PASS_AGREE",
+        "isolatedPass": true,
+        "batchPass": true,
+        "isolatedRaw": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+        "batchRaw": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+        "isolatedContentOk": true,
+        "batchContentOk": true,
+        "isolatedContractOk": true,
+        "batchContractOk": true
+      },
+      {
+        "testId": "t6-hidden",
+        "kind": "PASS_AGREE",
+        "isolatedPass": true,
+        "batchPass": true,
+        "isolatedRaw": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+        "batchRaw": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+        "isolatedContentOk": true,
+        "batchContentOk": true,
+        "isolatedContractOk": true,
+        "batchContractOk": true
+      }
+    ],
+    "suiteFalsePass": true,
+    "suiteFalseFail": false,
+    "falsePassTestIds": [
+      "t4"
+    ],
+    "falseFailTestIds": []
+  },
+  {
+    "missionId": "mission-03",
+    "missionTitle": "Speak Machine",
+    "promptId": "m03-owner-partial-format",
+    "promptLabel": "Owner: partial format cue (manual playtest)",
+    "instruction": "Depending on the client's request and the company policy, determine its SENTIMENT and PRIORITY. Output an answer formatted like this:\n\nSENTIMENT:\nPRIORITY:",
+    "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+    "isolated": {
+      "mode": "PARALLEL_ISOLATED",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "latencyMs": 14562,
+      "requestCount": 6,
+      "usage": {
+        "inputTokens": 727,
+        "outputTokens": 1116,
+        "totalTokens": 1843
+      },
+      "results": [
+        {
+          "testId": "t1",
+          "message": "Amazing service, thank you! Everything arrived perfectly.",
+          "rawOutput": "SENTIMENT: Positive\nPRIORITY: Low",
+          "evaluation": {
+            "raw": "SENTIMENT: Positive\nPRIORITY: Low",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "message": "Amazing service, thank you! Everything arrived perfectly.",
+            "testId": "t1",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t2",
+          "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+          "rawOutput": "SENTIMENT:\nNEGATIVE\nPRIORITY:\nHIGH",
+          "evaluation": {
+            "raw": "SENTIMENT:\nNEGATIVE\nPRIORITY:\nHIGH",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+            "testId": "t2",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t3",
+          "message": "What time will my package arrive?",
+          "rawOutput": "SENTIMENT: neutral\nPRIORITY: low",
+          "evaluation": {
+            "raw": "SENTIMENT: neutral\nPRIORITY: low",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "message": "What time will my package arrive?",
+            "testId": "t3",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t4",
+          "message": "Transaction #48192 appears twice on my statement.",
+          "rawOutput": "SENTIMENT: Negative\nPRIORITY: High",
+          "evaluation": {
+            "raw": "SENTIMENT: Negative\nPRIORITY: High",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "Transaction #48192 appears twice on my statement.",
+            "testId": "t4",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t5",
+          "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+          "rawOutput": "SENTIMENT: Negative\nPRIORITY: High",
+          "evaluation": {
+            "raw": "SENTIMENT: Negative\nPRIORITY: High",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+            "testId": "t5",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t6-hidden",
+          "message": "Please refund this damaged item. This quality is unacceptable.",
+          "rawOutput": "SENTIMENT:\nNegative\nPRIORITY:\nHigh",
+          "evaluation": {
+            "raw": "SENTIMENT:\nNegative\nPRIORITY:\nHigh",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "Please refund this damaged item. This quality is unacceptable.",
+            "testId": "t6-hidden",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        }
+      ],
+      "passed": 0,
+      "total": 6,
+      "allPassed": false,
+      "warnings": []
+    },
+    "batch": {
+      "mode": "SINGLE_BATCH",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "latencyMs": 9749,
+      "requestCount": 1,
+      "usage": {
+        "inputTokens": 494,
+        "outputTokens": 1118,
+        "totalTokens": 1612
+      },
+      "results": [
+        {
+          "testId": "t1",
+          "message": "Amazing service, thank you! Everything arrived perfectly.",
+          "rawOutput": "SENTIMENT: Positive\nPRIORITY: Low",
+          "evaluation": {
+            "raw": "SENTIMENT: Positive\nPRIORITY: Low",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "message": "Amazing service, thank you! Everything arrived perfectly.",
+            "testId": "t1",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t2",
+          "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+          "rawOutput": "SENTIMENT: Negative\nPRIORITY: High",
+          "evaluation": {
+            "raw": "SENTIMENT: Negative\nPRIORITY: High",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+            "testId": "t2",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t3",
+          "message": "What time will my package arrive?",
+          "rawOutput": "SENTIMENT: Neutral\nPRIORITY: Medium",
+          "evaluation": {
+            "raw": "SENTIMENT: Neutral\nPRIORITY: Medium",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "message": "What time will my package arrive?",
+            "testId": "t3",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t4",
+          "message": "Transaction #48192 appears twice on my statement.",
+          "rawOutput": "SENTIMENT: Negative\nPRIORITY: High",
+          "evaluation": {
+            "raw": "SENTIMENT: Negative\nPRIORITY: High",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "Transaction #48192 appears twice on my statement.",
+            "testId": "t4",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t5",
+          "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+          "rawOutput": "SENTIMENT: Negative\nPRIORITY: High",
+          "evaluation": {
+            "raw": "SENTIMENT: Negative\nPRIORITY: High",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+            "testId": "t5",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        },
+        {
+          "testId": "t6-hidden",
+          "message": "Please refund this damaged item. This quality is unacceptable.",
+          "rawOutput": "SENTIMENT: Negative\nPRIORITY: High",
+          "evaluation": {
+            "raw": "SENTIMENT: Negative\nPRIORITY: High",
+            "normalized": null,
+            "isValidCategory": false,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "Please refund this damaged item. This quality is unacceptable.",
+            "testId": "t6-hidden",
+            "errorKind": "format",
+            "parsedFields": null,
+            "contentOk": null,
+            "contractOk": false,
+            "fieldMismatches": []
+          },
+          "passed": false,
+          "contentOk": null,
+          "contractOk": false
+        }
+      ],
+      "passed": 0,
+      "total": 6,
+      "allPassed": false,
+      "warnings": []
+    },
+    "perTest": [
+      {
+        "testId": "t1",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "SENTIMENT: Positive\nPRIORITY: Low",
+        "batchRaw": "SENTIMENT: Positive\nPRIORITY: Low",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t2",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "SENTIMENT:\nNEGATIVE\nPRIORITY:\nHIGH",
+        "batchRaw": "SENTIMENT: Negative\nPRIORITY: High",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t3",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "SENTIMENT: neutral\nPRIORITY: low",
+        "batchRaw": "SENTIMENT: Neutral\nPRIORITY: Medium",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t4",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "SENTIMENT: Negative\nPRIORITY: High",
+        "batchRaw": "SENTIMENT: Negative\nPRIORITY: High",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t5",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "SENTIMENT: Negative\nPRIORITY: High",
+        "batchRaw": "SENTIMENT: Negative\nPRIORITY: High",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      },
+      {
+        "testId": "t6-hidden",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "SENTIMENT:\nNegative\nPRIORITY:\nHigh",
+        "batchRaw": "SENTIMENT: Negative\nPRIORITY: High",
+        "isolatedContentOk": null,
+        "batchContentOk": null,
+        "isolatedContractOk": false,
+        "batchContractOk": false
+      }
+    ],
+    "suiteFalsePass": false,
+    "suiteFalseFail": false,
+    "falsePassTestIds": [],
+    "falseFailTestIds": []
+  },
+  {
+    "missionId": "mission-03",
+    "missionTitle": "Speak Machine",
+    "promptId": "m03-owner-structured",
+    "promptLabel": "Owner: structured expectation (manual playtest)",
+    "instruction": "Depending on the client's request, determine its SENTIMENT and PRIORITY according to company policy.\n\nReturn exactly two lines:\n\nSENTIMENT: <one of POSITIVE, NEUTRAL, NEGATIVE>\nPRIORITY: <one of URGENT, NORMAL>\n\nVeyra Sentiment Rules — SENTIMENT:\nPOSITIVE: explicit praise; explicit satisfaction; explicit thanks in a clearly positive context.\nNEGATIVE: explicit complaint; explicit dissatisfaction; anger or criticism.\nNEUTRAL: factual question or statement with no explicit praise and no explicit complaint.\nIf there is no clear praise and no clear complaint, choose NEUTRAL.\n\nVeyra Support Policy — PRIORITY:\nURGENT: duplicate payment; unauthorized/unrecognized payment; account locked after repeated failed attempts; suspected security issue.\nNORMAL: delivery delay; refund request; wrong product/size; forgotten password; missing delivered package; general complaints.\nEmotion alone never determines priority.\n\nDo not output anything else.",
+    "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+    "isolated": {
+      "mode": "PARALLEL_ISOLATED",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "latencyMs": 8526,
+      "requestCount": 6,
+      "usage": {
+        "inputTokens": 1759,
+        "outputTokens": 847,
+        "totalTokens": 2606
+      },
+      "results": [
+        {
+          "testId": "t1",
+          "message": "Amazing service, thank you! Everything arrived perfectly.",
+          "rawOutput": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+          "evaluation": {
+            "raw": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "normalized": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "message": "Amazing service, thank you! Everything arrived perfectly.",
+            "testId": "t1",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "POSITIVE",
+              "PRIORITY": "NORMAL"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        },
+        {
+          "testId": "t2",
+          "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+          "rawOutput": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+          "evaluation": {
+            "raw": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "normalized": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+            "testId": "t2",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "NEGATIVE",
+              "PRIORITY": "NORMAL"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        },
+        {
+          "testId": "t3",
+          "message": "What time will my package arrive?",
+          "rawOutput": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+          "evaluation": {
+            "raw": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "normalized": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "message": "What time will my package arrive?",
+            "testId": "t3",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "NEUTRAL",
+              "PRIORITY": "NORMAL"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        },
+        {
+          "testId": "t4",
+          "message": "Transaction #48192 appears twice on my statement.",
+          "rawOutput": "SENTIMENT: NEUTRAL\nPRIORITY: URGENT",
+          "evaluation": {
+            "raw": "SENTIMENT: NEUTRAL\nPRIORITY: URGENT",
+            "normalized": "SENTIMENT: NEUTRAL\nPRIORITY: URGENT",
+            "isValidCategory": true,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "Transaction #48192 appears twice on my statement.",
+            "testId": "t4",
+            "failHint": "Reporting a duplicate charge is a problem — treat it as NEGATIVE.",
+            "errorKind": "sentiment",
+            "parsedFields": {
+              "SENTIMENT": "NEUTRAL",
+              "PRIORITY": "URGENT"
+            },
+            "contentOk": false,
+            "contractOk": true,
+            "fieldMismatches": [
+              "SENTIMENT"
+            ]
+          },
+          "passed": false,
+          "contentOk": false,
+          "contractOk": true
+        },
+        {
+          "testId": "t5",
+          "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+          "rawOutput": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+          "evaluation": {
+            "raw": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "normalized": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+            "testId": "t5",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "NEGATIVE",
+              "PRIORITY": "URGENT"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        },
+        {
+          "testId": "t6-hidden",
+          "message": "Please refund this damaged item. This quality is unacceptable.",
+          "rawOutput": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+          "evaluation": {
+            "raw": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "normalized": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "Please refund this damaged item. This quality is unacceptable.",
+            "testId": "t6-hidden",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "NEGATIVE",
+              "PRIORITY": "NORMAL"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        }
+      ],
+      "passed": 5,
+      "total": 6,
+      "allPassed": false,
+      "warnings": []
+    },
+    "batch": {
+      "mode": "SINGLE_BATCH",
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "latencyMs": 19524,
+      "requestCount": 1,
+      "usage": {
+        "inputTokens": 666,
+        "outputTokens": 974,
+        "totalTokens": 1640
+      },
+      "results": [
+        {
+          "testId": "t1",
+          "message": "Amazing service, thank you! Everything arrived perfectly.",
+          "rawOutput": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+          "evaluation": {
+            "raw": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "normalized": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+            "message": "Amazing service, thank you! Everything arrived perfectly.",
+            "testId": "t1",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "POSITIVE",
+              "PRIORITY": "NORMAL"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        },
+        {
+          "testId": "t2",
+          "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+          "rawOutput": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+          "evaluation": {
+            "raw": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "normalized": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "This is ridiculous. My package is late again and I'm extremely disappointed.",
+            "testId": "t2",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "NEGATIVE",
+              "PRIORITY": "NORMAL"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        },
+        {
+          "testId": "t3",
+          "message": "What time will my package arrive?",
+          "rawOutput": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+          "evaluation": {
+            "raw": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "normalized": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+            "message": "What time will my package arrive?",
+            "testId": "t3",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "NEUTRAL",
+              "PRIORITY": "NORMAL"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        },
+        {
+          "testId": "t4",
+          "message": "Transaction #48192 appears twice on my statement.",
+          "rawOutput": "SENTIMENT: NEUTRAL\nPRIORITY: URGENT",
+          "evaluation": {
+            "raw": "SENTIMENT: NEUTRAL\nPRIORITY: URGENT",
+            "normalized": "SENTIMENT: NEUTRAL\nPRIORITY: URGENT",
+            "isValidCategory": true,
+            "matchesExpected": false,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "Transaction #48192 appears twice on my statement.",
+            "testId": "t4",
+            "failHint": "Reporting a duplicate charge is a problem — treat it as NEGATIVE.",
+            "errorKind": "sentiment",
+            "parsedFields": {
+              "SENTIMENT": "NEUTRAL",
+              "PRIORITY": "URGENT"
+            },
+            "contentOk": false,
+            "contractOk": true,
+            "fieldMismatches": [
+              "SENTIMENT"
+            ]
+          },
+          "passed": false,
+          "contentOk": false,
+          "contractOk": true
+        },
+        {
+          "testId": "t5",
+          "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+          "rawOutput": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+          "evaluation": {
+            "raw": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "normalized": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+            "message": "I don't recognize this payment and I'm really worried someone accessed my account.",
+            "testId": "t5",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "NEGATIVE",
+              "PRIORITY": "URGENT"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        },
+        {
+          "testId": "t6-hidden",
+          "message": "Please refund this damaged item. This quality is unacceptable.",
+          "rawOutput": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+          "evaluation": {
+            "raw": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "normalized": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "isValidCategory": true,
+            "matchesExpected": true,
+            "expected": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+            "message": "Please refund this damaged item. This quality is unacceptable.",
+            "testId": "t6-hidden",
+            "errorKind": null,
+            "parsedFields": {
+              "SENTIMENT": "NEGATIVE",
+              "PRIORITY": "NORMAL"
+            },
+            "contentOk": true,
+            "contractOk": true,
+            "fieldMismatches": []
+          },
+          "passed": true,
+          "contentOk": true,
+          "contractOk": true
+        }
+      ],
+      "passed": 5,
+      "total": 6,
+      "allPassed": false,
+      "warnings": []
+    },
+    "perTest": [
+      {
+        "testId": "t1",
+        "kind": "PASS_AGREE",
+        "isolatedPass": true,
+        "batchPass": true,
+        "isolatedRaw": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+        "batchRaw": "SENTIMENT: POSITIVE\nPRIORITY: NORMAL",
+        "isolatedContentOk": true,
+        "batchContentOk": true,
+        "isolatedContractOk": true,
+        "batchContractOk": true
+      },
+      {
+        "testId": "t2",
+        "kind": "PASS_AGREE",
+        "isolatedPass": true,
+        "batchPass": true,
+        "isolatedRaw": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+        "batchRaw": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+        "isolatedContentOk": true,
+        "batchContentOk": true,
+        "isolatedContractOk": true,
+        "batchContractOk": true
+      },
+      {
+        "testId": "t3",
+        "kind": "PASS_AGREE",
+        "isolatedPass": true,
+        "batchPass": true,
+        "isolatedRaw": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+        "batchRaw": "SENTIMENT: NEUTRAL\nPRIORITY: NORMAL",
+        "isolatedContentOk": true,
+        "batchContentOk": true,
+        "isolatedContractOk": true,
+        "batchContractOk": true
+      },
+      {
+        "testId": "t4",
+        "kind": "FAIL_AGREE",
+        "isolatedPass": false,
+        "batchPass": false,
+        "isolatedRaw": "SENTIMENT: NEUTRAL\nPRIORITY: URGENT",
+        "batchRaw": "SENTIMENT: NEUTRAL\nPRIORITY: URGENT",
+        "isolatedContentOk": false,
+        "batchContentOk": false,
+        "isolatedContractOk": true,
+        "batchContractOk": true
+      },
+      {
+        "testId": "t5",
+        "kind": "PASS_AGREE",
+        "isolatedPass": true,
+        "batchPass": true,
+        "isolatedRaw": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+        "batchRaw": "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+        "isolatedContentOk": true,
+        "batchContentOk": true,
+        "isolatedContractOk": true,
+        "batchContractOk": true
+      },
+      {
+        "testId": "t6-hidden",
+        "kind": "PASS_AGREE",
+        "isolatedPass": true,
+        "batchPass": true,
+        "isolatedRaw": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+        "batchRaw": "SENTIMENT: NEGATIVE\nPRIORITY: NORMAL",
+        "isolatedContentOk": true,
+        "batchContentOk": true,
+        "isolatedContractOk": true,
+        "batchContractOk": true
+      }
+    ],
+    "suiteFalsePass": false,
+    "suiteFalseFail": false,
+    "falsePassTestIds": [],
+    "falseFailTestIds": []
+  }
+]

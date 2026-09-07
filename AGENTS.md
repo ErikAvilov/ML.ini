@@ -17,12 +17,15 @@ Avant de modifier l’UI, le produit ou une mission, lire :
 - [`docs/design/PRODUCT.md`](docs/design/PRODUCT.md) — vision produit / scope
 - [`docs/design/MISSION-UX.md`](docs/design/MISSION-UX.md) — shell mission plein écran
 - [`docs/design/PEDAGOGY.md`](docs/design/PEDAGOGY.md) — pédagogie
+- [`docs/NARRATIVE.md`](docs/NARRATIVE.md) — canon narratif Royaume I (Veyra, MILDRED, Mira)
 
 ## Rappels non négociables (V0)
 
-- Pas d’exposition de `NVIDIA_API_KEY` côté client
+- Pas d’exposition de `OPENAI_API_KEY` côté client
 - Pas de DB / auth / Stripe / Supabase sans demande explicite
 - Missions desktop = viewport shell, pas page SaaS scrollable centrée
 - Théorie après pratique
 - Contenu pédagogique dans `src/data/missions/`, pas enfoui dans le JSX
+- Identités narratives (Mira, Veyra, MILDRED) via `src/data/narrative/canon.ts`
 - UI : tokens `--ml-*` avant toute valeur hex arbitraire
+- Continuité narrative : ne pas casser le canon sans demande explicite du product owner

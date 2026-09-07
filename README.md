@@ -10,7 +10,7 @@ Voir [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) et [`docs/design/README.md
 
 ```bash
 cp .env.example .env.local
-# Ajoute ta clé NVIDIA : NVIDIA_API_KEY=nvapi-...
+# Ajoute ta clé OpenAI : OPENAI_API_KEY=sk-...
 npm install
 npm run dev
 ```
@@ -19,4 +19,4 @@ Ouvre [http://localhost:3000](http://localhost:3000).
 
 ## Stack
 
-Next.js (App Router) · TypeScript · Tailwind CSS · NVIDIA NIM (API compatible OpenAI, côté serveur)
+Next.js (App Router) · TypeScript · Tailwind CSS · OpenAI (API côté serveur)

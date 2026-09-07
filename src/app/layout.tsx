@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Source_Sans_3, Source_Serif_4, JetBrains_Mono } from "next/font/google";
 import { ProgressProvider } from "@/lib/progress-context";
+import { LocaleProvider } from "@/i18n/locale-context";
 import { SiteHeader } from "@/components/ui/SiteHeader";
 import "./globals.css";
 
@@ -40,10 +41,12 @@ export default function RootLayout({
       className={`${body.variable} ${display.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="flex h-dvh flex-col overflow-hidden bg-ml-bg-0 text-ml-text-body">
-        <ProgressProvider>
-          <SiteHeader />
-          <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
-        </ProgressProvider>
+        <LocaleProvider>
+          <ProgressProvider>
+            <SiteHeader />
+            <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
+          </ProgressProvider>
+        </LocaleProvider>
       </body>
     </html>
   );
