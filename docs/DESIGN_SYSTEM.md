@@ -16,7 +16,8 @@ MLINI = **école technique de l’IA déguisée en RPG**.
 | Couche | Feeling |
 |--------|---------|
 | **Learning UI** (missions, brief, playground) | Calme, lisible, confortable, moderne |
-| **Meta progression** (futur skill tree, ranks) | Plus riche |
+| **Meta progression** (`/skills` skill tree) | Plus riche — réseau de connaissances, teal de progression |
+| **Atmosphere** | Texture minérale (`/images/background-1.jpg`) — ~15–25% visible sous wash `--ml-bg-0` (~80%). Classes `.ml-atmosphere*` dans `globals.css` via `SiteAtmosphere`. |
 | **Rewards / Boss** | Prestige rare (bronze) |
 
 **Pas :** terminal militaire, cockpit sci-fi, cyberpunk, Matrix, fantasy médiévale lourde, dashboard SaaS violet.
@@ -172,7 +173,12 @@ Pas de HUD militaire (éviter ALL CAPS mono partout).
 
 | Fichier | Rôle |
 |---------|------|
-| `src/app/globals.css` | Tokens Arcane Academy |
+| `src/components/ui/SiteAtmosphere.tsx` | Texture ardoise + wash Arcane Academy |
+| `src/app/globals.css` | Tokens Arcane Academy + `.ml-atmosphere*` |
 | `src/app/layout.tsx` | Fonts + `data-theme` |
 | `src/components/mission/*` | Brief / playground |
+| `src/components/skills/*` | Skill tree meta-progression |
+| `src/data/skills/tree.ts` | Registry des compétences |
 | `docs/design/` | Produit, UX mission, pédagogie |
+| `docs/SKILL_TREE.md` | Modèle & règles unlock |
+| `docs/QOL.md` | Navigation, drafts, erreurs |

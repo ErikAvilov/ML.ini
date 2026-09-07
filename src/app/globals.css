@@ -162,6 +162,54 @@ body {
   min-height: 100vh;
 }
 
+/* --- Site atmosphere (global) — mineral slate under Arcane Academy night ---
+   Target: ~15–25% felt texture, ~75–85% --ml-bg-0 influence.
+   Atmosphere only — never competes with panels, text, or accents. */
+.ml-atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background-color: var(--ml-bg-0);
+}
+
+.ml-atmosphere__stone {
+  position: absolute;
+  inset: 0;
+  background-image: url("/images/background-1.jpg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  /* Pull the bright source into slate/night before the wash */
+  filter: saturate(0.45) brightness(0.55) contrast(1.05);
+  opacity: 0.9;
+}
+
+.ml-atmosphere__wash {
+  position: absolute;
+  inset: 0;
+  /* Primary night influence — texture remains a murmur underneath */
+  background: color-mix(in srgb, var(--ml-bg-0) 80%, transparent);
+}
+
+.ml-atmosphere__veil {
+  position: absolute;
+  inset: 0;
+  /* Soft edge darkening only — no spotlight */
+  background: radial-gradient(
+    ellipse 90% 85% at 50% 45%,
+    transparent 50%,
+    color-mix(in srgb, var(--ml-bg-0) 28%, transparent) 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-atmosphere__stone {
+    filter: saturate(0.45) brightness(0.55) contrast(1.05);
+  }
+}
+
 .font-display {
   font-family: var(--font-display), Georgia, "Times New Roman", serif;
   letter-spacing: -0.015em;

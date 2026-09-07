@@ -1,4 +1,5 @@
 import type { MissionStatus, PlayerProgress } from "@/lib/types";
+import { syncSkillsFromCompletedMissions } from "@/lib/skills";
 import { levelFromXp } from "@/lib/validation";
 
 export const STORAGE_KEY = "mlini-progress-v1";
@@ -12,11 +13,32 @@ export const DEFAULT_PROGRESS: PlayerProgress = {
   unlockedSkills: [],
   unlockedCapabilities: [],
   lastPlayedAt: null,
+  lastPlayedMissionId: null,
 };
 
 export interface MissionRewardMeta {
   skillId?: string;
   capabilityId?: string;
+}
+
+function normalizeProgress(parsed: Partial<PlayerProgress>): PlayerProgress {
+  const base: PlayerProgress = {
+    ...DEFAULT_PROGRESS,
+    ...parsed,
+    unlockedMissions: parsed.unlockedMissions?.length
+      ? parsed.unlockedMissions
+      : ["mission-01"],
+    completedMissions: parsed.completedMissions ?? [],
+    unlockedSkills: parsed.unlockedSkills ?? [],
+    unlockedCapabilities: parsed.unlockedCapabilities ?? [],
+    lastPlayedAt: parsed.lastPlayedAt ?? null,
+    lastPlayedMissionId: parsed.lastPlayedMissionId ?? null,
+  };
+
+  return {
+    ...base,
+    unlockedSkills: syncSkillsFromCompletedMissions(base),
+  };
 }
 
 export function loadProgress(): PlayerProgress {
@@ -26,16 +48,7 @@ export function loadProgress(): PlayerProgress {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return { ...DEFAULT_PROGRESS };
     const parsed = JSON.parse(raw) as Partial<PlayerProgress>;
-    return {
-      ...DEFAULT_PROGRESS,
-      ...parsed,
-      unlockedMissions: parsed.unlockedMissions?.length
-        ? parsed.unlockedMissions
-        : ["mission-01"],
-      completedMissions: parsed.completedMissions ?? [],
-      unlockedSkills: parsed.unlockedSkills ?? [],
-      unlockedCapabilities: parsed.unlockedCapabilities ?? [],
-    };
+    return normalizeProgress(parsed);
   } catch {
     return { ...DEFAULT_PROGRESS };
   }
@@ -65,7 +78,11 @@ export function completeMission(
   rewards?: MissionRewardMeta
 ): PlayerProgress {
   if (progress.completedMissions.includes(missionId)) {
-    return progress;
+    return {
+      ...progress,
+      lastPlayedMissionId: missionId,
+      lastPlayedAt: new Date().toISOString(),
+    };
   }
 
   const completedMissions = [...progress.completedMissions, missionId];
@@ -81,7 +98,7 @@ export function completeMission(
 
   const xp = progress.xp + xpReward;
 
-  return {
+  const next: PlayerProgress = {
     ...progress,
     xp,
     level: levelFromXp(xp),
@@ -90,5 +107,63 @@ export function completeMission(
     unlockedSkills: Array.from(unlockedSkills),
     unlockedCapabilities: Array.from(unlockedCapabilities),
     lastPlayedAt: new Date().toISOString(),
+    lastPlayedMissionId: missionId,
   };
+
+  return {
+    ...next,
+    unlockedSkills: syncSkillsFromCompletedMissions(next),
+  };
+}
+
+/** Record that the player opened / played a mission (QoL Continue). */
+export function touchLastPlayedMission(
+  progress: PlayerProgress,
+  missionId: string
+): PlayerProgress {
+  if (
+    progress.lastPlayedMissionId === missionId &&
+    progress.lastPlayedAt
+  ) {
+    return progress;
+  }
+  return {
+    ...progress,
+    lastPlayedMissionId: missionId,
+    lastPlayedAt: new Date().toISOString(),
+  };
+}
+
+/** Highest-order unlocked (available or completed) mission id. */
+export function getLastUnlockedMissionId(
+  progress: PlayerProgress,
+  missions: Array<{ id: string; order: number }>
+): string | null {
+  const sorted = [...missions].sort((a, b) => a.order - b.order);
+  let last: string | null = null;
+  for (const m of sorted) {
+    const status = getMissionStatus(m.id, progress, m.order);
+    if (status === "locked") break;
+    last = m.id;
+  }
+  return last;
+}
+
+/**
+ * Prefer lastPlayed if still reachable; else last unlocked.
+ * Ready for a future Dashboard "Continue learning" CTA.
+ */
+export function getContinueMissionId(
+  progress: PlayerProgress,
+  missions: Array<{ id: string; order: number }>
+): string | null {
+  const lastPlayed = progress.lastPlayedMissionId;
+  if (lastPlayed) {
+    const m = missions.find((x) => x.id === lastPlayed);
+    if (m) {
+      const status = getMissionStatus(m.id, progress, m.order);
+      if (status !== "locked") return lastPlayed;
+    }
+  }
+  return getLastUnlockedMissionId(progress, missions);
 }

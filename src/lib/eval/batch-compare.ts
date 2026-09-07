@@ -1,11 +1,10 @@
-import type OpenAI from "openai";
 import type { Locale } from "@/i18n/config";
 import { getApiMessages } from "@/i18n/messages/api";
 import {
   EVAL_MODEL,
   EVAL_REQUEST_TIMEOUT_MS,
-  buildChatCompletionParams,
-  getAIClient,
+  completeChat,
+  hasAICredentials,
 } from "@/lib/ai-client";
 import { evaluateMissionTest } from "@/lib/validation";
 import type {
@@ -117,15 +116,15 @@ function addUsage(a: TokenUsage, b: TokenUsage): TokenUsage {
   };
 }
 
-function usageFromCompletion(
-  completion: OpenAI.Chat.Completions.ChatCompletion
-): TokenUsage {
-  const u = completion.usage;
-  if (!u) return emptyUsage();
+function usageFromResult(usage: {
+  inputTokens: number | null;
+  outputTokens: number | null;
+  totalTokens: number | null;
+}): TokenUsage {
   return {
-    inputTokens: u.prompt_tokens ?? null,
-    outputTokens: u.completion_tokens ?? null,
-    totalTokens: u.total_tokens ?? null,
+    inputTokens: usage.inputTokens,
+    outputTokens: usage.outputTokens,
+    totalTokens: usage.totalTokens,
   };
 }
 
@@ -160,7 +159,6 @@ function buildRows(
 }
 
 async function classifyIsolated(
-  client: OpenAI,
   model: string,
   instruction: string,
   message: string,
@@ -176,30 +174,28 @@ async function classifyIsolated(
     );
 
     try {
-      const completion = await client.chat.completions.create(
-        buildChatCompletionParams({
-          model,
-          maxCompletionTokens: 1024,
-          messages: [
-            { role: "system", content: msg.pedagogicalConstraints },
-            {
-              role: "user",
-              content: [
-                msg.classifyUserPrefix,
-                instruction,
-                "",
-                msg.classifyMessagePrefix,
-                message,
-              ].join("\n"),
-            },
-          ],
-        }),
-        { signal: controller.signal }
-      );
+      const result = await completeChat({
+        model,
+        maxOutputTokens: 1024,
+        signal: controller.signal,
+        messages: [
+          { role: "system", content: msg.pedagogicalConstraints },
+          {
+            role: "user",
+            content: [
+              msg.classifyUserPrefix,
+              instruction,
+              "",
+              msg.classifyMessagePrefix,
+              message,
+            ].join("\n"),
+          },
+        ],
+      });
 
       return {
-        output: completion.choices[0]?.message?.content?.trim() ?? "",
-        usage: usageFromCompletion(completion),
+        output: result.text,
+        usage: usageFromResult(result.usage),
       };
     } finally {
       clearTimeout(timeout);
@@ -308,7 +304,6 @@ CRITICAL:
 - Never invent policy rules that are not in PLAYER_INSTRUCTION.`;
 
 async function classifyBatch(
-  client: OpenAI,
   model: string,
   instruction: string,
   tests: ClassificationTest[]
@@ -318,10 +313,7 @@ async function classifyBatch(
   warnings: string[];
 }> {
   const warnings: string[] = [];
-  const maxCompletionTokens = Math.min(
-    8192,
-    Math.max(2048, tests.length * 400)
-  );
+  const maxOutputTokens = Math.min(8192, Math.max(2048, tests.length * 400));
 
   return withRetries(async () => {
     const controller = new AbortController();
@@ -331,31 +323,25 @@ async function classifyBatch(
     );
 
     try {
-      let completion: OpenAI.Chat.Completions.ChatCompletion;
+      let content = "";
+      let usage = emptyUsage();
 
       try {
-        completion = await client.chat.completions.create(
-          buildChatCompletionParams({
-            model,
-            maxCompletionTokens,
-            responseFormat: {
-              type: "json_schema",
-              json_schema: {
-                name: "batch_eval_results",
-                strict: true,
-                schema: BATCH_WRAPPER_SCHEMA,
-              },
+        const result = await completeChat({
+          model,
+          maxOutputTokens,
+          signal: controller.signal,
+          jsonSchema: BATCH_WRAPPER_SCHEMA as unknown as Record<string, unknown>,
+          messages: [
+            { role: "system", content: BATCH_SYSTEM },
+            {
+              role: "user",
+              content: buildBatchUserPayload(instruction, tests),
             },
-            messages: [
-              { role: "system", content: BATCH_SYSTEM },
-              {
-                role: "user",
-                content: buildBatchUserPayload(instruction, tests),
-              },
-            ],
-          }),
-          { signal: controller.signal }
-        );
+          ],
+        });
+        content = result.text;
+        usage = usageFromResult(result.usage);
       } catch (strictErr) {
         const status =
           strictErr && typeof strictErr === "object" && "status" in strictErr
@@ -365,29 +351,29 @@ async function classifyBatch(
           throw strictErr;
         }
         warnings.push(
-          `json_schema strict failed (${
+          `json schema failed (${
             strictErr instanceof Error ? strictErr.message : "unknown"
-          }); retrying with json_object`
+          }); retrying without schema`
         );
-        completion = await client.chat.completions.create(
-          buildChatCompletionParams({
-            model,
-            maxCompletionTokens,
-            responseFormat: { type: "json_object" },
-            messages: [
-              { role: "system", content: BATCH_SYSTEM },
-              {
-                role: "user",
-                content: buildBatchUserPayload(instruction, tests),
-              },
-            ],
-          }),
-          { signal: controller.signal }
-        );
+        const result = await completeChat({
+          model,
+          maxOutputTokens,
+          signal: controller.signal,
+          messages: [
+            {
+              role: "system",
+              content: `${BATCH_SYSTEM}\n\nRespond with valid JSON only.`,
+            },
+            {
+              role: "user",
+              content: buildBatchUserPayload(instruction, tests),
+            },
+          ],
+        });
+        content = result.text;
+        usage = usageFromResult(result.usage);
       }
 
-      const content = completion.choices[0]?.message?.content?.trim() ?? "";
-      const usage = usageFromCompletion(completion);
       const outputsById = new Map<string, string>();
 
       try {
@@ -426,9 +412,8 @@ export async function runParallelIsolated(options: {
   locale: Locale;
   model?: string;
 }): Promise<ModeRunResult> {
-  const client = getAIClient();
-  if (!client) {
-    throw new Error("OPENAI_API_KEY missing");
+  if (!hasAICredentials()) {
+    throw new Error("AI API key missing (GEMINI_API_KEY or OPENAI_API_KEY)");
   }
 
   const model = options.model ?? EVAL_MODEL;
@@ -438,7 +423,6 @@ export async function runParallelIsolated(options: {
 
   const settled = await mapPool(tests, 2, async (test) => {
     const { output, usage } = await classifyIsolated(
-      client,
       model,
       options.instruction,
       test.message,
@@ -478,9 +462,8 @@ export async function runSingleBatch(options: {
   locale?: Locale;
   model?: string;
 }): Promise<ModeRunResult> {
-  const client = getAIClient();
-  if (!client) {
-    throw new Error("OPENAI_API_KEY missing");
+  if (!hasAICredentials()) {
+    throw new Error("AI API key missing (GEMINI_API_KEY or OPENAI_API_KEY)");
   }
 
   const model = options.model ?? EVAL_MODEL;
@@ -488,7 +471,6 @@ export async function runSingleBatch(options: {
   const started = Date.now();
 
   const { outputsById, usage, warnings } = await classifyBatch(
-    client,
     model,
     options.instruction,
     tests

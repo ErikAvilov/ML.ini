@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ProgressNode } from "@/components/ui/ProgressNode";
 import { getMissionStatus } from "@/lib/progression";
@@ -14,8 +15,9 @@ interface MissionNavBarProps {
 }
 
 export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
+  const router = useRouter();
   const { progress, ready } = useProgress();
-  const { messages } = useLocale();
+  const { messages, t } = useLocale();
   const total = missions.length;
   const sorted = [...missions].sort((a, b) => a.order - b.order);
 
@@ -31,6 +33,23 @@ export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
   const nextStatus = next ? statusOf(next) : null;
   const canPrev = prev && prevStatus !== "locked";
   const canNext = next && nextStatus !== "locked";
+
+  function lockedReason(m: MissionDefinition): string {
+    const prior = sorted.find((x) => x.order === m.order - 1);
+    if (prior) {
+      return t(messages.missionLockedCompletePrev, {
+        order: String(prior.order).padStart(2, "0"),
+      });
+    }
+    return messages.missionLocked;
+  }
+
+  function goToMission(m: MissionDefinition) {
+    const st = statusOf(m);
+    if (st === "locked") return;
+    if (m.id === mission.id) return;
+    router.push(`/missions/${m.slug}`);
+  }
 
   return (
     <div className="shrink-0 border-b border-ml-border bg-ml-surface-1/75">
@@ -58,7 +77,8 @@ export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
             </span>
             <div
               className="flex items-center gap-0.5"
-              aria-label={messages.kingdomProgress}
+              role="navigation"
+              aria-label={messages.missionSelectorLabel}
             >
               {sorted.map((m, i) => {
                 const st = statusOf(m);
@@ -71,16 +91,48 @@ export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
                     : st !== "locked" || isCurrent
                       ? "ml-connection ml-connection-available"
                       : "ml-connection";
+                const clickable = st !== "locked";
+                const title =
+                  st === "locked"
+                    ? lockedReason(m)
+                    : t(messages.missionNavLabel, {
+                        order: String(m.order).padStart(2, "0"),
+                        title: m.title,
+                      });
 
                 return (
                   <span key={m.id} className="flex items-center gap-0.5">
                     {i > 0 && <span className={connClass} aria-hidden />}
-                    <ProgressNode
-                      status={st}
-                      current={isCurrent}
-                      boss={m.kind === "boss"}
-                      title={m.title}
-                    />
+                    {clickable ? (
+                      <button
+                        type="button"
+                        onClick={() => goToMission(m)}
+                        className="rounded-sm p-0.5 transition hover:bg-ml-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--ml-accent)_40%,transparent)]"
+                        title={title}
+                        aria-label={title}
+                        aria-current={isCurrent ? "step" : undefined}
+                      >
+                        <ProgressNode
+                          status={st}
+                          current={isCurrent}
+                          boss={m.kind === "boss"}
+                          title={title}
+                        />
+                      </button>
+                    ) : (
+                      <span
+                        className="cursor-not-allowed p-0.5"
+                        title={title}
+                        aria-label={title}
+                      >
+                        <ProgressNode
+                          status={st}
+                          current={isCurrent}
+                          boss={m.kind === "boss"}
+                          title={title}
+                        />
+                      </span>
+                    )}
                   </span>
                 );
               })}
@@ -99,7 +151,7 @@ export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
               <ChevronLeft className="h-4 w-4" />
             </Link>
           ) : (
-            <span className="p-1.5 text-ml-text-muted/30">
+            <span className="p-1.5 text-ml-text-muted/30" aria-hidden>
               <ChevronLeft className="h-4 w-4" />
             </span>
           )}
@@ -113,7 +165,7 @@ export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
               <ChevronRight className="h-4 w-4" />
             </Link>
           ) : (
-            <span className="p-1.5 text-ml-text-muted/30">
+            <span className="p-1.5 text-ml-text-muted/30" aria-hidden>
               <ChevronRight className="h-4 w-4" />
             </span>
           )}

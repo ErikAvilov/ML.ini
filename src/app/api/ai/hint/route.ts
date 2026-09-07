@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import {
-  buildChatCompletionParams,
-  getAIClient,
+  completeChat,
+  hasAICredentials,
   REQUEST_TIMEOUT_MS,
 } from "@/lib/ai-client";
 import {
@@ -43,8 +43,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const client = getAIClient();
-  if (!client) {
+  if (!hasAICredentials()) {
     return NextResponse.json({
       hint: msg.hintFallbackVague,
     });
@@ -54,26 +53,22 @@ export async function POST(request: Request) {
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
   try {
-    const completion = await client.chat.completions.create(
-      buildChatCompletionParams({
-        maxCompletionTokens: 1024,
-        messages: [
-          {
-            role: "system",
-            content: msg.hintSystem(objective, labels),
-          },
-          {
-            role: "user",
-            content: msg.hintUser(instruction),
-          },
-        ],
-      }),
-      { signal: controller.signal }
-    );
+    const { text } = await completeChat({
+      maxOutputTokens: 1024,
+      signal: controller.signal,
+      messages: [
+        {
+          role: "system",
+          content: msg.hintSystem(objective, labels),
+        },
+        {
+          role: "user",
+          content: msg.hintUser(instruction),
+        },
+      ],
+    });
 
-    const hint =
-      completion.choices[0]?.message?.content?.trim() || msg.hintDefault;
-
+    const hint = text || msg.hintDefault;
     return NextResponse.json({ hint });
   } catch {
     return NextResponse.json({

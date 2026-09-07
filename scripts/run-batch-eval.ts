@@ -48,8 +48,11 @@ function loadMission(id: string): MissionDefinition {
 }
 
 async function main() {
-  if (!process.env.OPENAI_API_KEY?.trim()) {
-    console.error("OPENAI_API_KEY missing. Load .env via --env-file=.env");
+  const { hasAICredentials } = await import("../src/lib/ai-client");
+  if (!hasAICredentials()) {
+    console.error(
+      "AI key missing. Set GEMINI_API_KEY (or OPENAI_API_KEY + AI_PROVIDER=openai). Load .env via --env-file=.env"
+    );
     process.exit(1);
   }
 
@@ -98,8 +101,11 @@ async function main() {
     ``,
     `- Generated: ${new Date().toISOString()}`,
     `- Model: \`${EVAL_MODEL}\``,
-    `- OPENAI_MODEL env: \`${process.env.OPENAI_MODEL ?? "(unset → default)"}\``,
-    `- OPENAI_EVAL_MODEL env: \`${process.env.OPENAI_EVAL_MODEL ?? "(unset → EVAL_MODEL=MODEL)"}\``,
+    `- AI_PROVIDER: \`${process.env.AI_PROVIDER ?? "(auto)"}\``,
+    `- GEMINI_MODEL env: \`${process.env.GEMINI_MODEL ?? "(unset → default)"}\``,
+    `- GEMINI_EVAL_MODEL env: \`${process.env.GEMINI_EVAL_MODEL ?? "(unset → EVAL_MODEL=MODEL)"}\``,
+    `- OPENAI_MODEL env: \`${process.env.OPENAI_MODEL ?? "(unset)"}\``,
+    `- OPENAI_EVAL_MODEL env: \`${process.env.OPENAI_EVAL_MODEL ?? "(unset)"}\``,
     ``,
     ...reports.map(formatComparisonMarkdown),
   ];

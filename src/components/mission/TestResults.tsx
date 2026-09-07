@@ -313,6 +313,11 @@ export function TestResults({
         passed === total ? "border-ml-success" : "border-ml-reward"
       }`}
     >
+      {passed < total && (
+        <p className="mb-1.5 font-mono text-[length:var(--ml-text-xs)] tracking-[0.14em] text-ml-reward uppercase">
+          {messages.solutionFailedLabel}
+        </p>
+      )}
       {feedbackSpeaker === "mira" && (
         <p className="mb-1.5 font-mono text-[length:var(--ml-text-xs)] tracking-[0.14em] text-ml-reward uppercase">
           {LEAD.displayName}

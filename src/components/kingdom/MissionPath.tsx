@@ -19,14 +19,6 @@ export function MissionPath({ missions }: MissionPathProps) {
         aria-hidden
         className="pointer-events-none absolute top-6 bottom-6 left-[28px] w-px bg-gradient-to-b from-signal/50 via-line to-amber/40 sm:left-1/2 sm:-translate-x-1/2"
       />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-40"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 20% 10%, rgba(61,214,180,0.08), transparent 35%), radial-gradient(circle at 80% 70%, rgba(245,178,74,0.07), transparent 40%)",
-        }}
-      />
 
       <ol className="relative space-y-1">
         {missions.map((mission, index) => {

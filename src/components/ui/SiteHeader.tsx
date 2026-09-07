@@ -13,7 +13,7 @@ export function SiteHeader() {
   const xp = xpProgressInLevel(progress.xp);
 
   return (
-    <header className="relative z-30 shrink-0 border-b border-ml-border bg-[color-mix(in_srgb,var(--ml-bg-0)_94%,transparent)] backdrop-blur-md">
+    <header className="relative z-30 shrink-0 border-b border-ml-border bg-[color-mix(in_srgb,var(--ml-bg-0)_90%,transparent)] backdrop-blur-sm">
       <div className="flex h-12 w-full items-center justify-between gap-4 px-3 sm:px-4">
         <div className="flex items-center gap-4">
           <Link href="/" className="group flex items-center gap-2.5">
@@ -30,6 +30,12 @@ export function SiteHeader() {
             className="hidden text-[length:var(--ml-text-sm)] text-ml-text-muted transition hover:text-ml-text sm:inline"
           >
             {messages.kingdomNav}
+          </Link>
+          <Link
+            href="/skills"
+            className="text-[length:var(--ml-text-sm)] text-ml-text-muted transition hover:text-ml-text"
+          >
+            {messages.skillsNav}
           </Link>
         </div>
 

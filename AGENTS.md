@@ -18,14 +18,20 @@ Avant de modifier l’UI, le produit ou une mission, lire :
 - [`docs/design/MISSION-UX.md`](docs/design/MISSION-UX.md) — shell mission plein écran
 - [`docs/design/PEDAGOGY.md`](docs/design/PEDAGOGY.md) — pédagogie
 - [`docs/NARRATIVE.md`](docs/NARRATIVE.md) — canon narratif Royaume I (Veyra, MILDRED, Mira)
+- [`docs/SKILL_TREE.md`](docs/SKILL_TREE.md) — arbre de compétences (meta-progression)
+- [`docs/QOL.md`](docs/QOL.md) — patterns ergonomiques missions
+- Si `graphify-out/graph.json` existe : préférer `graphify query` pour naviguer l’architecture avant d’explorer au hasard ; `graphify --update` après gros changements
 
 ## Rappels non négociables (V0)
 
-- Pas d’exposition de `OPENAI_API_KEY` côté client
+- Pas d’exposition de `GEMINI_API_KEY` / `OPENAI_API_KEY` côté client
 - Pas de DB / auth / Stripe / Supabase sans demande explicite
 - Missions desktop = viewport shell, pas page SaaS scrollable centrée
 - Théorie après pratique
 - Contenu pédagogique dans `src/data/missions/`, pas enfoui dans le JSX
+- Compétences globales dans `src/data/skills/`, pas enfouies dans le JSX
 - Identités narratives (Mira, Veyra, MILDRED) via `src/data/narrative/canon.ts`
 - UI : tokens `--ml-*` avant toute valeur hex arbitraire
 - Continuité narrative : ne pas casser le canon sans demande explicite du product owner
+- Skill tree ≠ progression MILDRED / carte Royaume — deux systèmes distincts
+- IA serveur via `src/lib/ai-client.ts` (`completeChat`) — provider Gemini par défaut

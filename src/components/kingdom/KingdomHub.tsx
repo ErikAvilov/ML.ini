@@ -31,15 +31,6 @@ export function KingdomHub() {
 
   return (
     <div className="relative overflow-hidden">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(61,214,180,0.09),transparent_50%),radial-gradient(ellipse_at_bottom_right,rgba(245,178,74,0.06),transparent_45%)]"
-      />
-      <div
-        aria-hidden
-        className="map-grid pointer-events-none absolute inset-0 opacity-[0.35]"
-      />
-
       <div className="relative mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
         <div className="mb-8 max-w-2xl">
           <p className="mb-3 font-mono text-[11px] tracking-[0.22em] text-signal uppercase">

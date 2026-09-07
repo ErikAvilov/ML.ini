@@ -49,14 +49,15 @@ src/data/missions/     # définitions pédagogiques (données, pas JSX massif)
 src/data/kingdoms/     # royaumes
 src/components/mission/  # shell mission, briefing, playground
 src/components/kingdom/  # hub / carte
-src/lib/               # progression, validation, ai-client (OpenAI)
+src/lib/               # progression, validation, ai-client (Gemini / OpenAI)
 src/app/api/ai/        # classify, hint — clé API serveur uniquement
 ```
 
 ## Variables d’environnement
 
-- `OPENAI_API_KEY` dans `.env` ou `.env.local` (jamais dans le frontend / Git)
-- Optionnel : `OPENAI_MODEL` (défaut `gpt-5.6-luna`)
-- Optionnel : `OPENAI_REASONING_EFFORT` (défaut `low`)
+- `AI_PROVIDER=gemini` (défaut) ou `openai`
+- `GEMINI_API_KEY` dans `.env` ou `.env.local` (jamais dans le frontend / Git)
+- Optionnel : `GEMINI_MODEL` (défaut `gemini-2.5-flash`)
+- Fallback OpenAI : `OPENAI_API_KEY` + `AI_PROVIDER=openai`
 - Voir `.env.example`
-- Clé : [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+- Clé Gemini : [aistudio.google.com/apikey](https://aistudio.google.com/apikey)

@@ -59,12 +59,42 @@ export interface DiscoveredConcept {
 
 /** Skill unlock shown on mission completion (proto skill system) */
 export interface MissionSkillUnlock {
+  /** Stable id matching the global skill tree registry */
+  skillId: string;
   skillName: string;
   /** Formal / tree name, e.g. Prompting */
   formalSkillName: string;
   skillCategory: string;
   level: number;
   description: string;
+}
+
+export type SkillNodeState = "locked" | "available" | "unlocked" | "mastered";
+export type SkillNodeType = "minor" | "normal" | "major" | "keystone";
+
+/** Global skill-tree node (locale-resolved display fields) */
+export interface SkillDefinition {
+  id: string;
+  /** Canonical formal name, e.g. "LLM Fundamentals I" */
+  name: string;
+  /** Player-facing title */
+  displayName: string;
+  description: string;
+  category: string;
+  level: number;
+  type: SkillNodeType;
+  prerequisites: string[];
+  /** Mission that proves this skill */
+  unlockedByMissionId: string;
+  /** Kingdom id for detail copy */
+  kingdomId: string;
+  /** Layout position on the skill canvas (logical units) */
+  position: { x: number; y: number };
+}
+
+export interface SkillEdge {
+  from: string;
+  to: string;
 }
 
 /** Capability added to Project MILDRED */
@@ -210,6 +240,8 @@ export interface PlayerProgress {
   /** Project MILDRED capability ids now ONLINE */
   unlockedCapabilities: string[];
   lastPlayedAt: string | null;
+  /** Last mission the player opened (QoL / Continue) */
+  lastPlayedMissionId: string | null;
 }
 
 export interface ClassificationResult {

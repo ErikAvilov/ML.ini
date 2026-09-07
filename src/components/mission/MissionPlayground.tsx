@@ -107,13 +107,15 @@ export function MissionPlayground({
           className="min-h-0 w-full flex-1 cursor-text resize-none border border-ml-border bg-ml-bg-1 px-3.5 py-3 text-[length:var(--ml-text-md)] leading-[1.55] text-ml-text outline-none transition placeholder:text-ml-text-muted/55 hover:border-ml-border-strong focus:border-ml-border-strong focus:ring-1 focus:ring-[color-mix(in_srgb,var(--ml-accent)_20%,transparent)] disabled:cursor-not-allowed disabled:opacity-60"
           style={{ borderRadius: "var(--ml-frame-radius)" }}
         />
-        <div className="mt-2.5 flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-2.5 flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 flex-wrap items-center gap-3">
             <Button
               variant="primary"
               size="md"
               onClick={onRun}
               disabled={Boolean(running || instruction.trim().length === 0)}
+              aria-busy={running && runMode === "sequential"}
+              title={messages.runShortcutHint}
             >
               <Play className="h-3.5 w-3.5" />
               {running && runMode === "sequential"
@@ -147,9 +149,17 @@ export function MissionPlayground({
               </Button>
             )}
             {error && (
-              <p className="min-w-0 flex-1 border-l-2 border-ml-danger pl-3 text-[length:var(--ml-text-sm)] text-ml-danger">
-                {error}
-              </p>
+              <div className="min-w-0 flex-1 border-l-2 border-ml-danger pl-3">
+                <p className="font-mono text-[length:var(--ml-text-xs)] tracking-[0.14em] text-ml-danger uppercase">
+                  {messages.systemErrorLabel}
+                </p>
+                <p className="mt-0.5 text-[length:var(--ml-text-sm)] text-ml-danger">
+                  {error}
+                </p>
+                <p className="mt-1 text-[length:var(--ml-text-xs)] text-ml-text-muted">
+                  {messages.systemErrorHelp}
+                </p>
+              </div>
             )}
           </div>
           <div className="min-w-0 sm:max-w-[min(100%,28rem)]">

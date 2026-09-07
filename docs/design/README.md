@@ -10,5 +10,7 @@ Documentation pour les agents et contributeurs.
 | [MISSION-UX.md](./MISSION-UX.md) | Shell mission plein écran |
 | [PEDAGOGY.md](./PEDAGOGY.md) | Boucle d’apprentissage |
 | [../NARRATIVE.md](../NARRATIVE.md) | **Canon fiction Royaume I** (Veyra, MILDRED, Mira) |
+| [../SKILL_TREE.md](../SKILL_TREE.md) | Arbre de compétences (meta-progression) |
+| [../QOL.md](../QOL.md) | Patterns ergonomiques missions |
 
 **Règle courte :** Mlini est une école technique de l’IA déguisée en jeu vidéo — pas un dashboard SaaS, pas un article de blog, pas ChatGPT dans une page.

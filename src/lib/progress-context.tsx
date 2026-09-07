@@ -14,6 +14,7 @@ import {
   loadProgress,
   saveProgress,
   STORAGE_KEY,
+  touchLastPlayedMission,
 } from "@/lib/progression";
 import type { PlayerProgress } from "@/lib/types";
 
@@ -26,6 +27,7 @@ interface ProgressContextValue {
     xpReward: number,
     rewards?: { skillId?: string; capabilityId?: string }
   ) => PlayerProgress;
+  markMissionPlayed: (missionId: string) => void;
   resetProgress: () => void;
 }
 
@@ -73,7 +75,6 @@ function getServerSnapshot(): PlayerProgress {
   return DEFAULT_PROGRESS;
 }
 
-/** false en SSR/hydratation, true après montage client — sans `typeof window` au render */
 function subscribeIsClient(onStoreChange: () => void) {
   queueMicrotask(onStoreChange);
   return () => {};
@@ -127,6 +128,12 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const markMissionPlayed = useCallback((missionId: string) => {
+    const next = touchLastPlayedMission(memoryProgress, missionId);
+    if (next === memoryProgress) return;
+    writeProgress(next);
+  }, []);
+
   const resetProgress = useCallback(() => {
     writeProgress({ ...DEFAULT_PROGRESS });
   }, []);
@@ -136,9 +143,16 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       progress,
       ready,
       completeMissionAndUnlock,
+      markMissionPlayed,
       resetProgress,
     }),
-    [progress, ready, completeMissionAndUnlock, resetProgress]
+    [
+      progress,
+      ready,
+      completeMissionAndUnlock,
+      markMissionPlayed,
+      resetProgress,
+    ]
   );
 
   return (

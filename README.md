@@ -10,7 +10,7 @@ Voir [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) et [`docs/design/README.md
 
 ```bash
 cp .env.example .env.local
-# Ajoute ta clé OpenAI : OPENAI_API_KEY=sk-...
+# Ajoute ta clé Gemini : GEMINI_API_KEY=...
 npm install
 npm run dev
 ```
@@ -19,4 +19,4 @@ Ouvre [http://localhost:3000](http://localhost:3000).
 
 ## Stack
 
-Next.js (App Router) · TypeScript · Tailwind CSS · OpenAI (API côté serveur)
+Next.js (App Router) · TypeScript · Tailwind CSS · Gemini (API côté serveur, OpenAI en fallback)

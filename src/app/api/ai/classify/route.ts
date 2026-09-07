@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import {
-  buildChatCompletionParams,
-  getAIClient,
+  completeChat,
+  getMissingKeyMessage,
+  hasAICredentials,
   REQUEST_TIMEOUT_MS,
 } from "@/lib/ai-client";
 import {
@@ -48,37 +49,34 @@ export async function POST(request: Request) {
     );
   }
 
-  const client = getAIClient();
-  if (!client) {
-    return NextResponse.json({ error: msg.missingKey }, { status: 503 });
+  if (!hasAICredentials()) {
+    return NextResponse.json(
+      { error: msg.missingKey || getMissingKeyMessage() },
+      { status: 503 }
+    );
   }
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
   try {
-    const completion = await client.chat.completions.create(
-      buildChatCompletionParams({
-        // Budget includes hidden reasoning tokens + short mission output.
-        maxCompletionTokens: 1024,
-        messages: [
-          { role: "system", content: msg.pedagogicalConstraints },
-          {
-            role: "user",
-            content: [
-              msg.classifyUserPrefix,
-              instruction,
-              "",
-              msg.classifyMessagePrefix,
-              message,
-            ].join("\n"),
-          },
-        ],
-      }),
-      { signal: controller.signal }
-    );
-
-    const output = completion.choices[0]?.message?.content?.trim() ?? "";
+    const { text: output } = await completeChat({
+      maxOutputTokens: 1024,
+      signal: controller.signal,
+      messages: [
+        { role: "system", content: msg.pedagogicalConstraints },
+        {
+          role: "user",
+          content: [
+            msg.classifyUserPrefix,
+            instruction,
+            "",
+            msg.classifyMessagePrefix,
+            message,
+          ].join("\n"),
+        },
+      ],
+    });
 
     if (!output) {
       return NextResponse.json(

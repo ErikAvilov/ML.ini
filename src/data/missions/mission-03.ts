@@ -345,12 +345,13 @@ export function createMission03(locale: Locale): MissionDefinition {
           "Readable for a human is not the same as usable for the next service.",
         ],
         skillUnlocked: {
-          skillName: "Structuring AI responses",
+          skillId: "structured-output-1",
+          skillName: "Structuring AI Responses",
           formalSkillName: "Structured Output",
           skillCategory: "Structured Output",
           level: 1,
           description:
-            "You can make a language model return predictable fields that another program can use.",
+            "You can make a language model return predictable information another program can use.",
         },
         technicalTerms: [
           {
@@ -594,12 +595,13 @@ export function createMission03(locale: Locale): MissionDefinition {
         "Lisible pour un humain n’est pas la même chose qu’utilisable pour le service suivant.",
       ],
       skillUnlocked: {
+        skillId: "structured-output-1",
         skillName: "Structurer les réponses d’une IA",
         formalSkillName: "Structured Output",
         skillCategory: "Structured Output",
         level: 1,
         description:
-          "Tu peux faire renvoyer à un modèle de langage des champs prévisibles qu’un autre programme peut utiliser.",
+          "Tu peux faire renvoyer à un modèle de langage des informations prévisibles qu’un autre programme peut utiliser.",
       },
       technicalTerms: [
         {

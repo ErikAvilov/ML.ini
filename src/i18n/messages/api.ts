@@ -11,7 +11,7 @@ const apiMessages = {
     timeout: "Délai dépassé. Réessaie dans un instant.",
     modelError: "Erreur lors de l'appel au modèle. Réessaie.",
     missingKey:
-      "OPENAI_API_KEY manquante. Ajoute-la dans `.env` ou `.env.local` à la racine.",
+      "GEMINI_API_KEY manquante. Ajoute-la dans `.env` ou `.env.local` (Google AI Studio). Fallback : OPENAI_API_KEY + AI_PROVIDER=openai.",
     hintNoInstruction:
       "Écris d'abord une instruction, puis redemande un indice. Sans instruction, on ne peut pas diagnostiquer ce qui cloche.",
     hintFallbackVague:
@@ -44,7 +44,7 @@ Reste en français.`,
     timeout: "Timed out. Try again in a moment.",
     modelError: "Error calling the model. Try again.",
     missingKey:
-      "OPENAI_API_KEY missing. Add it to `.env` or `.env.local` at the project root.",
+      "GEMINI_API_KEY missing. Add it to `.env` or `.env.local` (Google AI Studio). Fallback: OPENAI_API_KEY + AI_PROVIDER=openai.",
     hintNoInstruction:
       "Write an instruction first, then ask for a hint again. Without an instruction, we cannot diagnose what is wrong.",
     hintFallbackVague:

@@ -146,12 +146,13 @@ export function createMission01(locale: Locale): MissionDefinition {
           "When you write a reusable instruction with a strict format, you are configuring a system — not chatting.",
         ],
         skillUnlocked: {
-          skillName: "Controlling the output",
-          formalSkillName: "Prompting",
-          skillCategory: "Prompting",
+          skillId: "llm-fundamentals-1",
+          skillName: "Understanding AI Inputs & Outputs",
+          formalSkillName: "LLM Fundamentals",
+          skillCategory: "LLM Fundamentals",
           level: 1,
           description:
-            "You can force a language model to answer in a format a program can actually use.",
+            "You understand the basic flow between input, instructions, a language model and its output.",
         },
         technicalTerms: [
           {
@@ -316,12 +317,13 @@ export function createMission01(locale: Locale): MissionDefinition {
         "Quand tu écris une instruction réutilisable avec un format strict, tu configures un système — tu ne discutes pas.",
       ],
       skillUnlocked: {
-        skillName: "Contrôler la sortie",
-        formalSkillName: "Prompting",
-        skillCategory: "Prompting",
+        skillId: "llm-fundamentals-1",
+        skillName: "Comprendre entrées & sorties d’une IA",
+        formalSkillName: "LLM Fundamentals",
+        skillCategory: "Fondamentaux LLM",
         level: 1,
         description:
-          "Tu peux forcer un modèle de langage à répondre dans un format qu’un programme peut vraiment utiliser.",
+          "Tu comprends le flux de base entre entrée, instructions, modèle de langage et sortie.",
       },
       technicalTerms: [
         {

@@ -1,13 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Lightbulb, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useLocale } from "@/i18n/locale-context";
 import { LEAD } from "@/data/narrative/canon";
+import {
+  loadHintRevealCount,
+  saveHintRevealCount,
+} from "@/lib/persistence/hint-session";
 import type { MissionHint } from "@/lib/types";
 
 interface HintPanelProps {
+  missionId: string;
   hints: MissionHint[];
   instruction: string;
   objective: string;
@@ -15,15 +20,22 @@ interface HintPanelProps {
 }
 
 export function HintPanel({
+  missionId,
   hints,
   instruction,
   objective,
   compact = false,
 }: HintPanelProps) {
   const { locale, messages, t } = useLocale();
-  const [revealed, setRevealed] = useState(0);
+  const [revealed, setRevealed] = useState(() =>
+    typeof window !== "undefined" ? loadHintRevealCount(missionId) : 0
+  );
   const [aiHint, setAiHint] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    saveHintRevealCount(missionId, revealed);
+  }, [missionId, revealed]);
 
   const nextHint = hints[revealed];
   const shown = hints.slice(0, revealed);
@@ -63,17 +75,21 @@ export function HintPanel({
           <Lightbulb className="h-4 w-4 text-ml-reward" />
           <span className="ml-section-label">{messages.hints}</span>
         </div>
-        <div className="flex gap-1">
+        <div className="flex gap-1" aria-label={messages.hints}>
           {hints.map((h) => (
             <span
               key={h.level}
               className={`h-1 w-5 ${
                 revealed >= h.level ? "bg-ml-reward" : "bg-ml-border"
               }`}
-              title={t(messages.hintLevel, {
-                level: h.level,
-                title: "",
-              }).replace(/\s·\s*$/, "")}
+              title={
+                h.fromMira
+                  ? LEAD.displayName
+                  : t(messages.hintLevel, {
+                      level: h.level,
+                      title: h.title,
+                    })
+              }
             />
           ))}
         </div>

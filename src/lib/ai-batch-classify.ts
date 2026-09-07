@@ -1,9 +1,8 @@
-import type OpenAI from "openai";
 import {
   EVAL_REQUEST_TIMEOUT_MS,
   MODEL,
-  buildChatCompletionParams,
-  getAIClient,
+  completeChat,
+  hasAICredentials,
 } from "@/lib/ai-client";
 
 export interface BatchTestItem {
@@ -119,17 +118,13 @@ export async function classifyBatchItems(options: {
   tests: BatchTestItem[];
   model?: string;
 }): Promise<BatchClassifyResult> {
-  const client = getAIClient();
-  if (!client) {
+  if (!hasAICredentials()) {
     throw new Error("MISSING_KEY");
   }
 
   const model = options.model ?? MODEL;
   const tests = options.tests;
-  const maxCompletionTokens = Math.min(
-    8192,
-    Math.max(2048, tests.length * 400)
-  );
+  const maxOutputTokens = Math.min(8192, Math.max(2048, tests.length * 400));
 
   return withRetries(async () => {
     const warnings: string[] = [];
@@ -140,31 +135,23 @@ export async function classifyBatchItems(options: {
     );
 
     try {
-      let completion: OpenAI.Chat.Completions.ChatCompletion;
+      let content = "";
 
       try {
-        completion = await client.chat.completions.create(
-          buildChatCompletionParams({
-            model,
-            maxCompletionTokens,
-            responseFormat: {
-              type: "json_schema",
-              json_schema: {
-                name: "batch_eval_results",
-                strict: true,
-                schema: BATCH_WRAPPER_SCHEMA,
-              },
+        const result = await completeChat({
+          model,
+          maxOutputTokens,
+          signal: controller.signal,
+          jsonSchema: BATCH_WRAPPER_SCHEMA as unknown as Record<string, unknown>,
+          messages: [
+            { role: "system", content: BATCH_SYSTEM },
+            {
+              role: "user",
+              content: buildBatchUserPayload(options.instruction, tests),
             },
-            messages: [
-              { role: "system", content: BATCH_SYSTEM },
-              {
-                role: "user",
-                content: buildBatchUserPayload(options.instruction, tests),
-              },
-            ],
-          }),
-          { signal: controller.signal }
-        );
+          ],
+        });
+        content = result.text;
       } catch (strictErr) {
         const status =
           strictErr && typeof strictErr === "object" && "status" in strictErr
@@ -174,28 +161,28 @@ export async function classifyBatchItems(options: {
           throw strictErr;
         }
         warnings.push(
-          `json_schema strict failed (${
+          `json schema failed (${
             strictErr instanceof Error ? strictErr.message : "unknown"
-          }); retrying with json_object`
+          }); retrying without schema`
         );
-        completion = await client.chat.completions.create(
-          buildChatCompletionParams({
-            model,
-            maxCompletionTokens,
-            responseFormat: { type: "json_object" },
-            messages: [
-              { role: "system", content: BATCH_SYSTEM },
-              {
-                role: "user",
-                content: buildBatchUserPayload(options.instruction, tests),
-              },
-            ],
-          }),
-          { signal: controller.signal }
-        );
+        const result = await completeChat({
+          model,
+          maxOutputTokens,
+          signal: controller.signal,
+          messages: [
+            {
+              role: "system",
+              content: `${BATCH_SYSTEM}\n\nRespond with valid JSON only.`,
+            },
+            {
+              role: "user",
+              content: buildBatchUserPayload(options.instruction, tests),
+            },
+          ],
+        });
+        content = result.text;
       }
 
-      const content = completion.choices[0]?.message?.content?.trim() ?? "";
       const results: Array<{ testId: string; rawOutput: string }> = [];
 
       try {

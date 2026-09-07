@@ -204,12 +204,13 @@ export function createMission02(locale: Locale): MissionDefinition {
           "A precise instruction explains how YOUR system defines urgency — including what stays NORMAL.",
         ],
         skillUnlocked: {
-          skillName: "Giving rules to an AI",
+          skillId: "prompting-1",
+          skillName: "Giving Rules to an AI",
           formalSkillName: "Prompting",
           skillCategory: "Prompting",
           level: 1,
           description:
-            "You can communicate explicit rules and decision criteria to a language model.",
+            "You can communicate explicit business rules and decision criteria to a language model.",
         },
         technicalTerms: [
           {
@@ -434,12 +435,13 @@ export function createMission02(locale: Locale): MissionDefinition {
         "Une instruction précise explique comment TON système définit l’urgence — y compris ce qui reste NORMAL.",
       ],
       skillUnlocked: {
+        skillId: "prompting-1",
         skillName: "Donner des règles à une IA",
         formalSkillName: "Prompting",
         skillCategory: "Prompting",
         level: 1,
         description:
-          "Tu peux transmettre des règles explicites et des critères de décision à un modèle de langage.",
+          "Tu peux transmettre des règles métier et des critères de décision explicites à un modèle de langage.",
       },
       technicalTerms: [
         {

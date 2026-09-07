@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { MissionBriefing } from "@/components/mission/MissionBriefing";
@@ -13,6 +14,10 @@ import {
 } from "@/components/mission/SuccessToast";
 import { useProgress } from "@/lib/progress-context";
 import { getMissionStatus } from "@/lib/progression";
+import {
+  loadMissionDraft,
+  saveMissionDraft,
+} from "@/lib/persistence/mission-drafts";
 import { evaluateMissionTest, summarizeSuite } from "@/lib/validation";
 import { useLocale } from "@/i18n/locale-context";
 import { getMissionBySlug, getMissions } from "@/data/missions";
@@ -53,6 +58,18 @@ export function MissionWorkspace({ missionSlug }: MissionWorkspaceProps) {
       : "locked";
 
   if (status === "locked" || !mission.playable) {
+    const sorted = [...missions].sort((a, b) => a.order - b.order);
+    const prior = sorted.find((m) => m.order === mission.order - 1);
+    const lockedCopy =
+      status === "locked" && prior
+        ? messages.missionLockedCompletePrev.replace(
+            "{order}",
+            String(prior.order).padStart(2, "0")
+          )
+        : status === "locked"
+          ? messages.missionLocked
+          : (mission.comingSoonMessage ?? messages.missionComingSoon);
+
     return (
       <div className="flex h-full min-h-0 flex-col overflow-hidden">
         <MissionNavBar mission={mission} missions={missions} />
@@ -67,14 +84,17 @@ export function MissionWorkspace({ missionSlug }: MissionWorkspaceProps) {
             <h1 className="mt-2 font-display text-2xl text-fog">
               {mission.title}
             </h1>
-            <p className="mt-3 text-sm text-mist">
-              {status === "locked"
-                ? messages.missionLocked
-                : (mission.comingSoonMessage ?? messages.missionComingSoon)}
-            </p>
-            <Link href="/royaume" className="mt-6 inline-block">
-              <Button variant="secondary">{messages.backToKingdom}</Button>
-            </Link>
+            <p className="mt-3 text-sm text-mist">{lockedCopy}</p>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              {prior && (
+                <Link href={`/missions/${prior.slug}`}>
+                  <Button variant="secondary">{messages.prevMission}</Button>
+                </Link>
+              )}
+              <Link href="/royaume">
+                <Button variant="primary">{messages.backToKingdom}</Button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -108,7 +128,9 @@ function MissionSession({
   locale,
   messages,
 }: MissionSessionProps) {
-  const { progress, completeMissionAndUnlock } = useProgress();
+  const router = useRouter();
+  const { progress, completeMissionAndUnlock, markMissionPlayed } =
+    useProgress();
   const alreadyCleared = progress.completedMissions.includes(mission.id);
   const tests = mission.tests ?? [];
   const showcase =
@@ -117,7 +139,9 @@ function MissionSession({
     ? missions.find((m) => m.id === nextMissionId) ?? null
     : null;
 
-  const [instruction, setInstruction] = useState("");
+  const [instruction, setInstruction] = useState(() =>
+    typeof window !== "undefined" ? loadMissionDraft(mission.id) : ""
+  );
   const [activeMessage, setActiveMessage] = useState(showcase);
   const [liveOutput, setLiveOutput] = useState<string | null>(null);
   const [results, setResults] = useState<ClassificationResult[]>([]);
@@ -129,18 +153,39 @@ function MissionSession({
   );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [stage, setStage] = useState<Stage>("idle");
-  const [error, setError] = useState<string | null>(null);
+  const [systemError, setSystemError] = useState<string | null>(null);
   const [successToast, setSuccessToast] = useState<SuccessToastData | null>(
     null
   );
   const [justUnlocked, setJustUnlocked] = useState(false);
   const [mobileTab, setMobileTab] = useState<MobileTab>("brief");
 
+  const runningRef = useRef(running);
+  const instructionRef = useRef(instruction);
+  const handleRunRef = useRef<() => Promise<void>>(async () => {});
+
+  useEffect(() => {
+    runningRef.current = running;
+    instructionRef.current = instruction;
+  }, [running, instruction]);
+
+  useEffect(() => {
+    markMissionPlayed(mission.id);
+  }, [mission.id, markMissionPlayed]);
+
+  useEffect(() => {
+    saveMissionDraft(mission.id, instruction);
+  }, [mission.id, instruction]);
+
   async function runClassify(message: string) {
     const res = await fetch("/api/ai/classify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ instruction, message, locale }),
+      body: JSON.stringify({
+        instruction: instructionRef.current,
+        message,
+        locale,
+      }),
     });
     const data = (await res.json()) as { output?: string; error?: string };
     if (!res.ok) {
@@ -158,17 +203,12 @@ function MissionSession({
 
     if (!wasCleared) {
       const skill = mission.completion?.skillUnlocked;
-      const skillId = skill
-        ? `${skill.formalSkillName}-${skill.level}`
-            .toLowerCase()
-            .replace(/\s+/g, "-")
-        : undefined;
       const next = completeMissionAndUnlock(
         mission.id,
         nextMissionId,
         mission.xpReward,
         {
-          skillId,
+          skillId: skill?.skillId,
           capabilityId: mission.completion?.capabilityUnlocked.id,
         }
       );
@@ -190,9 +230,9 @@ function MissionSession({
   }
 
   function handleDevComplete() {
-    if (process.env.NODE_ENV !== "development" || running) return;
+    if (process.env.NODE_ENV !== "development" || runningRef.current) return;
     setMobileTab("workspace");
-    setError(null);
+    setSystemError(null);
     setFeedback(null);
     setFeedbackSpeaker(null);
     setRunning(false);
@@ -201,12 +241,18 @@ function MissionSession({
   }
 
   async function handleRun() {
-    if (!instruction.trim() || running || tests.length === 0) return;
+    if (
+      !instructionRef.current.trim() ||
+      runningRef.current ||
+      tests.length === 0
+    ) {
+      return;
+    }
 
     setMobileTab("workspace");
     setRunning(true);
     setRunMode("sequential");
-    setError(null);
+    setSystemError(null);
     setFeedback(null);
     setFeedbackSpeaker(null);
     setResults([]);
@@ -249,7 +295,7 @@ function MissionSession({
         grantMissionSuccess();
       }
     } catch (err) {
-      setError(
+      setSystemError(
         err instanceof Error ? err.message : messages.genericError
       );
       setStage("idle");
@@ -260,13 +306,53 @@ function MissionSession({
     }
   }
 
+  useEffect(() => {
+    handleRunRef.current = handleRun;
+  });
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      const metaEnter =
+        (e.metaKey || e.ctrlKey) && e.key === "Enter" && !e.altKey;
+      if (metaEnter) {
+        e.preventDefault();
+        void handleRunRef.current();
+        return;
+      }
+
+      if (e.altKey && !e.metaKey && !e.ctrlKey && e.key === "ArrowLeft") {
+        const sorted = [...missions].sort((a, b) => a.order - b.order);
+        const prev = sorted.find((m) => m.order === mission.order - 1);
+        if (!prev) return;
+        const st = getMissionStatus(prev.id, progress, prev.order);
+        if (st === "locked") return;
+        e.preventDefault();
+        router.push(`/missions/${prev.slug}`);
+        return;
+      }
+
+      if (e.altKey && !e.metaKey && !e.ctrlKey && e.key === "ArrowRight") {
+        const sorted = [...missions].sort((a, b) => a.order - b.order);
+        const next = sorted.find((m) => m.order === mission.order + 1);
+        if (!next) return;
+        const st = getMissionStatus(next.id, progress, next.order);
+        if (st === "locked") return;
+        e.preventDefault();
+        router.push(`/missions/${next.slug}`);
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [mission.order, missions, progress, router]);
+
   async function handleRunBatch() {
     if (!instruction.trim() || running || tests.length === 0) return;
 
     setMobileTab("workspace");
     setRunning(true);
     setRunMode("batch");
-    setError(null);
+    setSystemError(null);
     setFeedback(null);
     setFeedbackSpeaker(null);
     setResults([]);
@@ -325,7 +411,7 @@ function MissionSession({
         grantMissionSuccess();
       }
     } catch (err) {
-      setError(
+      setSystemError(
         err instanceof Error ? err.message : messages.genericError
       );
       setStage("idle");
@@ -367,7 +453,7 @@ function MissionSession({
 
       <div className="grid min-h-0 flex-1 lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)]">
         <aside
-          className={`min-h-0 min-w-0 overflow-y-auto border-r border-ml-border bg-ml-bg-1/50 px-5 py-5 sm:px-6 sm:py-6 ${
+          className={`min-h-0 min-w-0 overflow-y-auto border-r border-ml-border bg-ml-bg-1/75 px-5 py-5 sm:px-6 sm:py-6 ${
             mobileTab === "brief" ? "block" : "hidden lg:block"
           }`}
         >
@@ -380,6 +466,7 @@ function MissionSession({
               hints={mission.hints ?? []}
               instruction={instruction}
               objective={mission.objective}
+              missionId={mission.id}
             />
           )}
         </aside>
@@ -410,7 +497,7 @@ function MissionSession({
             feedbackSpeaker={feedbackSpeaker}
             currentIndex={currentIndex}
             testCount={tests.length}
-            error={error}
+            error={systemError}
             justUnlocked={justUnlocked}
             showSuccess={Boolean(successToast)}
           />
@@ -426,5 +513,5 @@ function MissionSession({
 }
 
 function wait(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise<void>((resolve) => setTimeout(resolve, ms));
 }
