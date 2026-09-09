@@ -9,7 +9,7 @@ import { useProgress } from "@/lib/progress-context";
 import { getMissionStatus } from "@/lib/progression";
 import { HomeHero } from "@/components/home/HomeHero";
 import { HomeLearningLoop } from "@/components/home/HomeLearningLoop";
-import { HomeKingdomSection } from "@/components/home/HomeKingdomSection";
+import { HomeMildredSection } from "@/components/home/HomeMildredSection";
 import { HomeSkillsSection } from "@/components/home/HomeSkillsSection";
 import { HomeFinalCta } from "@/components/home/HomeFinalCta";
 
@@ -26,6 +26,9 @@ export function HomeExperience() {
   const getStatus = (missionId: string, order: number) =>
     getMissionStatus(missionId, progress, order);
 
+  const activeMission =
+    missions.find((m) => getStatus(m.id, m.order) === "available") ?? null;
+
   useEffect(() => {
     document.documentElement.dataset.home = "true";
     return () => {
@@ -36,23 +39,21 @@ export function HomeExperience() {
   return (
     <div className="relative">
       <HomeHero
-        locale={locale}
         messages={messages}
         kingdomName={kingdom.name}
         missions={missions}
         getStatus={getStatus}
-        unlockedCapabilities={progress.unlockedCapabilities}
+        activeMission={activeMission}
       />
 
-      <div className="mx-auto h-px max-w-xs bg-[color-mix(in_srgb,var(--ml-border)_80%,transparent)]" />
+      <div className="mx-auto h-px max-w-xs bg-ml-border/80" />
 
       <div className="space-y-24 py-20 sm:space-y-28 sm:py-24">
         <HomeLearningLoop messages={messages} />
-        <HomeKingdomSection
+        <HomeMildredSection
+          locale={locale}
           messages={messages}
-          kingdomName={kingdom.name}
-          missions={missions}
-          getStatus={getStatus}
+          unlockedCapabilities={progress.unlockedCapabilities}
         />
         <HomeSkillsSection
           messages={messages}

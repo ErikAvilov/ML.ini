@@ -1,128 +1,116 @@
 "use client";
 
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { Check, Lock, Skull, Play } from "lucide-react";
+import { Check, Lock, Play, Shield } from "lucide-react";
 import { useLocale } from "@/i18n/locale-context";
 import type { MissionDefinition, MissionStatus } from "@/lib/types";
 
 interface MissionNodeProps {
   mission: MissionDefinition;
   status: MissionStatus;
-  index: number;
+  selected: boolean;
+  active: boolean;
+  onSelect: (missionId: string) => void;
 }
 
-const positionClass = [
-  "ml-[4%] sm:ml-[8%]",
-  "ml-[38%] sm:ml-[48%]",
-  "ml-[12%] sm:ml-[18%]",
-  "ml-[52%] sm:ml-[58%]",
-  "ml-[8%] sm:ml-[12%]",
-  "ml-[44%] sm:ml-[50%]",
-  "ml-[16%] sm:ml-[22%]",
-  "ml-[48%] sm:ml-[54%]",
-  "ml-[20%] sm:ml-[28%]",
-  "ml-[34%] sm:ml-[40%]",
-];
-
-export function MissionNode({ mission, status, index }: MissionNodeProps) {
+export function MissionNode({
+  mission,
+  status,
+  selected,
+  active,
+  onSelect,
+}: MissionNodeProps) {
   const { messages } = useLocale();
   const isBoss = mission.kind === "boss";
-  const href =
-    status === "locked"
-      ? undefined
-      : `/missions/${mission.slug}`;
 
-  const content = (
-    <motion.div
-      initial={{ opacity: 0, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.45 }}
-      className={`relative w-[min(100%,280px)] ${positionClass[index] ?? ""}`}
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(mission.id)}
+      aria-pressed={selected}
+      className="group relative z-10 flex w-32 flex-col items-center text-center outline-none focus-visible:rounded-ml focus-visible:ring-2 focus-visible:ring-[var(--ml-border-accent)]"
     >
-      <div
-        className={`group relative overflow-hidden border px-4 py-3 transition duration-300 ${
-          status === "completed"
-            ? "border-[color-mix(in_srgb,var(--ml-success)_40%,transparent)] bg-[var(--ml-success-soft)]"
-            : status === "available"
-              ? isBoss
-                ? "border-[var(--ml-frame-boss)] bg-[var(--ml-reward-soft)]"
-                : "border-[var(--ml-border-accent)] bg-ml-surface-2 hover:border-ml-accent"
-              : "border-ml-border bg-ml-surface-1/50 opacity-70"
+      <span
+        className={`relative flex h-16 w-16 items-center justify-center border bg-ml-surface-2 transition duration-200 group-hover:-translate-y-0.5 ${
+          isBoss
+            ? "border-[var(--ml-frame-boss)] text-ml-reward"
+            : status === "locked"
+              ? "border-ml-border text-ml-text-muted"
+              : status === "completed"
+                ? "border-[var(--ml-border-accent)] text-ml-accent"
+                : "border-ml-accent text-ml-accent"
+        } ${
+          selected
+            ? isBoss
+              ? "ring-2 ring-[var(--ml-reward-soft)]"
+              : "ring-2 ring-[var(--ml-accent-soft)]"
+            : ""
         }`}
         style={{ borderRadius: "var(--ml-frame-radius-lg)" }}
       >
-        <div className="flex items-start gap-3">
-          <div
-            className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border ${
-              status === "completed"
-                ? "border-signal/40 bg-signal/20 text-signal"
-                : status === "available"
-                  ? isBoss
-                    ? "border-amber/40 bg-amber/15 text-amber"
-                    : "border-signal/40 bg-ink text-signal"
-                  : "border-line bg-ink-soft text-mist"
+        <span
+          className={`flex h-8 w-8 rotate-45 items-center justify-center border ${
+            isBoss
+              ? "border-ml-reward bg-ml-reward-soft"
+              : status === "locked"
+                ? "border-ml-border bg-ml-bg-1"
+                : status === "completed"
+                  ? "border-ml-accent bg-ml-accent"
+                  : "border-ml-accent bg-ml-accent-soft"
+          }`}
+        >
+          {status === "completed" ? (
+            <Check
+              className="-rotate-45 text-[var(--ml-text-on-primary)]"
+              size={17}
+            />
+          ) : status === "locked" ? (
+            <Lock className="-rotate-45" size={15} />
+          ) : isBoss ? (
+            <Shield className="-rotate-45" size={17} />
+          ) : (
+            <Play className="-rotate-45" size={16} />
+          )}
+        </span>
+        {active && (
+          <span
+            className={`absolute -top-1 -right-1 h-3 w-3 rounded-full border-2 border-ml-surface-2 motion-safe:animate-pulse ${
+              isBoss ? "bg-ml-reward" : "bg-ml-accent"
             }`}
-          >
-            {status === "completed" ? (
-              <Check className="h-5 w-5" />
-            ) : status === "locked" ? (
-              <Lock className="h-4 w-4" />
-            ) : isBoss ? (
-              <Skull className="h-5 w-5" />
-            ) : (
-              <Play className="h-4 w-4" />
-            )}
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-[10px] tracking-[0.16em] text-mist uppercase">
-                {isBoss ? "Boss" : `Mission ${mission.order}`}
-              </span>
-              {status === "available" && (
-                <span className="rounded bg-signal/15 px-1.5 py-0.5 text-[9px] tracking-wider text-signal uppercase">
-                  {messages.missionActiveBadge}
-                </span>
-              )}
-              {status === "completed" && (
-                <span className="rounded bg-signal/10 px-1.5 py-0.5 text-[9px] tracking-wider text-signal uppercase">
-                  {messages.missionClearedBadge}
-                </span>
-              )}
-            </div>
-            <h3
-              className={`mt-1 font-display text-base leading-tight ${
-                isBoss ? "text-amber" : "text-fog"
-              }`}
-            >
-              {mission.title}
-            </h3>
-            <p className="mt-1 line-clamp-2 text-xs text-mist">
-              {status === "locked"
-                ? messages.lockedHint
-                : mission.brief}
-            </p>
-            {status !== "locked" && (
-              <p className="mt-2 font-mono text-[10px] tracking-wider text-signal/80 uppercase">
-                +{mission.xpReward} XP
-              </p>
-            )}
-          </div>
-        </div>
-        {status === "available" && !isBoss && (
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,color-mix(in_srgb,var(--ml-accent)_10%,transparent),transparent_55%)]" />
+          />
         )}
-      </div>
-    </motion.div>
-  );
+      </span>
 
-  if (!href) {
-    return <div className="relative py-3">{content}</div>;
-  }
-
-  return (
-    <Link href={href} className="relative block py-3 outline-none">
-      {content}
-    </Link>
+      <span
+        className={`mt-3 font-mono text-xs ${
+          isBoss
+            ? "text-ml-reward"
+            : status === "locked"
+              ? "text-ml-text-muted"
+              : "text-ml-accent"
+        }`}
+      >
+        {isBoss
+          ? `${messages.homeKingdomBoss} · ${mission.order}`
+          : `M-${String(mission.order).padStart(2, "0")}`}
+      </span>
+      <span
+        className={`mt-1 line-clamp-2 text-sm font-semibold leading-tight ${
+          isBoss
+            ? "font-display text-ml-reward"
+            : status === "locked"
+              ? "text-ml-text-muted"
+              : "text-ml-text"
+        }`}
+      >
+        {mission.shortTitle}
+      </span>
+      <span className="mt-1 text-xs text-ml-text-muted">
+        {status === "completed"
+          ? messages.missionClearedBadge
+          : status === "available"
+            ? messages.missionActiveBadge
+            : messages.profileLocked}
+      </span>
+    </button>
   );
 }

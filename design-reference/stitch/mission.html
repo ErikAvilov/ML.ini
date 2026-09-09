@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MLINI — Atelier Mission 04 : Fallback Protocols</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@200..600,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            app: "#09131D",
+            panel: "#101D29",
+            editor: "#0D1620",
+            borderSubtle: "#263A4C",
+            primaryTeal: "#42BDB1",
+            textPrimary: "#EEE8DA",
+            textMuted: "#8DA0B3",
+            failureRed: "#E05252",
+            failureBg: "#3D1A24",
+            successGreen: "#34D399"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    @layer base {
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #09131D;
+        color: #EEE8DA;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #09131D;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #263A4C;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #38536B;
+    }
+  </style>
+</head>
+<body class="bg-app text-textPrimary antialiased min-h-screen flex flex-col selection:bg-primaryTeal selection:text-app">
+<!-- TOP HEADER -->
+<header class="h-14 w-full bg-[#0B1723] border-b border-borderSubtle px-4 lg:px-6 flex items-center justify-between shrink-0 z-30">
+<div class="flex items-center gap-3 min-w-0">
+<!-- MLINI Emblem & Wordmark -->
+<a class="flex items-center gap-2.5 text-textPrimary hover:opacity-90 transition-opacity" href="#">
+<svg class="w-5 h-5 text-primaryTeal" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+<polygon points="12,2 22,12 12,22 2,12"></polygon>
+<line x1="12" x2="12" y1="7" y2="17"></line>
+</svg>
+<span class="font-bold tracking-tight text-base font-sans text-textPrimary">MLINI</span>
+</a>
+<span class="text-borderSubtle">/</span>
+<!-- Breadcrumb / Mission Title -->
+<div class="flex items-center gap-2 truncate text-sm font-medium">
+<span class="text-textMuted hidden sm:inline">Royaume I</span>
+<span class="text-textMuted hidden sm:inline">·</span>
+<span class="text-textPrimary font-semibold truncate">Mission 04 : Fallback Protocols</span>
+</div>
+</div>
+<!-- Header Right: Progress & Return Action -->
+<div class="flex items-center gap-4">
+<!-- Minimalist Level & XP indicator -->
+<div class="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded bg-panel border border-borderSubtle/60 text-xs">
+<span class="text-primaryTeal font-semibold">Niv. 3</span>
+<span class="w-1 h-1 rounded-full bg-borderSubtle"></span>
+<span class="font-mono text-textMuted text-[11px]">420 XP</span>
+</div>
+<!-- Profile Avatar -->
+<div class="w-7 h-7 rounded-full bg-borderSubtle/60 border border-borderSubtle flex items-center justify-center text-textMuted">
+<span class="material-symbols-outlined text-[16px]">person</span>
+</div>
+<!-- Exit Button -->
+<a class="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium text-textMuted hover:text-textPrimary hover:bg-panel border border-transparent hover:border-borderSubtle transition-all" href="#">
+<span class="material-symbols-outlined text-[16px]">arrow_back</span>
+<span class="hidden sm:inline">Retour au Royaume</span>
+<span class="sm:hidden">Quitter</span>
+</a>
+</div>
+</header>
+<!-- MAIN WORKSPACE: Split View -->
+<main class="flex-1 w-full p-3 lg:p-4 grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4 items-stretch min-h-[calc(100vh-3.5rem)]">
+<!-- LEFT PANEL: Instruction & Guidance (~42% -> 5 cols lg) -->
+<section class="lg:col-span-5 flex flex-col gap-3 lg:gap-3.5 overflow-y-auto pr-0.5">
+<!-- Mentor Briefing -->
+<div class="bg-panel border border-borderSubtle rounded-md p-4 flex flex-col gap-2.5">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-primaryTeal/15 border border-primaryTeal/30 flex items-center justify-center text-primaryTeal shrink-0">
+<span class="material-symbols-outlined text-[15px]">assistant</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-xs font-semibold text-textPrimary">Mira</span>
+<span class="text-[11px] text-textMuted">Guide d'ingénierie</span>
+</div>
+</div>
+<div class="bg-app/70 rounded border border-borderSubtle/50 p-3">
+<p class="text-[13px] text-textPrimary leading-relaxed font-sans">
+            « Notre routeur a rencontré un pic de charge inattendu : le modèle a renvoyé du texte libre au lieu d'un objet JSON strict. Corrige la logique de secours pour garantir un état déterministe. »
+          </p>
+</div>
+</div>
+<!-- Problème & Contexte -->
+<div class="bg-panel border border-borderSubtle rounded-md p-4 flex flex-col gap-2">
+<div class="flex items-center gap-1.5 text-xs font-semibold text-textMuted uppercase tracking-wider">
+<span class="material-symbols-outlined text-[16px] text-primaryTeal">info</span>
+<span>Problème &amp; Contexte</span>
+</div>
+<p class="text-xs text-textMuted leading-relaxed">
+          Lorsqu'un LLM génère du Markdown inattendu ou un format JSON tronqué, le runtime applicatif ne doit jamais s'interrompre par une exception non gérée. Le système attend une payload garantie conforme au schéma de typage de l'infrastructure aval.
+        </p>
+</div>
+<!-- Objectifs -->
+<div class="bg-panel border border-borderSubtle rounded-md p-4 flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="text-xs font-semibold text-textMuted uppercase tracking-wider">Objectifs de validation</span>
+<span class="text-[11px] font-mono text-primaryTeal">2 requis</span>
+</div>
+<ul class="space-y-2.5">
+<li class="flex items-start gap-2.5 text-xs">
+<span class="w-4 h-4 rounded-full bg-borderSubtle/60 text-[10px] font-mono flex items-center justify-center text-textMuted shrink-0 mt-0.5 font-bold">1</span>
+<span class="text-textPrimary leading-snug">
+              Valider le contrat de sortie <code class="px-1 py-0.5 bg-app text-primaryTeal font-mono text-[11px] rounded border border-borderSubtle">TriageContract</code> (sentiment, priority, category).
+            </span>
+</li>
+<li class="flex items-start gap-2.5 text-xs">
+<span class="w-4 h-4 rounded-full bg-borderSubtle/60 text-[10px] font-mono flex items-center justify-center text-textMuted shrink-0 mt-0.5 font-bold">2</span>
+<span class="text-textPrimary leading-snug">
+              Intercepter les erreurs de validation et injecter la charge de secours <code class="px-1 py-0.5 bg-app text-primaryTeal font-mono text-[11px] rounded border border-borderSubtle">neutral_escalation</code> avec le statut conforme.
+            </span>
+</li>
+</ul>
+</div>
+<!-- Règles & Contraintes -->
+<div class="bg-panel border border-borderSubtle rounded-md p-4 flex flex-col gap-1.5">
+<div class="flex items-center gap-1.5 text-xs font-semibold text-textMuted uppercase tracking-wider">
+<span class="material-symbols-outlined text-[16px] text-textMuted">rule</span>
+<span>Règles &amp; Contraintes</span>
+</div>
+<p class="text-xs text-textMuted leading-relaxed">
+          Utiliser Pydantic pour la validation stricte. Pas d'expressions régulières arbitraires. La réponse de secours doit être typée et non modifiée sous forme de chaîne brute.
+        </p>
+</div>
+<!-- Indice Dépliable -->
+<div class="border border-borderSubtle/70 rounded-md overflow-hidden bg-panel/60">
+<button class="w-full px-4 py-2.5 flex items-center justify-between text-left text-xs font-medium text-textMuted hover:text-textPrimary transition-colors" id="toggleHintBtn" type="button">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">lightbulb</span>
+<span>Indice de résolution</span>
+</div>
+<span class="material-symbols-outlined text-[16px] transition-transform" id="toggleHintIcon">expand_more</span>
+</button>
+<div class="hidden px-4 pb-3 pt-1 border-t border-borderSubtle/50 text-xs text-textMuted leading-relaxed font-mono bg-app/40" id="hintContent">
+          Vérifie le sentiment renvoyé lors de la capture de l'exception à la ligne 45. Le schéma requiert <span class="text-primaryTeal">"NEUTRAL"</span> et non <span class="text-failureRed">"NEGATIVE"</span>.
+        </div>
+</div>
+</section>
+<!-- RIGHT PANEL: Code Editor & Test Execution (~58% -> 7 cols lg) -->
+<section class="lg:col-span-7 flex flex-col gap-3 min-h-0">
+<!-- Code Editor Window -->
+<div class="bg-editor border border-borderSubtle rounded-md flex flex-col overflow-hidden shadow-sm">
+<!-- Editor Tab Bar -->
+<div class="h-9 bg-panel/80 border-b border-borderSubtle px-3 flex items-center justify-between select-none">
+<div class="flex items-center gap-2">
+<div class="flex items-center gap-1.5 px-2.5 py-1 bg-editor border-t border-x border-borderSubtle text-primaryTeal font-mono text-xs rounded-t">
+<span class="material-symbols-outlined text-[13px]">code</span>
+<span>fallback_router.py</span>
+</div>
+<span class="text-[11px] font-mono text-textMuted/70">Python 3.11</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-textMuted hover:text-textPrimary p-1 rounded transition-colors" title="Copier le code">
+<span class="material-symbols-outlined text-[15px]">content_copy</span>
+</button>
+</div>
+</div>
+<!-- Code Content Area -->
+<div class="p-4 bg-editor font-mono text-xs text-textPrimary leading-relaxed overflow-x-auto select-text">
+<div class="flex gap-4">
+<!-- Line numbers -->
+<div class="flex flex-col text-borderSubtle select-none text-right font-mono text-[11px] opacity-70">
+<span>32</span><span>33</span><span>34</span><span>35</span><span>36</span><span>37</span><span>38</span><span>39</span><span>40</span><span>41</span><span>42</span><span>43</span><span>44</span><span>45</span><span>46</span>
+</div>
+<!-- Code text -->
+<div class="flex-1 font-mono text-[12px] space-y-0.5">
+<div><span class="text-[#8DA0B3]">from</span> pydantic <span class="text-[#8DA0B3]">import</span> BaseModel, Field, ValidationError</div>
+<div><span class="text-[#8DA0B3]">from</span> typing <span class="text-[#8DA0B3]">import</span> Literal</div>
+<div class="text-[#597085] italic"># Définition du contrat de triage strict</div>
+<div><span class="text-[#E5B567]">class</span> <span class="text-primaryTeal font-semibold">TriageContract</span>(BaseModel):</div>
+<div class="pl-4">sentiment: Literal[<span class="text-[#A7C890]">"POSITIVE"</span>, <span class="text-[#A7C890]">"NEGATIVE"</span>, <span class="text-[#A7C890]">"NEUTRAL"</span>]</div>
+<div class="pl-4">priority: Literal[<span class="text-[#A7C890]">"LOW"</span>, <span class="text-[#A7C890]">"MEDIUM"</span>, <span class="text-[#A7C890]">"URGENT"</span>]</div>
+<div class="pl-4">category: str = Field(description=<span class="text-[#A7C890]">"Destination triage"</span>)</div>
+<div> </div>
+<div><span class="text-[#E5B567]">def</span> <span class="text-primaryTeal font-semibold">execute_triage_route</span>(raw_model_response: str) -&gt; TriageContract:</div>
+<div class="pl-4"><span class="text-[#8DA0B3]">try</span>:</div>
+<div class="pl-8"><span class="text-[#8DA0B3]">return</span> TriageContract.model_validate_json(raw_model_response)</div>
+<div class="pl-4"><span class="text-[#8DA0B3]">except</span> (ValidationError, ValueError):</div>
+<div class="pl-8 text-[#597085] italic"># Injection de repli déterministe lors d'une panne JSON</div>
+<div class="pl-8" id="bugLine"><span class="text-[#8DA0B3]">return</span> TriageContract(category=<span class="text-[#A7C890]">"NEUTRAL_ESCALATION"</span>, priority=<span class="text-[#A7C890]">"URGENT"</span>, sentiment=<span class="text-failureRed font-medium bg-failureBg/80 px-1 py-0.5 rounded border border-failureRed/40" id="sentimentValue">"NEGATIVE"</span>)</div>
+</div>
+</div>
+</div>
+<!-- Action Bar -->
+<div class="bg-panel border-t border-borderSubtle px-4 py-2.5 flex items-center justify-between gap-3">
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium text-textMuted hover:text-textPrimary hover:bg-app border border-borderSubtle/60 transition-colors" id="btnReset" type="button">
+<span class="material-symbols-outlined text-[15px]">restart_alt</span>
+<span>Réinitialiser</span>
+</button>
+<div class="flex items-center gap-2.5">
+<button class="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium text-textMuted hover:text-primaryTeal hover:bg-primaryTeal/10 transition-colors" id="btnApplyFix" type="button">
+<span class="material-symbols-outlined text-[15px]">auto_fix_high</span>
+<span>Corriger sentiment</span>
+</button>
+<button class="flex items-center gap-1.5 px-4 py-1.5 rounded text-xs font-semibold bg-primaryTeal hover:bg-[#4dd2c4] text-[#051119] transition-all shadow-sm" id="btnRunTests" type="button">
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+<span>Lancer les tests</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Test Results Section -->
+<div class="bg-panel border border-borderSubtle rounded-md p-4 flex flex-col gap-3.5 flex-1">
+<!-- Results Header -->
+<div class="flex items-center justify-between pb-1 border-b border-borderSubtle/50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-textMuted">checklist</span>
+<span class="text-xs font-semibold text-textPrimary">Résultats d'exécution</span>
+</div>
+<div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-failureBg border border-failureRed/30 text-failureRed" id="testSummaryBadge">
+<span class="w-1.5 h-1.5 rounded-full bg-failureRed"></span>
+<span>3 PASS / 1 FAIL</span>
+</div>
+</div>
+<!-- Tests List -->
+<div class="space-y-1.5 font-mono text-xs">
+<!-- TEST 01 -->
+<div class="flex items-center justify-between p-2 rounded bg-app/50 border border-borderSubtle/40">
+<div class="flex items-center gap-2">
+<span class="text-successGreen material-symbols-outlined text-[16px]">check</span>
+<span class="text-textPrimary text-xs font-sans">TEST 01 : Schéma de validation</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-successGreen font-semibold text-[11px]">PASS</span>
+<span class="text-textMuted text-[10px]">14ms</span>
+</div>
+</div>
+<!-- TEST 02 -->
+<div class="flex items-center justify-between p-2 rounded bg-app/50 border border-borderSubtle/40">
+<div class="flex items-center gap-2">
+<span class="text-successGreen material-symbols-outlined text-[16px]">check</span>
+<span class="text-textPrimary text-xs font-sans">TEST 02 : Traitement des champs manquants</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-successGreen font-semibold text-[11px]">PASS</span>
+<span class="text-textMuted text-[10px]">22ms</span>
+</div>
+</div>
+<!-- TEST 03 -->
+<div class="flex items-center justify-between p-2 rounded bg-app/50 border border-borderSubtle/40">
+<div class="flex items-center gap-2">
+<span class="text-successGreen material-symbols-outlined text-[16px]">check</span>
+<span class="text-textPrimary text-xs font-sans">TEST 03 : Contrainte de latence</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-successGreen font-semibold text-[11px]">PASS</span>
+<span class="text-textMuted text-[10px]">165ms</span>
+</div>
+</div>
+<!-- TEST 04 (Collapsible or Detailed with Diagnostic Box) -->
+<div class="rounded border overflow-hidden transition-colors" id="test4Container" style="border-color: rgba(224, 82, 82, 0.4); background-color: rgba(61, 26, 36, 0.25);">
+<div class="flex items-center justify-between p-2">
+<div class="flex items-center gap-2">
+<span class="text-failureRed material-symbols-outlined text-[16px]" id="test4StatusIcon">close</span>
+<span class="text-textPrimary text-xs font-sans">TEST 04 : Repli sur JSON malformé</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-failureRed font-semibold text-[11px]" id="test4Badge">FAIL</span>
+<span class="text-textMuted text-[10px]">28ms</span>
+</div>
+</div>
+<!-- Diagnostic Box (Readable, High contrast, non-decorative) -->
+<div class="p-3 bg-[#080E14] border-t border-borderSubtle flex flex-col gap-2.5" id="diagnosticBox">
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono">
+<div class="p-1.5 rounded bg-panel border border-borderSubtle flex flex-col gap-0.5">
+<span class="text-textMuted text-[10px]">CONTENT</span>
+<span class="text-failureRed font-medium" id="diagContent">Incorrect</span>
+</div>
+<div class="p-1.5 rounded bg-panel border border-borderSubtle flex flex-col gap-0.5">
+<span class="text-textMuted text-[10px]">OUTPUT CONTRACT</span>
+<span class="text-successGreen font-medium">Valid</span>
+</div>
+<div class="p-1.5 rounded bg-panel border border-borderSubtle flex flex-col gap-0.5">
+<span class="text-textMuted text-[10px]">SENTIMENT</span>
+<span class="text-failureRed font-medium truncate" id="diagSentiment" title="Attendu 'NEUTRAL' | Reçu 'NEGATIVE'">Attendu "NEUTRAL" | Reçu "NEGATIVE"</span>
+</div>
+<div class="p-1.5 rounded bg-panel border border-borderSubtle flex flex-col gap-0.5">
+<span class="text-textMuted text-[10px]">PRIORITY</span>
+<span class="text-textPrimary font-medium truncate" title="Attendu 'URGENT' | Reçu 'URGENT'">Attendu "URGENT" | Reçu "URGENT"</span>
+</div>
+</div>
+<div class="text-xs text-textMuted leading-relaxed font-sans bg-panel/70 p-2.5 rounded border border-borderSubtle/60" id="explanationBox">
+<span class="text-textPrimary font-medium">Diagnostic :</span>
+<span id="explanationText">Le gestionnaire d'exception a injecté <code class="font-mono text-failureRed bg-failureBg px-1 py-0.5 rounded text-[11px]">sentiment='NEGATIVE'</code> au lieu de la valeur déterministe <code class="font-mono text-primaryTeal bg-app px-1 py-0.5 rounded text-[11px]">'NEUTRAL'</code> à la ligne 45.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<script>
+    // Accordion for Hint
+    const toggleHintBtn = document.getElementById('toggleHintBtn');
+    const hintContent = document.getElementById('hintContent');
+    const toggleHintIcon = document.getElementById('toggleHintIcon');
+
+    if (toggleHintBtn && hintContent) {
+      toggleHintBtn.addEventListener('click', () => {
+        const isHidden = hintContent.classList.contains('hidden');
+        if (isHidden) {
+          hintContent.classList.remove('hidden');
+          toggleHintIcon.style.transform = 'rotate(180deg)';
+        } else {
+          hintContent.classList.add('hidden');
+          toggleHintIcon.style.transform = 'rotate(0deg)';
+        }
+      });
+    }
+
+    // State Management: Fix and Test Run
+    let isFixed = false;
+    const btnApplyFix = document.getElementById('btnApplyFix');
+    const btnReset = document.getElementById('btnReset');
+    const btnRunTests = document.getElementById('btnRunTests');
+    const sentimentValue = document.getElementById('sentimentValue');
+
+    const testSummaryBadge = document.getElementById('testSummaryBadge');
+    const test4Container = document.getElementById('test4Container');
+    const test4StatusIcon = document.getElementById('test4StatusIcon');
+    const test4Badge = document.getElementById('test4Badge');
+    const diagContent = document.getElementById('diagContent');
+    const diagSentiment = document.getElementById('diagSentiment');
+    const explanationText = document.getElementById('explanationText');
+
+    function applyState(fixed) {
+      isFixed = fixed;
+      if (fixed) {
+        sentimentValue.textContent = '"NEUTRAL"';
+        sentimentValue.className = 'text-primaryTeal font-medium bg-primaryTeal/10 px-1 py-0.5 rounded border border-primaryTeal/30';
+        btnApplyFix.innerHTML = '<span class="material-symbols-outlined text-[15px] text-primaryTeal">done</span><span class="text-primaryTeal">Valeur corrigée</span>';
+
+        testSummaryBadge.className = 'flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-emerald-950/40 border border-successGreen/30 text-successGreen';
+        testSummaryBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-successGreen"></span><span>4 PASS / 0 FAIL (100%)</span>';
+
+        test4Container.style.borderColor = 'rgba(52, 211, 153, 0.4)';
+        test4Container.style.backgroundColor = 'rgba(16, 29, 41, 0.4)';
+
+        test4StatusIcon.className = 'text-successGreen material-symbols-outlined text-[16px]';
+        test4StatusIcon.textContent = 'check';
+
+        test4Badge.className = 'text-successGreen font-semibold text-[11px]';
+        test4Badge.textContent = 'PASS';
+
+        diagContent.className = 'text-successGreen font-medium';
+        diagContent.textContent = 'Conforme';
+
+        diagSentiment.className = 'text-successGreen font-medium truncate';
+        diagSentiment.textContent = 'Attendu "NEUTRAL" | Reçu "NEUTRAL"';
+
+        explanationText.innerHTML = 'Le contrat de repli a été validé avec succès. L’état déterministe <code class="font-mono text-primaryTeal bg-app px-1 py-0.5 rounded text-[11px]">neutral_escalation</code> est respecté.';
+      } else {
+        sentimentValue.textContent = '"NEGATIVE"';
+        sentimentValue.className = 'text-failureRed font-medium bg-failureBg/80 px-1 py-0.5 rounded border border-failureRed/40';
+        btnApplyFix.innerHTML = '<span class="material-symbols-outlined text-[15px]">auto_fix_high</span><span>Corriger sentiment</span>';
+
+        testSummaryBadge.className = 'flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-failureBg border border-failureRed/30 text-failureRed';
+        testSummaryBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-failureRed"></span><span>3 PASS / 1 FAIL</span>';
+
+        test4Container.style.borderColor = 'rgba(224, 82, 82, 0.4)';
+        test4Container.style.backgroundColor = 'rgba(61, 26, 36, 0.25)';
+
+        test4StatusIcon.className = 'text-failureRed material-symbols-outlined text-[16px]';
+        test4StatusIcon.textContent = 'close';
+
+        test4Badge.className = 'text-failureRed font-semibold text-[11px]';
+        test4Badge.textContent = 'FAIL';
+
+        diagContent.className = 'text-failureRed font-medium';
+        diagContent.textContent = 'Incorrect';
+
+        diagSentiment.className = 'text-failureRed font-medium truncate';
+        diagSentiment.textContent = 'Attendu "NEUTRAL" | Reçu "NEGATIVE"';
+
+        explanationText.innerHTML = 'Le gestionnaire d\'exception a injecté <code class="font-mono text-failureRed bg-failureBg px-1 py-0.5 rounded text-[11px]">sentiment=\'NEGATIVE\'</code> au lieu de la valeur déterministe <code class="font-mono text-primaryTeal bg-app px-1 py-0.5 rounded text-[11px]">\'NEUTRAL\'</code> à la ligne 45.';
+      }
+    }
+
+    if (btnApplyFix) {
+      btnApplyFix.addEventListener('click', () => {
+        applyState(true);
+      });
+    }
+
+    if (btnReset) {
+      btnReset.addEventListener('click', () => {
+        applyState(false);
+      });
+    }
+
+    if (btnRunTests) {
+      btnRunTests.addEventListener('click', () => {
+        const originalContent = btnRunTests.innerHTML;
+        btnRunTests.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">refresh</span><span>Exécution...</span>';
+        setTimeout(() => {
+          btnRunTests.innerHTML = originalContent;
+          applyState(isFixed);
+        }, 300);
+      });
+    }
+  </script>
+</body></html>

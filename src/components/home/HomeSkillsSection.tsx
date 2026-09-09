@@ -17,51 +17,62 @@ export function HomeSkillsSection({
   skills,
   unlockedSkills,
 }: HomeSkillsSectionProps) {
-  const chain = skills.slice(0, 3);
-
   return (
     <section className="ml-home-section mx-auto max-w-3xl px-4 text-center sm:px-6">
-      <p className="ml-section-label">{messages.homeSkillsSectionTitle}</p>
-      <h2 className="mt-3 font-display text-[length:var(--ml-text-2xl)] text-ml-text sm:text-3xl">
-        {messages.homeSkillsSectionLead}
+      <h2 className="font-display text-[length:var(--ml-text-2xl)] text-ml-text sm:text-3xl">
+        {messages.homeSkillsSectionTitle}
       </h2>
-      <p className="mx-auto mt-3 max-w-lg text-[length:var(--ml-text-base)] leading-[var(--ml-leading-body)] text-ml-text-muted">
-        {messages.homeSkillsProof}
+      <p className="mx-auto mt-3 max-w-lg text-[length:var(--ml-text-base)] text-ml-text-muted">
+        {messages.homeSkillsSectionLead}
       </p>
 
-      <ol className="mx-auto mt-10 flex max-w-sm flex-col items-center">
-        {chain.map((skill, i) => {
+      <ul
+        className="mx-auto mt-10 max-w-md space-y-0 border border-ml-border bg-[color-mix(in_srgb,var(--ml-surface-1)_75%,transparent)] px-4 py-2 text-left"
+        style={{ borderRadius: "var(--ml-frame-radius-lg)" }}
+      >
+        {skills.map((skill) => {
           const unlocked = unlockedSkills.includes(skill.id);
+          const available =
+            !unlocked &&
+            skill.prerequisites.every((p) => unlockedSkills.includes(p));
           return (
-            <li key={skill.id} className="flex w-full flex-col items-center">
-              <div
-                className={`w-full border px-4 py-3 text-left ${
+            <li
+              key={skill.id}
+              className="flex items-center gap-3 border-b border-ml-border/70 py-3 last:border-0"
+            >
+              <span
+                className={`h-2.5 w-2.5 shrink-0 rotate-45 border ${
                   unlocked
-                    ? "border-[color-mix(in_srgb,var(--ml-accent)_40%,transparent)] bg-[color-mix(in_srgb,var(--ml-accent)_8%,transparent)]"
-                    : "border-ml-border bg-[color-mix(in_srgb,var(--ml-surface-1)_70%,transparent)]"
+                    ? "border-ml-accent bg-ml-accent"
+                    : available
+                      ? "border-ml-accent bg-[color-mix(in_srgb,var(--ml-accent)_25%,transparent)]"
+                      : "border-ml-border bg-transparent"
                 }`}
-                style={{ borderRadius: "var(--ml-frame-radius)" }}
-              >
-                <p className="font-mono text-[length:var(--ml-text-xs)] tracking-wide text-ml-text-muted uppercase">
+                aria-hidden
+              />
+              <div className="min-w-0 flex-1">
+                <p className="font-mono text-[10px] tracking-wide text-ml-text-muted uppercase">
                   {skill.category}
                 </p>
                 <p
-                  className={`mt-1 text-[length:var(--ml-text-base)] ${
-                    unlocked ? "text-ml-text" : "text-ml-text-body"
+                  className={`text-[length:var(--ml-text-sm)] ${
+                    unlocked || available ? "text-ml-text" : "text-ml-text-muted"
                   }`}
                 >
-                  {skill.displayName}
+                  {skill.name}
                 </p>
               </div>
-              {i < chain.length - 1 && (
-                <span className="my-2 text-ml-text-muted" aria-hidden>
-                  ↓
-                </span>
-              )}
+              <span className="shrink-0 font-mono text-[10px] tracking-wide uppercase text-ml-text-muted">
+                {unlocked
+                  ? "✓"
+                  : available
+                    ? messages.homeMildredInProgress
+                    : messages.profileLocked}
+              </span>
             </li>
           );
         })}
-      </ol>
+      </ul>
 
       <div className="mt-8">
         <Link href="/skills">

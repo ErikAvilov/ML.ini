@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&amp;family=Playfair+Display:ital,wght@0,600;0,700;1,600&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,400,0..1,0" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "mineral-bg": "#09131D",
+            "mineral-panel": "#101D29",
+            "mineral-card": "#152433",
+            "mineral-border": "#263A4C",
+            "mineral-border-subtle": "#1B2C3C",
+            "mineral-text": "#EEE8DA",
+            "primary": "#63d9cc",
+            "primary-dim": "#3aa89c",
+            "primary-container": "#184247",
+            "secondary": "#edc06a",
+            "secondary-dim": "#b58e38",
+            "muted": "#7A8F9E",
+            "muted-dark": "#364B5C"
+          },
+          fontFamily: {
+            "serif": ["Playfair Display", "serif"],
+            "sans": ["Plus Jakarta Sans", "sans-serif"],
+            "mono": ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    @layer base {
+      html, body {
+        margin: 0;
+        padding: 0;
+        background-color: #09131D;
+        color: #EEE8DA;
+      }
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #09131D;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #263A4C;
+        border-radius: 3px;
+      }
+    }
+  </style>
+</head>
+<body class="bg-mineral-bg font-sans text-mineral-text antialiased selection:bg-primary selection:text-[#062427] min-h-screen flex flex-col">
+<!-- Header: Standard clean product navigation header -->
+<header class="h-16 w-full bg-mineral-panel border-b border-mineral-border/80 px-6 flex items-center justify-between sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<!-- Brand Logo -->
+<a class="flex items-center gap-2.5 group" href="#">
+<img alt="MLINI Identity Logo" class="h-6 w-auto object-contain transition-transform group-hover:scale-105" src="https://lh3.googleusercontent.com/aida/AEtjO1U5waqaD1ETb3FLUD-skcDMww9Po5iiEhWOtXnwirpMNZs4XGBm89krmgVCanarlUT1QfN5FPBZE217foZqm-uDHdVQauVeFicyvL32vkK5tIRDaRPucUnhqAlcfutyqXU8JKywk1uTs1YAGuBEcEQHUFldtKJj6Daclo6kvlfirttQdEcQhGr82_0Q17I4KczLlqrsalp0VIxL8xrPZ_3RDPkhn9u2v0IGyxgZBGkKH24PtrLRsZLd4TBX"/>
+<span class="font-serif text-lg font-semibold tracking-wider text-mineral-text">MLINI</span>
+</a>
+<!-- Primary Nav Links -->
+<nav class="hidden md:flex items-center gap-1 text-sm font-medium">
+<a class="px-3.5 py-1.5 rounded bg-mineral-card text-primary font-semibold border border-mineral-border/60 flex items-center gap-1.5" href="#">
+<span class="material-symbols-outlined text-[18px]">map</span>
+<span>Royaumes</span>
+</a>
+<a class="px-3.5 py-1.5 rounded text-muted hover:text-mineral-text hover:bg-mineral-card/50 transition-colors flex items-center gap-1.5" href="#">
+<span class="material-symbols-outlined text-[18px]">account_tree</span>
+<span>Arbre</span>
+</a>
+<a class="px-3.5 py-1.5 rounded text-muted hover:text-mineral-text hover:bg-mineral-card/50 transition-colors flex items-center gap-1.5" href="#">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+<span>Missions</span>
+</a>
+<a class="px-3.5 py-1.5 rounded text-muted hover:text-mineral-text hover:bg-mineral-card/50 transition-colors flex items-center gap-1.5" href="#">
+<span class="material-symbols-outlined text-[18px]">shield_person</span>
+<span>Profil</span>
+</a>
+</nav>
+</div>
+<!-- User Status (Gamer Level & Experience) -->
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-3 bg-mineral-card/80 px-3 py-1.5 rounded border border-mineral-border">
+<div class="flex items-center gap-1">
+<span class="font-mono text-xs font-bold text-secondary">NIV.</span>
+<span class="font-mono text-xs font-bold text-mineral-text">3</span>
+</div>
+<div class="h-3 w-px bg-mineral-border"></div>
+<div class="flex flex-col gap-1 min-w-[5.5rem]">
+<div class="flex justify-between items-center text-[10px] leading-none font-mono">
+<span class="text-primary font-semibold">420</span>
+<span class="text-muted">600 XP</span>
+</div>
+<div class="w-24 h-1.5 bg-mineral-bg rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 70%;"></div>
+</div>
+</div>
+</div>
+<!-- Avatar Medallion -->
+<a class="relative w-9 h-9 rounded-full bg-mineral-card border border-primary/40 flex items-center justify-center text-primary hover:border-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">person</span>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-primary rounded-full border-2 border-mineral-panel"></span>
+</a>
+</div>
+</header>
+<!-- Main Adventure Content Canvas -->
+<main class="flex-1 max-w-[1500px] w-full mx-auto p-6 flex flex-col gap-6">
+<!-- Kingdom Banner Plaque -->
+<div class="bg-mineral-panel border border-mineral-border rounded-[6px] p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+<div class="flex items-center gap-4">
+<!-- Kingdom Diamond Emblem -->
+<div class="w-12 h-12 rounded-[4px] bg-mineral-card border border-mineral-border flex items-center justify-center shrink-0">
+<div class="w-6 h-6 rotate-45 border-2 border-primary bg-primary/10 flex items-center justify-center">
+<div class="w-2 h-2 rotate-45 bg-primary"></div>
+</div>
+</div>
+<div>
+<div class="text-[11px] uppercase tracking-widest text-secondary font-semibold font-mono">Royaume I</div>
+<h1 class="font-serif text-2xl sm:text-3xl font-semibold text-mineral-text tracking-tight">Building with AI</h1>
+</div>
+</div>
+<!-- Clean Kingdom Stats -->
+<div class="flex items-center gap-3 self-start sm:self-center">
+<div class="flex items-center gap-2 bg-mineral-card px-3 py-1.5 rounded-[4px] border border-mineral-border/80">
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+<span class="text-xs text-mineral-text">3 / 10 missions terminées</span>
+</div>
+<div class="flex items-center gap-2 bg-mineral-card px-3 py-1.5 rounded-[4px] border border-mineral-border/80">
+<span class="material-symbols-outlined text-secondary text-[18px]">bolt</span>
+<span class="font-mono text-xs font-semibold text-secondary">420 XP</span>
+</div>
+</div>
+</div>
+<!-- Main Spatial Layout: Adventure Progression Map (Left) + Mission Drawer & Mildred Assembly (Right) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+<!-- Adventure Map Section (8 Cols) -->
+<div class="xl:col-span-8 flex flex-col gap-3">
+<!-- Map Subheader Controls -->
+<div class="flex items-center justify-between px-3 py-2 bg-mineral-panel border border-mineral-border rounded-[4px] text-xs">
+<div class="flex items-center gap-2 text-muted">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="text-[11px] font-medium tracking-wide">Carte de progression du Royaume</span>
+</div>
+<button class="flex items-center gap-1.5 text-xs text-primary hover:text-primary-dim transition-colors font-medium" id="centerActiveBtn">
+<span class="material-symbols-outlined text-[16px]">center_focus_strong</span>
+<span>Centrer la mission active</span>
+</button>
+</div>
+<!-- Adventure Map Canvas Frame -->
+<div class="relative bg-mineral-panel border border-mineral-border rounded-[6px] p-8 overflow-x-auto min-h-[580px] flex items-center justify-center select-none shadow-sm" id="mapViewport">
+<!-- Subtle clean architectural grid background -->
+<div class="absolute inset-0 pointer-events-none opacity-10">
+<svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<pattern height="32" id="dotgrid" patternunits="userSpaceOnUse" width="32">
+<circle cx="16" cy="16" fill="#63d9cc" r="1"></circle>
+</pattern>
+</defs>
+<rect fill="url(#dotgrid)" height="100%" width="100%"></rect>
+</svg>
+</div>
+<!-- Nodes & Path Container -->
+<div class="relative z-10 w-[960px] py-8 flex flex-col gap-28 mx-auto">
+<!-- Path SVG -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" fill="none" viewbox="0 0 960 480" xmlns="http://www.w3.org/2000/svg">
+<!-- Completed paths: Solid clean teal lines -->
+<path d="M 96 110 L 236 110 L 376 110 L 516 110" stroke="#63d9cc" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- Active transition: dashed teal line to active node M-04 -->
+<path d="M 516 110 L 656 110" stroke="#63d9cc" stroke-dasharray="6 6" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- Locked upper branch: muted slate -->
+<path d="M 656 110 L 796 110" stroke="#263A4C" stroke-dasharray="4 4" stroke-width="2"></path>
+<!-- Connecting trace down to row 2 -->
+<path d="M 516 110 L 516 230 L 96 230 L 96 350" stroke="#263A4C" stroke-dasharray="4 4" stroke-width="2"></path>
+<!-- Locked paths in row 2 -->
+<path d="M 96 350 L 236 350 L 376 350 L 516 350 L 720 350" stroke="#263A4C" stroke-dasharray="4 4" stroke-width="2"></path>
+<!-- Boss connector: prestige gold dashed trace -->
+<path d="M 720 350 L 836 350" stroke="#edc06a" stroke-dasharray="5 5" stroke-width="2"></path>
+<path d="M 796 110 C 850 180, 850 260, 836 350" stroke="#edc06a" stroke-dasharray="4 4" stroke-opacity="0.6" stroke-width="1.5"></path>
+</svg>
+<!-- ROW 1: Missions 01 -> 05 -->
+<div class="flex items-center justify-between relative px-6">
+<!-- Node 01: Completed -->
+<div class="group flex flex-col items-center cursor-pointer node-item" data-mission="1">
+<div class="w-14 h-14 bg-mineral-card border border-primary/50 rounded-[4px] flex items-center justify-center transition-all duration-200 group-hover:scale-105 group-hover:border-primary">
+<div class="w-7 h-7 rotate-45 bg-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[#062427] text-[16px] -rotate-45 font-bold">check</span>
+</div>
+</div>
+<div class="mt-3 flex flex-col items-center text-center max-w-[120px]">
+<span class="font-mono text-[10px] text-primary font-medium">M-01</span>
+<span class="text-xs font-medium text-mineral-text">The Black Box</span>
+<span class="text-[10px] text-muted">Terminé</span>
+</div>
+</div>
+<!-- Node 02: Completed -->
+<div class="group flex flex-col items-center cursor-pointer node-item" data-mission="2">
+<div class="w-14 h-14 bg-mineral-card border border-primary/50 rounded-[4px] flex items-center justify-center transition-all duration-200 group-hover:scale-105 group-hover:border-primary">
+<div class="w-7 h-7 rotate-45 bg-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[#062427] text-[16px] -rotate-45 font-bold">check</span>
+</div>
+</div>
+<div class="mt-3 flex flex-col items-center text-center max-w-[120px]">
+<span class="font-mono text-[10px] text-primary font-medium">M-02</span>
+<span class="text-xs font-medium text-mineral-text">Signal in Noise</span>
+<span class="text-[10px] text-muted">Terminé</span>
+</div>
+</div>
+<!-- Node 03: Completed -->
+<div class="group flex flex-col items-center cursor-pointer node-item" data-mission="3">
+<div class="w-14 h-14 bg-mineral-card border border-primary/50 rounded-[4px] flex items-center justify-center transition-all duration-200 group-hover:scale-105 group-hover:border-primary">
+<div class="w-7 h-7 rotate-45 bg-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[#062427] text-[16px] -rotate-45 font-bold">check</span>
+</div>
+</div>
+<div class="mt-3 flex flex-col items-center text-center max-w-[120px]">
+<span class="font-mono text-[10px] text-primary font-medium">M-03</span>
+<span class="text-xs font-medium text-mineral-text">Speak Machine</span>
+<span class="text-[10px] text-muted">Terminé</span>
+</div>
+</div>
+<!-- Node 04: Active Glowing Diamond -->
+<div class="group relative flex flex-col items-center cursor-pointer node-item" data-mission="4" id="activeMissionNode">
+<div class="relative w-16 h-16 bg-mineral-card border-2 border-primary rounded-[6px] flex items-center justify-center shadow-[0_0_16px_rgba(99,217,204,0.3)] transition-transform duration-200 group-hover:scale-105">
+<div class="w-8 h-8 rotate-45 bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[#062427] text-[18px] -rotate-45 font-bold animate-pulse">play_arrow</span>
+</div>
+<!-- Subtle pulsing beacon dot -->
+<span class="absolute -top-1.5 -right-1.5 flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+</span>
+</div>
+<div class="mt-3 flex flex-col items-center text-center max-w-[130px]">
+<span class="font-mono text-[10px] text-primary font-semibold">M-04</span>
+<span class="text-xs font-semibold text-primary">Fallback Protocols</span>
+<span class="text-[10px] text-secondary font-medium">En cours</span>
+</div>
+</div>
+<!-- Node 05: Locked -->
+<div class="group flex flex-col items-center cursor-pointer opacity-70 hover:opacity-100 transition-opacity node-item" data-mission="5">
+<div class="w-14 h-14 bg-mineral-card/60 border border-mineral-border rounded-[4px] flex items-center justify-center">
+<div class="w-7 h-7 rotate-45 bg-mineral-border/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-muted text-[15px] -rotate-45">lock</span>
+</div>
+</div>
+<div class="mt-3 flex flex-col items-center text-center max-w-[120px]">
+<span class="font-mono text-[10px] text-muted">M-05</span>
+<span class="text-xs font-medium text-muted">Context Window</span>
+<span class="text-[10px] text-muted-dark">Verrouillé</span>
+</div>
+</div>
+</div>
+<!-- ROW 2: Missions 06 -> 10 (Boss Mildred) -->
+<div class="flex items-center justify-between relative px-6">
+<!-- Node 06: Locked -->
+<div class="group flex flex-col items-center cursor-pointer opacity-70 hover:opacity-100 transition-opacity node-item" data-mission="6">
+<div class="w-14 h-14 bg-mineral-card/60 border border-mineral-border rounded-[4px] flex items-center justify-center">
+<div class="w-7 h-7 rotate-45 bg-mineral-border/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-muted text-[15px] -rotate-45">lock</span>
+</div>
+</div>
+<div class="mt-3 flex flex-col items-center text-center max-w-[120px]">
+<span class="font-mono text-[10px] text-muted">M-06</span>
+<span class="text-xs font-medium text-muted">Prompt Defense</span>
+<span class="text-[10px] text-muted-dark">Verrouillé</span>
+</div>
+</div>
+<!-- Node 07: Locked -->
+<div class="group flex flex-col items-center cursor-pointer opacity-70 hover:opacity-100 transition-opacity node-item" data-mission="7">
+<div class="w-14 h-14 bg-mineral-card/60 border border-mineral-border rounded-[4px] flex items-center justify-center">
+<div class="w-7 h-7 rotate-45 bg-mineral-border/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-muted text-[15px] -rotate-45">lock</span>
+</div>
+</div>
+<div class="mt-3 flex flex-col items-center text-center max-w-[120px]">
+<span class="font-mono text-[10px] text-muted">M-07</span>
+<span class="text-xs font-medium text-muted">Structured Extract</span>
+<span class="text-[10px] text-muted-dark">Verrouillé</span>
+</div>
+</div>
+<!-- Node 08: Locked -->
+<div class="group flex flex-col items-center cursor-pointer opacity-70 hover:opacity-100 transition-opacity node-item" data-mission="8">
+<div class="w-14 h-14 bg-mineral-card/60 border border-mineral-border rounded-[4px] flex items-center justify-center">
+<div class="w-7 h-7 rotate-45 bg-mineral-border/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-muted text-[15px] -rotate-45">lock</span>
+</div>
+</div>
+<div class="mt-3 flex flex-col items-center text-center max-w-[120px]">
+<span class="font-mono text-[10px] text-muted">M-08</span>
+<span class="text-xs font-medium text-muted">Eval Matrix</span>
+<span class="text-[10px] text-muted-dark">Verrouillé</span>
+</div>
+</div>
+<!-- Node 09: Locked -->
+<div class="group flex flex-col items-center cursor-pointer opacity-70 hover:opacity-100 transition-opacity node-item" data-mission="9">
+<div class="w-14 h-14 bg-mineral-card/60 border border-mineral-border rounded-[4px] flex items-center justify-center">
+<div class="w-7 h-7 rotate-45 bg-mineral-border/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-muted text-[15px] -rotate-45">lock</span>
+</div>
+</div>
+<div class="mt-3 flex flex-col items-center text-center max-w-[120px]">
+<span class="font-mono text-[10px] text-muted">M-09</span>
+<span class="text-xs font-medium text-muted">Orchestration</span>
+<span class="text-[10px] text-muted-dark">Verrouillé</span>
+</div>
+</div>
+<!-- Node 10: BOSS FINAL — Mildred Core -->
+<div class="group flex flex-col items-center cursor-pointer node-item" data-mission="10">
+<div class="relative w-16 h-16 bg-mineral-card border-2 border-secondary rounded-[6px] flex items-center justify-center shadow-[0_0_20px_rgba(237,192,106,0.25)] transition-transform duration-200 group-hover:scale-105">
+<div class="w-8 h-8 rotate-45 bg-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[#332400] text-[18px] -rotate-45 font-bold">shield</span>
+</div>
+<span class="absolute -top-2 px-1.5 py-0.2 bg-secondary rounded-[3px] text-[8px] font-mono text-[#332400] font-bold uppercase tracking-wider">BOSS</span>
+</div>
+<div class="mt-3 flex flex-col items-center text-center max-w-[140px]">
+<span class="font-mono text-[10px] text-secondary font-bold">M-10 · FINAL</span>
+<span class="font-serif text-xs font-bold text-secondary">Mildred Core</span>
+<span class="text-[10px] text-muted">Épreuve Finale</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between px-3 py-2 text-xs text-muted">
+<span>Sélectionne un nœud pour afficher le détail de la mission.</span>
+<span class="font-mono text-[11px] text-muted-dark">10 ÉTAPES DU ROYAUME</span>
+</div>
+</div>
+<!-- Right Side Panel (4 Cols): Mission Details & Projet Mildred Tracker -->
+<div class="xl:col-span-4 flex flex-col gap-5">
+<!-- Active Mission Drawer Card -->
+<div class="bg-mineral-panel border border-mineral-border rounded-[6px] p-5 flex flex-col gap-4 shadow-sm">
+<div class="flex items-center justify-between pb-3 border-b border-mineral-border/70">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rotate-45 bg-primary"></div>
+<span class="font-mono text-xs font-semibold text-primary" id="missionBadge">MISSION 04</span>
+</div>
+<span class="px-2 py-0.5 rounded-[4px] bg-mineral-card border border-mineral-border text-[11px] font-mono text-secondary font-medium" id="missionStatus">En cours</span>
+</div>
+<!-- Mission Title & Description -->
+<div class="flex flex-col gap-1.5">
+<h2 class="font-serif text-xl font-semibold text-mineral-text tracking-tight" id="missionTitle">Fallback Protocols</h2>
+<p class="text-xs leading-relaxed text-muted" id="missionDesc">
+              Concevoir une architecture résiliente aux erreurs d'API et dégradations de modèle grâce à des cascades d'appels probabilistes et de validateurs stricts.
+            </p>
+</div>
+<!-- Objectifs: 3 clean checklist items -->
+<div class="flex flex-col gap-2.5 bg-mineral-card p-3.5 rounded-[4px] border border-mineral-border/70">
+<div class="text-[11px] font-medium text-mineral-text uppercase tracking-wider">Objectifs</div>
+<div class="flex items-start gap-2 text-xs">
+<span class="material-symbols-outlined text-primary text-[17px] shrink-0 mt-0.5">check_box</span>
+<span class="text-mineral-text">Instancier une chaîne conditionnelle à 3 niveaux (Fast, Heavy, Rule-based)</span>
+</div>
+<div class="flex items-start gap-2 text-xs">
+<span class="material-symbols-outlined text-muted text-[17px] shrink-0 mt-0.5">check_box_outline_blank</span>
+<span class="text-muted">Implémenter un disjoncteur (Circuit Breaker) en cas de latence critique</span>
+</div>
+<div class="flex items-start gap-2 text-xs">
+<span class="material-symbols-outlined text-muted text-[17px] shrink-0 mt-0.5">check_box_outline_blank</span>
+<span class="text-muted">Garantir un format de retour conforme au schéma JSON en mode dégradé</span>
+</div>
+</div>
+<!-- Rewards Grid -->
+<div class="grid grid-cols-2 gap-2">
+<div class="bg-mineral-card p-2.5 rounded-[4px] border border-mineral-border/60 flex flex-col">
+<span class="text-[10px] text-muted">Récompense</span>
+<span class="font-mono text-xs font-bold text-secondary mt-0.5">+180 XP</span>
+</div>
+<div class="bg-mineral-card p-2.5 rounded-[4px] border border-mineral-border/60 flex flex-col">
+<span class="text-[10px] text-muted">Compétence débloquée</span>
+<span class="text-xs font-medium text-primary mt-0.5">Résilience d'API</span>
+</div>
+</div>
+<!-- Primary CTA Button -->
+<a class="w-full py-2.5 px-4 bg-primary hover:bg-primary-dim text-[#062427] font-semibold text-sm rounded-[4px] flex items-center justify-center gap-2 transition-colors shadow-sm mt-1" href="#">
+<span>Lancer la mission</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<!-- Project Mildred Modular Tracker -->
+<div class="bg-mineral-panel border border-mineral-border rounded-[6px] p-5 flex flex-col gap-3 shadow-sm">
+<div class="flex items-center justify-between pb-2.5 border-b border-mineral-border/70">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">settings_suggest</span>
+<h3 class="font-serif text-base font-semibold text-mineral-text">PROJET MILDRED</h3>
+</div>
+<span class="font-mono text-xs text-primary font-semibold">3 / 5 modules</span>
+</div>
+<p class="text-xs text-muted leading-relaxed">
+            Le système que tu construis pendant le Royaume I. Chaque mission réussie assemble une nouvelle capacité de ton agent.
+          </p>
+<!-- Modular Capabilities Checklist -->
+<div class="flex flex-col gap-2 mt-1">
+<div class="flex items-center justify-between p-2 rounded-[4px] bg-mineral-card border border-mineral-border/50 text-xs">
+<span class="text-mineral-text font-medium">Classification</span>
+<span class="text-primary font-bold">✓</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-[4px] bg-mineral-card border border-mineral-border/50 text-xs">
+<span class="text-mineral-text font-medium">Business Rules</span>
+<span class="text-primary font-bold">✓</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-[4px] bg-mineral-card border border-mineral-border/50 text-xs">
+<span class="text-mineral-text font-medium">Structured Output</span>
+<span class="text-primary font-bold">✓</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-[4px] bg-mineral-card border border-primary/40 text-xs">
+<span class="text-primary font-medium">Fallback Protocols</span>
+<span class="text-secondary font-mono text-[11px] animate-pulse">En cours...</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-[4px] bg-mineral-card/40 border border-mineral-border/30 text-xs opacity-60">
+<span class="text-muted">AI Integration</span>
+<span class="text-muted-dark text-sm">○</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+    (function() {
+      const missionData = {
+        1: {
+          badge: "MISSION 01",
+          title: "The Black Box",
+          desc: "Comprendre les limites physiques et probabilistes des LLMs. Ingestion des jetons, vecteurs latents et calcul de perplexité.",
+          status: "Terminé (+100 XP)",
+          btn: "Revoir la mission"
+        },
+        2: {
+          badge: "MISSION 02",
+          title: "Signal in the Noise",
+          desc: "Filtrage et pré-traitement sémantique des requêtes. Élimination des ambiguïtés et extraction de signaux clairs.",
+          status: "Terminé (+120 XP)",
+          btn: "Revoir la mission"
+        },
+        3: {
+          badge: "MISSION 03",
+          title: "Speak Machine",
+          desc: "Contraindre la génération textuelle par schémas stricts sans altération de la précision sémantique.",
+          status: "Terminé (+150 XP)",
+          btn: "Revoir la mission"
+        },
+        4: {
+          badge: "MISSION 04",
+          title: "Fallback Protocols",
+          desc: "Concevoir une architecture résiliente aux erreurs d'API et dégradations de modèle grâce à des cascades d'appels probabilistes et de validateurs stricts.",
+          status: "En cours (+180 XP)",
+          btn: "Lancer la mission"
+        },
+        5: {
+          badge: "MISSION 05",
+          title: "The Context Window",
+          desc: "Gestion de l'attention et compression dynamique de contexte pour agents conversationnels multi-tours.",
+          status: "Verrouillé (+200 XP)",
+          btn: "Mission Verrouillée"
+        },
+        6: {
+          badge: "MISSION 06",
+          title: "Prompt Injection Defense",
+          desc: "Construction d'une ligne de défense logique contre les attaques par détournement d'instructions.",
+          status: "Verrouillé (+220 XP)",
+          btn: "Mission Verrouillée"
+        },
+        7: {
+          badge: "MISSION 07",
+          title: "Structured Extraction",
+          desc: "Extraction de données typées et validation schématique à partir de documents non structurés.",
+          status: "Verrouillé (+250 XP)",
+          btn: "Mission Verrouillée"
+        },
+        8: {
+          badge: "MISSION 08",
+          title: "Evaluation Matrix",
+          desc: "Évaluation de la performance des modèles par benchmark automatique et contrôle statistique.",
+          status: "Verrouillé (+280 XP)",
+          btn: "Mission Verrouillée"
+        },
+        9: {
+          badge: "MISSION 09",
+          title: "Multi-Step Orchestration",
+          desc: "Coordination d'agents spécialistes avec décomposition des tâches et boucles de correction.",
+          status: "Verrouillé (+320 XP)",
+          btn: "Mission Verrouillée"
+        },
+        10: {
+          badge: "MISSION 10 — BOSS FINAL",
+          title: "Mildred Core",
+          desc: "Assemblage final et déploiement du système autonome MILDRED complet en production.",
+          status: "Épreuve Finale (+500 XP)",
+          btn: "Épreuve Verrouillée"
+        }
+      };
+
+      const nodes = document.querySelectorAll('.node-item');
+      const badge = document.getElementById('missionBadge');
+      const title = document.getElementById('missionTitle');
+      const desc = document.getElementById('missionDesc');
+      const status = document.getElementById('missionStatus');
+      const centerBtn = document.getElementById('centerActiveBtn');
+      const activeNode = document.getElementById('activeMissionNode');
+
+      nodes.forEach(node => {
+        node.addEventListener('click', function() {
+          const id = this.getAttribute('data-mission');
+          const data = missionData[id];
+          if (data && title && desc) {
+            badge.textContent = data.badge;
+            title.textContent = data.title;
+            desc.textContent = data.desc;
+            status.textContent = data.status;
+          }
+        });
+      });
+
+      if (centerBtn && activeNode) {
+        centerBtn.addEventListener('click', function() {
+          activeNode.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        });
+      }
+    })();
+  </script>
+</body></html>

@@ -1,17 +1,19 @@
 @import "tailwindcss";
 
 /* ============================================================
-   MLINI — Arcane Academy (default theme)
+   MLINI — Adventure Tech (default theme)
    Calm learning UI + rare prestige accents.
+   Internal alias: data-theme="arcane-academy" (legacy).
    Cosmetic skins override these tokens later.
    ============================================================ */
 
 :root,
 [data-theme="arcane-academy"],
-[data-theme="arcane-tech"] {
+[data-theme="arcane-tech"],
+[data-theme="adventure-tech"] {
   /* ============================================================
-     Arcane Academy palette experiment (token source of truth)
-     TEXT #EEE8DA · BG #09131D · PRIMARY #42BDB1 · SECONDARY #607B92 · ACCENT #CFA552
+     Adventure Tech palette (token source of truth)
+     TEXT #EEE8DA · BG #09131D · PRIMARY #42BDB1 · SECONDARY #607B92 · PRESTIGE #CFA552
      ============================================================ */
 
   /* --- Concentration (~80%) — night navy, not terminal black --- */
@@ -433,8 +435,8 @@ html[data-home="true"] .ml-atmosphere__veil {
 
 .ml-node {
   display: inline-block;
-  width: 8px;
-  height: 8px;
+  width: 14px;
+  height: 14px;
   border-radius: 2px;
   border: 1px solid transparent;
   transition:
@@ -466,8 +468,8 @@ html[data-home="true"] .ml-atmosphere__veil {
 }
 
 .ml-node-boss {
-  width: 10px;
-  height: 10px;
+  width: 16px;
+  height: 16px;
   background: transparent;
   border: 1px solid var(--ml-node-boss);
   transform: rotate(45deg);
@@ -484,8 +486,8 @@ html[data-home="true"] .ml-atmosphere__veil {
 }
 
 .ml-connection {
-  height: 1px;
-  width: 6px;
+  height: 2px;
+  width: 12px;
   background: var(--ml-connection-locked);
 }
 

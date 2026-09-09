@@ -28,12 +28,28 @@ interface ProgressContextValue {
     rewards?: { skillId?: string; capabilityId?: string }
   ) => PlayerProgress;
   markMissionPlayed: (missionId: string) => void;
+  equipTitle: (titleId: string | null) => void;
+  equipFrame: (frameId: string) => void;
   resetProgress: () => void;
 }
 
 const ProgressContext = createContext<ProgressContextValue | null>(null);
 
-let memoryProgress: PlayerProgress = { ...DEFAULT_PROGRESS };
+function cloneProgress(source: PlayerProgress): PlayerProgress {
+  return {
+    ...source,
+    completedMissions: [...source.completedMissions],
+    unlockedMissions: [...source.unlockedMissions],
+    unlockedSkills: [...source.unlockedSkills],
+    unlockedCapabilities: [...source.unlockedCapabilities],
+    unlockedTitleIds: [...source.unlockedTitleIds],
+    unlockedFrameIds: [...source.unlockedFrameIds],
+    unlockedAchievementIds: [...source.unlockedAchievementIds],
+    activityDates: [...source.activityDates],
+  };
+}
+
+let memoryProgress: PlayerProgress = cloneProgress(DEFAULT_PROGRESS);
 let didReadStorage = false;
 const listeners = new Set<() => void>();
 
@@ -48,7 +64,6 @@ function hydrateFromStorage() {
 }
 
 function subscribe(listener: () => void) {
-  hydrateFromStorage();
   listeners.add(listener);
 
   const onStorage = (e: StorageEvent) => {
@@ -59,7 +74,12 @@ function subscribe(listener: () => void) {
     }
   };
   window.addEventListener("storage", onStorage);
-  queueMicrotask(() => emit());
+
+  // Defer localStorage read so the first client render matches SSR.
+  queueMicrotask(() => {
+    hydrateFromStorage();
+    emit();
+  });
 
   return () => {
     listeners.delete(listener);
@@ -68,6 +88,8 @@ function subscribe(listener: () => void) {
 }
 
 function getClientSnapshot(): PlayerProgress {
+  // Identical to server until storage has been applied post-hydration.
+  if (!didReadStorage) return DEFAULT_PROGRESS;
   return memoryProgress;
 }
 
@@ -81,7 +103,7 @@ function subscribeIsClient(onStoreChange: () => void) {
 }
 
 function getIsClientSnapshot() {
-  return true;
+  return didReadStorage;
 }
 
 function getIsClientServerSnapshot() {
@@ -129,13 +151,26 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   );
 
   const markMissionPlayed = useCallback((missionId: string) => {
+    hydrateFromStorage();
     const next = touchLastPlayedMission(memoryProgress, missionId);
     if (next === memoryProgress) return;
     writeProgress(next);
   }, []);
 
+  const equipTitle = useCallback((titleId: string | null) => {
+    hydrateFromStorage();
+    if (titleId && !memoryProgress.unlockedTitleIds.includes(titleId)) return;
+    writeProgress({ ...memoryProgress, equippedTitleId: titleId });
+  }, []);
+
+  const equipFrame = useCallback((frameId: string) => {
+    hydrateFromStorage();
+    if (!memoryProgress.unlockedFrameIds.includes(frameId)) return;
+    writeProgress({ ...memoryProgress, equippedFrameId: frameId });
+  }, []);
+
   const resetProgress = useCallback(() => {
-    writeProgress({ ...DEFAULT_PROGRESS });
+    writeProgress(cloneProgress(DEFAULT_PROGRESS));
   }, []);
 
   const value = useMemo(
@@ -144,6 +179,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       ready,
       completeMissionAndUnlock,
       markMissionPlayed,
+      equipTitle,
+      equipFrame,
       resetProgress,
     }),
     [
@@ -151,6 +188,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       ready,
       completeMissionAndUnlock,
       markMissionPlayed,
+      equipTitle,
+      equipFrame,
       resetProgress,
     ]
   );

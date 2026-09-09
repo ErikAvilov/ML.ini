@@ -12,26 +12,23 @@ export function PlayerStatsBar() {
   const xp = xpProgressInLevel(progress.xp);
 
   return (
-    <div className="grid gap-4 rounded-xl border border-line bg-panel/70 p-4 backdrop-blur-md sm:grid-cols-[1fr_auto_auto] sm:items-end">
+    <div className="grid min-w-0 gap-3 rounded-ml border border-ml-border bg-ml-surface-2 px-3 py-2.5 sm:grid-cols-[minmax(130px,1fr)_auto_auto] sm:items-center">
       <XpBar
         current={ready ? xp.current : 0}
         needed={xp.needed}
         level={ready ? xp.level : 1}
         animateKey={progress.xp}
       />
-      <div className="flex items-center gap-2 text-sm text-fog">
-        <Sparkles className="h-4 w-4 text-signal" />
-        <span className="font-mono text-signal">
-          {t(messages.xpShort, { xp: progress.xp })}
+      <div className="flex items-center gap-1.5 text-sm">
+        <Sparkles className="h-4 w-4 text-ml-accent" />
+        <span className="font-mono text-ml-accent">
+          {t(messages.xpShort, { xp: ready ? progress.xp : 0 })}
         </span>
       </div>
-      <div className="flex items-center gap-2 text-sm text-fog">
-        <Flame className="h-4 w-4 text-amber" />
-        <span className="font-mono text-amber">
-          {progress.streak} {messages.days}
-        </span>
-        <span className="text-[10px] uppercase tracking-widest text-mist">
-          {messages.streak}
+      <div className="flex items-center gap-1.5 text-sm">
+        <Flame className="h-4 w-4 text-ml-reward" />
+        <span className="font-mono text-ml-reward">
+          {ready ? progress.streak : 0} {messages.days}
         </span>
       </div>
     </div>

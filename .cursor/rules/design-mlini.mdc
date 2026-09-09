@@ -1,13 +1,9 @@
----
-description: Design & UX Mlini — lire docs/DESIGN_SYSTEM.md avant de modifier l’UI ou les missions
-alwaysApply: true
----
-
 # Design Mlini
 
 Avant de changer l’UI, le layout mission, ou le contenu pédagogique, lire :
 
-- `docs/DESIGN_SYSTEM.md` (tokens Arcane Academy — source de vérité visuelle)
+- `docs/DESIGN_SYSTEM.md` (tokens Adventure Tech — source de vérité visuelle)
+- `docs/UI_ARCHITECTURE.md` (layouts / composants / Stitch = visuel only)
 - `docs/design/MISSION-UX.md` (si mission / playground)
 - `docs/design/PEDAGOGY.md` (si briefing / feedback / réussite)
 - `docs/design/PRODUCT.md` (si scope / nouvelles features)
@@ -23,3 +19,4 @@ Avant de changer l’UI, le layout mission, ou le contenu pédagogique, lire :
 - L’or / bronze (`--ml-reward`) reste rare ; le teal a un sens fonctionnel
 - Théorie / concepts après la pratique, pas avant
 - Ne pas casser le canon narratif sans demande explicite du product owner
+- Ne pas importer le curriculum inventé de `design-reference/stitch/`

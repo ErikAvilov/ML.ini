@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+    }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "background": "#09131D",
+            "panel": "#101D29",
+            "panel-elevated": "#152433",
+            "border-subtle": "#263A4C",
+            "border-muted": "#1C2D3D",
+            "primary": "#42BDB1",
+            "primary-hover": "#36a398",
+            "secondary": "#CFA552",
+            "text-main": "#EEE8DA",
+            "text-muted": "#8A9EA8",
+            "text-dim": "#607B92"
+          },
+          borderRadius: {
+            "DEFAULT": "4px",
+            "sm": "4px",
+            "md": "6px",
+            "lg": "8px"
+          },
+          fontFamily: {
+            serif: ["Playfair Display", "Georgia", "serif"],
+            sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"],
+            cinzel: ["Cinzel", "serif"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-background font-sans text-text-main antialiased selection:bg-primary selection:text-background min-h-screen flex flex-col">
+<!-- GLOBAL NAVIGATION -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border-subtle/70">
+<div class="max-w-6xl mx-auto h-16 px-6 flex items-center justify-between">
+<!-- Logo & Main Nav -->
+<div class="flex items-center gap-10">
+<a class="flex items-center gap-3 group focus:outline-none" data-path="home" href="#">
+<!-- Diamond Node SVG Emblem -->
+<div class="w-8 h-8 relative flex items-center justify-center">
+<svg class="w-8 h-8 transition-transform group-hover:scale-105 duration-200" viewbox="0 0 40 40">
+<polygon fill="#101D29" points="20,2 38,20 20,38 2,20" stroke="#263A4C" stroke-width="1.5"></polygon>
+<polygon fill="#152433" points="20,8 32,20 20,32 8,20" stroke="#42BDB1" stroke-width="1.2"></polygon>
+<polygon fill="#42BDB1" points="20,15 25,20 20,25 15,20"></polygon>
+<circle cx="20" cy="20" fill="#EEE8DA" r="1.5"></circle>
+<circle cx="20" cy="2" fill="#CFA552" r="1.5"></circle>
+</svg>
+</div>
+<span class="font-cinzel text-lg font-bold tracking-[0.2em] text-text-main">MLINI</span>
+</a>
+<nav class="hidden md:flex items-center gap-7 text-sm font-medium">
+<a class="text-text-muted hover:text-text-main transition-colors" data-path="kingdom" href="#">Royaumes</a>
+<a class="text-text-muted hover:text-text-main transition-colors" data-path="tree" href="#">Arbre</a>
+<a class="text-text-muted hover:text-text-main transition-colors" data-path="workspace" href="#">Missions</a>
+<a class="text-text-muted hover:text-text-main transition-colors" data-path="profile" href="#">Profil</a>
+</nav>
+</div>
+<!-- User Progression & Profile -->
+<div class="flex items-center gap-5">
+<div class="hidden sm:flex items-center gap-3 py-1.5 px-3 rounded bg-panel border border-border-muted text-xs">
+<span class="font-mono text-secondary font-semibold">Niv. 3</span>
+<span class="text-border-subtle">·</span>
+<div class="flex items-center gap-2">
+<div class="w-16 h-1 bg-border-muted rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 70%;"></div>
+</div>
+<span class="font-mono text-text-muted text-[11px]">420 XP</span>
+</div>
+</div>
+<a class="w-8 h-8 rounded-full bg-panel-elevated border border-border-subtle hover:border-primary flex items-center justify-center transition-colors" data-path="profile" href="#">
+<div class="w-2.5 h-2.5 rotate-45 border border-primary bg-primary/20"></div>
+</a>
+</div>
+</div>
+</header>
+<!-- MAIN CONTENT -->
+<main class="flex-1 w-full pt-16">
+<!-- HERO SECTION -->
+<section class="relative w-full pt-20 pb-16 px-6 flex flex-col items-center text-center">
+<div class="max-w-3xl flex flex-col items-center">
+<!-- Eyebrow -->
+<span class="text-[11px] font-mono tracking-[0.25em] text-primary uppercase font-semibold mb-5">
+          Apprends en construisant
+        </span>
+<!-- Headline -->
+<h1 class="font-serif text-4xl sm:text-5xl lg:text-[54px] font-semibold text-text-main tracking-tight leading-[1.15] mb-5">
+          Apprends l’IA en la construisant.
+        </h1>
+<!-- Subtitle -->
+<p class="text-base sm:text-lg text-text-muted max-w-xl font-normal leading-relaxed mb-8">
+          Progresse à travers des Royaumes, résous des missions et construis de vrais systèmes avec l’IA.
+        </p>
+<!-- CTA & Subtext -->
+<div class="flex flex-col items-center gap-3">
+<a class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-primary hover:bg-primary-hover text-[#09131D] font-semibold text-sm tracking-wide rounded-sm transition-all duration-150 shadow-sm" data-path="workspace" href="#">
+<span>ENTRER DANS LE ROYAUME I</span>
+<span class="text-base font-bold">→</span>
+</a>
+<span class="text-xs text-text-dim font-sans">Gratuit · Aucun prérequis</span>
+</div>
+</div>
+<!-- KINGDOM I PLAQUE -->
+<div class="w-full max-w-3xl mt-16">
+<div class="bg-panel border border-border-subtle rounded-md p-7 text-left shadow-lg">
+<!-- Plaque Header -->
+<div class="flex flex-col sm:flex-row sm:items-baseline justify-between border-b border-border-muted pb-4 mb-6 gap-2">
+<div>
+<span class="font-mono text-[10px] uppercase tracking-[0.2em] text-primary block mb-1">Royaume I</span>
+<h2 class="font-serif text-2xl font-semibold text-text-main">Building with AI</h2>
+</div>
+<div class="font-mono text-xs text-secondary tracking-wider">
+              10 MISSIONS · 1 BOSS · 1 SYSTÈME À CONSTRUIRE
+            </div>
+</div>
+<!-- Connected Mission Path -->
+<div class="py-4">
+<div class="relative flex items-center justify-between">
+<!-- Background Connecting Line -->
+<div class="absolute left-3 right-3 top-1/2 -translate-y-1/2 h-[1.5px] bg-border-subtle z-0"></div>
+<!-- Completed Portion of Line -->
+<div class="absolute left-3 top-1/2 -translate-y-1/2 h-[1.5px] bg-primary z-0" style="width: 33.3%;"></div>
+<!-- Node 1: Completed -->
+<div class="relative z-10 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-background text-[11px]" title="Mission 1">
+<span class="font-bold leading-none">✓</span>
+</div>
+<!-- Node 2: Completed -->
+<div class="relative z-10 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-background text-[11px]" title="Mission 2">
+<span class="font-bold leading-none">✓</span>
+</div>
+<!-- Node 3: Completed -->
+<div class="relative z-10 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-background text-[11px]" title="Mission 3">
+<span class="font-bold leading-none">✓</span>
+</div>
+<!-- Node 4: Active Teal Diamond with subtle glow -->
+<div class="relative z-10 w-6 h-6 flex items-center justify-center" title="Mission 4 - En cours">
+<div class="w-3.5 h-3.5 rotate-45 bg-primary shadow-[0_0_10px_rgba(66,189,177,0.8)] border border-[#EEE8DA]"></div>
+</div>
+<!-- Nodes 5-9: Muted Locked Circles -->
+<div class="relative z-10 w-5 h-5 rounded-full bg-panel-elevated border border-border-subtle flex items-center justify-center" title="Mission 5">
+<div class="w-1.5 h-1.5 rounded-full bg-border-subtle"></div>
+</div>
+<div class="relative z-10 w-5 h-5 rounded-full bg-panel-elevated border border-border-subtle flex items-center justify-center" title="Mission 6">
+<div class="w-1.5 h-1.5 rounded-full bg-border-subtle"></div>
+</div>
+<div class="relative z-10 w-5 h-5 rounded-full bg-panel-elevated border border-border-subtle flex items-center justify-center" title="Mission 7">
+<div class="w-1.5 h-1.5 rounded-full bg-border-subtle"></div>
+</div>
+<div class="relative z-10 w-5 h-5 rounded-full bg-panel-elevated border border-border-subtle flex items-center justify-center" title="Mission 8">
+<div class="w-1.5 h-1.5 rounded-full bg-border-subtle"></div>
+</div>
+<div class="relative z-10 w-5 h-5 rounded-full bg-panel-elevated border border-border-subtle flex items-center justify-center" title="Mission 9">
+<div class="w-1.5 h-1.5 rounded-full bg-border-subtle"></div>
+</div>
+<!-- Node 10: Gold Boss Diamond -->
+<div class="relative z-10 w-6 h-6 flex items-center justify-center" title="Mission 10 - Boss">
+<div class="w-4 h-4 rotate-45 bg-secondary shadow-[0_0_8px_rgba(207,165,82,0.6)] flex items-center justify-center">
+<div class="w-1.5 h-1.5 bg-[#101D29]"></div>
+</div>
+</div>
+</div>
+<!-- Current Step Indicator -->
+<div class="mt-6 pt-3 border-t border-border-muted flex items-center justify-between text-xs font-mono">
+<span class="text-primary font-medium">Mission 04 en cours : Structured Output</span>
+<span class="text-text-dim">Étape 4 sur 10</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- LEARNING LOOP SECTION -->
+<section class="w-full py-20 px-6 border-y border-border-muted bg-[#0B1724]">
+<div class="max-w-3xl mx-auto flex flex-col items-center text-center">
+<h2 class="font-serif text-2xl sm:text-3xl font-semibold text-text-main mb-3">
+          Tu rencontres le problème avant la théorie.
+        </h2>
+<p class="text-sm sm:text-base text-text-muted max-w-xl mb-10 leading-relaxed font-normal">
+          Pas de vidéos magistrales de 40 minutes : un terminal, une anomalie concrète, et un code qui refuse de compiler tant que ton architecture n'est pas robuste.
+        </p>
+<!-- Step-by-Step Clean Pipeline -->
+<div class="w-full bg-panel border border-border-subtle rounded-md p-6 sm:p-8">
+<div class="flex flex-wrap sm:flex-nowrap items-center justify-center sm:justify-between gap-3 sm:gap-2 font-mono text-xs sm:text-sm font-semibold tracking-wider">
+<span class="text-text-muted">PROBLÈME</span>
+<span class="text-border-subtle text-base font-sans">→</span>
+<span class="text-text-muted">ESSAIE</span>
+<span class="text-border-subtle text-base font-sans">→</span>
+<span class="text-text-muted">LANCE</span>
+<span class="text-border-subtle text-base font-sans">→</span>
+<span class="text-primary">CORRIGE</span>
+<span class="text-border-subtle text-base font-sans">→</span>
+<span class="text-secondary">RÉUSSIS</span>
+</div>
+</div>
+</div>
+</section>
+<!-- PROJECT MILDRED -->
+<section class="w-full py-20 px-6">
+<div class="max-w-4xl mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
+<!-- Narrative Left Side -->
+<div class="md:col-span-6 flex flex-col items-start pt-2">
+<span class="font-mono text-[11px] uppercase tracking-[0.2em] text-primary font-semibold mb-2">
+              Système Tangible
+            </span>
+<h2 class="font-serif text-3xl font-semibold text-text-main mb-3">
+              Projet MILDRED
+            </h2>
+<p class="text-sm font-medium text-text-main mb-3">
+              Chaque mission ajoute une brique au système que tu construis.
+            </p>
+<p class="text-sm text-text-muted leading-relaxed mb-6 font-normal">
+              Tu ne réalises pas de tutoriels déconnectés de la réalité. Chaque mission assemble une brique d'un agent complet prêt pour la production.
+            </p>
+<a class="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-primary hover:text-primary-hover transition-colors" data-path="workspace" href="#">
+<span>Voir le système en cours</span>
+<span class="text-sm">→</span>
+</a>
+</div>
+<!-- Component Module List Right Side -->
+<div class="md:col-span-6">
+<div class="bg-panel border border-border-subtle rounded-md divide-y divide-border-muted shadow-sm">
+<!-- Module 1: Validated -->
+<div class="flex items-center justify-between p-3.5 px-4 font-mono text-xs">
+<span class="text-text-main font-medium">Classification</span>
+<span class="text-primary font-bold">✓</span>
+</div>
+<!-- Module 2: Validated -->
+<div class="flex items-center justify-between p-3.5 px-4 font-mono text-xs">
+<span class="text-text-main font-medium">Business Rules</span>
+<span class="text-primary font-bold">✓</span>
+</div>
+<!-- Module 3: Validated -->
+<div class="flex items-center justify-between p-3.5 px-4 font-mono text-xs">
+<span class="text-text-main font-medium">Structured Output</span>
+<span class="text-primary font-bold">✓</span>
+</div>
+<!-- Module 4: In Progress -->
+<div class="flex items-center justify-between p-3.5 px-4 font-mono text-xs bg-panel-elevated">
+<span class="text-text-main font-semibold">Data Parsing</span>
+<span class="text-primary flex items-center gap-1.5">
+<span class="inline-block w-2 h-2 rounded-full border border-primary"></span>
+<span class="text-[11px] font-normal text-text-muted">En cours</span>
+</span>
+</div>
+<!-- Module 5: Locked -->
+<div class="flex items-center justify-between p-3.5 px-4 font-mono text-xs opacity-60">
+<span class="text-text-dim">Decision Logic</span>
+<span class="text-text-dim flex items-center gap-1.5">
+<span class="inline-block w-2 h-2 rounded-full border border-border-subtle"></span>
+<span class="text-[11px] font-normal">Verrouillé</span>
+</span>
+</div>
+<!-- Module 6: Locked -->
+<div class="flex items-center justify-between p-3.5 px-4 font-mono text-xs opacity-60">
+<span class="text-text-dim">AI Integration</span>
+<span class="text-text-dim flex items-center gap-1.5">
+<span class="inline-block w-2 h-2 rounded-full border border-border-subtle"></span>
+<span class="text-[11px] font-normal">Verrouillé</span>
+</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SKILL TREE TEASER -->
+<section class="w-full py-20 px-6 border-t border-border-muted bg-[#0B1724]">
+<div class="max-w-2xl mx-auto flex flex-col items-center">
+<!-- Title & Subtitle -->
+<div class="text-center mb-10">
+<h2 class="font-serif text-2xl sm:text-3xl font-semibold text-text-main mb-2">
+            Ton Arbre de Compétences
+          </h2>
+<p class="text-sm text-text-muted">
+            Chaque compétence que tu prouves rejoint ton arbre de compétences.
+          </p>
+</div>
+<!-- Vertical Flowing Knowledge Graph -->
+<div class="w-full max-w-md bg-panel border border-border-subtle rounded-md p-6 sm:p-8">
+<div class="relative flex flex-col items-center">
+<!-- Continuous vertical line -->
+<div class="absolute top-4 bottom-4 w-[1px] bg-border-subtle left-1/2 -translate-x-1/2"></div>
+<!-- Node 1: LLM Fundamentals I -->
+<div class="relative z-10 flex flex-col items-center w-full mb-6">
+<div class="flex items-center gap-3 w-full justify-start pl-8 sm:pl-16">
+<div class="w-4 h-4 rotate-45 border border-primary bg-panel-elevated flex items-center justify-center shrink-0 -ml-[9px]">
+<div class="w-1.5 h-1.5 bg-primary"></div>
+</div>
+<div class="flex items-baseline justify-between flex-1 pr-4">
+<span class="text-sm font-medium text-text-main">LLM Fundamentals I</span>
+<span class="font-mono text-xs text-primary font-semibold">Validé</span>
+</div>
+</div>
+</div>
+<!-- Node 2: Prompting I -->
+<div class="relative z-10 flex flex-col items-center w-full mb-6">
+<div class="flex items-center gap-3 w-full justify-start pl-8 sm:pl-16">
+<div class="w-4 h-4 rotate-45 border border-primary bg-panel-elevated flex items-center justify-center shrink-0 -ml-[9px]">
+<div class="w-1.5 h-1.5 bg-primary"></div>
+</div>
+<div class="flex items-baseline justify-between flex-1 pr-4">
+<span class="text-sm font-medium text-text-main">Prompting I</span>
+<span class="font-mono text-xs text-primary font-semibold">Validé</span>
+</div>
+</div>
+</div>
+<!-- Node 3: Structured Output I (Active) -->
+<div class="relative z-10 flex flex-col items-center w-full mb-6">
+<div class="flex items-center gap-3 w-full justify-start pl-8 sm:pl-16">
+<div class="w-4 h-4 rotate-45 bg-primary shadow-[0_0_8px_rgba(66,189,177,0.8)] border border-text-main flex items-center justify-center shrink-0 -ml-[9px]"></div>
+<div class="flex items-baseline justify-between flex-1 pr-4">
+<span class="text-sm font-semibold text-text-main">Structured Output I</span>
+<span class="font-mono text-xs text-primary font-semibold">En cours</span>
+</div>
+</div>
+</div>
+<!-- Node 4: JSON & Schemas (Locked) -->
+<div class="relative z-10 flex flex-col items-center w-full mb-6">
+<div class="flex items-center gap-3 w-full justify-start pl-8 sm:pl-16">
+<div class="w-4 h-4 rotate-45 border border-text-dim bg-panel flex items-center justify-center shrink-0 -ml-[9px]"></div>
+<div class="flex items-baseline justify-between flex-1 pr-4">
+<span class="text-sm font-normal text-text-dim">JSON &amp; Schemas</span>
+<span class="font-mono text-xs text-text-dim">Verrouillé</span>
+</div>
+</div>
+</div>
+<!-- Node 5: Agents Autonomes (Gold Capstone) -->
+<div class="relative z-10 flex flex-col items-center w-full">
+<div class="flex items-center gap-3 w-full justify-start pl-8 sm:pl-16">
+<div class="w-4 h-4 rotate-45 bg-secondary shadow-[0_0_8px_rgba(207,165,82,0.5)] border border-[#EEE8DA] flex items-center justify-center shrink-0 -ml-[9px]"></div>
+<div class="flex items-baseline justify-between flex-1 pr-4">
+<span class="text-sm font-medium text-secondary">Agents Autonomes</span>
+<span class="font-mono text-xs text-secondary font-semibold">Boss Capstone</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<a class="mt-6 inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-primary hover:text-primary-hover transition-colors" data-path="tree" href="#">
+<span>Explorer l'arbre complet</span>
+<span class="text-sm">→</span>
+</a>
+</div>
+</section>
+<!-- FINAL CALL TO ACTION -->
+<section class="w-full py-20 px-6 border-t border-border-muted flex flex-col items-center text-center">
+<div class="max-w-xl flex flex-col items-center gap-5">
+<h3 class="font-serif text-2xl sm:text-3xl font-semibold text-text-main">
+          Prêt à poser ta première brique ?
+        </h3>
+<p class="text-sm text-text-muted leading-relaxed">
+          Le terminal du Royaume I est initialisé et attend tes instructions. Aucune configuration locale nécessaire.
+        </p>
+<a class="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-primary hover:bg-primary-hover text-[#09131D] font-semibold text-sm tracking-wide rounded-sm transition-all duration-150" data-path="workspace" href="#">
+<span>Rejoindre la mission 01</span>
+<span class="text-base font-bold">→</span>
+</a>
+</div>
+</section>
+</main>
+<!-- REFINED FOOTER -->
+<footer class="w-full border-t border-border-muted py-6 px-6 bg-background">
+<div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-text-dim">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 rotate-45 bg-primary/60"></div>
+<span>MLINI</span>
+</div>
+<div>
+        © 2025 MLINI. Apprendre l'IA par la pratique.
+      </div>
+</div>
+</footer>
+</body></html>

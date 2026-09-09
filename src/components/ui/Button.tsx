@@ -37,15 +37,20 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       md: "px-4 py-2.5 text-[length:var(--ml-text-sm)]",
       lg: "px-5 py-3 text-[length:var(--ml-text-base)]",
     };
+    const isDisabled = Boolean(disabled);
 
     return (
       <button
         ref={ref}
         type={type}
-        disabled={disabled}
         className={`inline-flex cursor-pointer items-center justify-center gap-2 font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-40 ${variants[variant]} ${sizes[size]} ${className}`}
         style={{ borderRadius: "var(--ml-frame-radius)" }}
         {...props}
+        // React 19 SSR emits disabled="" ; comparing to disabled={true} can false-positive.
+        // Keep native disabled for a11y, silence the known boolean-attr hydration noise.
+        disabled={isDisabled}
+        aria-disabled={isDisabled || undefined}
+        suppressHydrationWarning
       />
     );
   }

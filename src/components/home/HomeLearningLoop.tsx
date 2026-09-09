@@ -10,35 +10,32 @@ export function HomeLearningLoop({ messages }: HomeLearningLoopProps) {
     messages.homeLoopTry,
     messages.homeLoopRun,
     messages.homeLoopFail,
-    messages.homeLoopUnderstand,
     messages.homeLoopSucceed,
-  ];
+  ].filter(Boolean);
 
   return (
-    <section className="ml-home-section mx-auto max-w-3xl px-4 text-center sm:px-6">
-      <p className="ml-section-label">{messages.homeLoopTitle}</p>
-      <h2 className="mt-3 font-display text-[length:var(--ml-text-2xl)] text-ml-text sm:text-3xl">
+    <section className="ml-home-section mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 className="font-display text-[length:var(--ml-text-2xl)] text-ml-text sm:text-3xl">
         {messages.homeLoopLead}
       </h2>
-      <p className="mx-auto mt-3 max-w-xl text-[length:var(--ml-text-base)] leading-[var(--ml-leading-body)] text-ml-text-body">
-        {messages.homeLoopSupport}
-      </p>
 
-      <ol className="ml-home-loop mt-10 flex flex-col items-center gap-0 sm:mt-12">
+      <ol className="mt-10 flex flex-col items-stretch justify-center gap-2 sm:mt-12 sm:flex-row sm:flex-wrap sm:items-center sm:gap-1">
         {steps.map((step, i) => (
-          <li key={step} className="flex flex-col items-center">
+          <li key={step} className="flex items-center justify-center gap-1 sm:gap-1.5">
             <span
-              className={`ml-home-fade inline-flex min-w-[9.5rem] items-center justify-center border px-4 py-2.5 font-mono text-[length:var(--ml-text-sm)] tracking-[0.08em] uppercase ${
+              className={`inline-flex min-w-[6.5rem] items-center justify-center border px-3 py-2.5 font-mono text-[length:var(--ml-text-xs)] tracking-[0.1em] uppercase ${
                 i === steps.length - 1
-                  ? "border-[color-mix(in_srgb,var(--ml-accent)_45%,transparent)] bg-[color-mix(in_srgb,var(--ml-accent)_10%,transparent)] text-ml-accent"
-                  : "border-ml-border bg-[color-mix(in_srgb,var(--ml-surface-1)_80%,transparent)] text-ml-text"
+                  ? "border-[color-mix(in_srgb,var(--ml-reward)_45%,transparent)] bg-[color-mix(in_srgb,var(--ml-reward)_10%,transparent)] text-ml-reward"
+                  : i === steps.length - 2
+                    ? "border-[color-mix(in_srgb,var(--ml-accent)_45%,transparent)] bg-[color-mix(in_srgb,var(--ml-accent)_10%,transparent)] text-ml-accent"
+                    : "border-ml-border bg-[color-mix(in_srgb,var(--ml-surface-1)_80%,transparent)] text-ml-text"
               }`}
             >
               {step}
             </span>
             {i < steps.length - 1 && (
-              <span className="my-1.5 text-ml-text-muted" aria-hidden>
-                ↓
+              <span className="hidden text-ml-text-muted sm:inline" aria-hidden>
+                →
               </span>
             )}
           </li>

@@ -1,19 +1,29 @@
 import type { MissionStatus, PlayerProgress } from "@/lib/types";
 import { syncSkillsFromCompletedMissions } from "@/lib/skills";
 import { levelFromXp } from "@/lib/validation";
+import { resolveUnlockedAchievementIds } from "@/data/profile/achievements";
+import { resolveUnlockedFrameIds } from "@/data/profile/frames";
+import { resolveUnlockedTitleIds } from "@/data/profile/titles";
 
 export const STORAGE_KEY = "mlini-progress-v1";
 
 export const DEFAULT_PROGRESS: PlayerProgress = {
   xp: 0,
   level: 1,
-  streak: 3,
+  streak: 0,
+  bestStreak: 0,
   completedMissions: [],
   unlockedMissions: ["mission-01"],
   unlockedSkills: [],
   unlockedCapabilities: [],
   lastPlayedAt: null,
   lastPlayedMissionId: null,
+  equippedTitleId: null,
+  unlockedTitleIds: [],
+  equippedFrameId: "basalt",
+  unlockedFrameIds: ["basalt"],
+  unlockedAchievementIds: [],
+  activityDates: [],
 };
 
 export interface MissionRewardMeta {
@@ -22,9 +32,12 @@ export interface MissionRewardMeta {
 }
 
 function normalizeProgress(parsed: Partial<PlayerProgress>): PlayerProgress {
+  const streak = Math.max(Number(parsed.streak) || 0, 0);
   const base: PlayerProgress = {
     ...DEFAULT_PROGRESS,
     ...parsed,
+    streak,
+    bestStreak: Math.max(Number(parsed.bestStreak) || streak, streak),
     unlockedMissions: parsed.unlockedMissions?.length
       ? parsed.unlockedMissions
       : ["mission-01"],
@@ -33,12 +46,50 @@ function normalizeProgress(parsed: Partial<PlayerProgress>): PlayerProgress {
     unlockedCapabilities: parsed.unlockedCapabilities ?? [],
     lastPlayedAt: parsed.lastPlayedAt ?? null,
     lastPlayedMissionId: parsed.lastPlayedMissionId ?? null,
+    equippedTitleId: parsed.equippedTitleId ?? null,
+    unlockedTitleIds: parsed.unlockedTitleIds ?? [],
+    equippedFrameId: parsed.equippedFrameId ?? "basalt",
+    unlockedFrameIds: parsed.unlockedFrameIds ?? ["basalt"],
+    unlockedAchievementIds: parsed.unlockedAchievementIds ?? [],
+    activityDates: (parsed.activityDates ?? []).filter((date) =>
+      /^\d{4}-\d{2}-\d{2}$/.test(date)
+    ),
   };
+
+  const unlockedTitleIds = Array.from(
+    new Set([...base.unlockedTitleIds, ...resolveUnlockedTitleIds(base)])
+  );
+  const unlockedFrameIds = Array.from(
+    new Set([...base.unlockedFrameIds, ...resolveUnlockedFrameIds(base)])
+  );
 
   return {
     ...base,
     unlockedSkills: syncSkillsFromCompletedMissions(base),
+    unlockedTitleIds,
+    equippedTitleId:
+      base.equippedTitleId &&
+      unlockedTitleIds.includes(base.equippedTitleId)
+        ? base.equippedTitleId
+        : null,
+    unlockedFrameIds,
+    equippedFrameId: unlockedFrameIds.includes(base.equippedFrameId)
+      ? base.equippedFrameId
+      : "basalt",
+    unlockedAchievementIds: Array.from(
+      new Set([
+        ...base.unlockedAchievementIds,
+        ...resolveUnlockedAchievementIds(base),
+      ])
+    ),
   };
+}
+
+function recordActivity(progress: PlayerProgress, now: Date): string[] {
+  const date = now.toISOString().slice(0, 10);
+  return progress.activityDates.includes(date)
+    ? progress.activityDates
+    : [...progress.activityDates, date];
 }
 
 export function loadProgress(): PlayerProgress {
@@ -77,12 +128,14 @@ export function completeMission(
   xpReward: number,
   rewards?: MissionRewardMeta
 ): PlayerProgress {
+  const now = new Date();
   if (progress.completedMissions.includes(missionId)) {
-    return {
+    return normalizeProgress({
       ...progress,
       lastPlayedMissionId: missionId,
-      lastPlayedAt: new Date().toISOString(),
-    };
+      lastPlayedAt: now.toISOString(),
+      activityDates: recordActivity(progress, now),
+    });
   }
 
   const completedMissions = [...progress.completedMissions, missionId];
@@ -106,14 +159,12 @@ export function completeMission(
     unlockedMissions: Array.from(unlockedMissions),
     unlockedSkills: Array.from(unlockedSkills),
     unlockedCapabilities: Array.from(unlockedCapabilities),
-    lastPlayedAt: new Date().toISOString(),
+    lastPlayedAt: now.toISOString(),
     lastPlayedMissionId: missionId,
+    activityDates: recordActivity(progress, now),
   };
 
-  return {
-    ...next,
-    unlockedSkills: syncSkillsFromCompletedMissions(next),
-  };
+  return normalizeProgress(next);
 }
 
 /** Record that the player opened / played a mission (QoL Continue). */
@@ -121,16 +172,20 @@ export function touchLastPlayedMission(
   progress: PlayerProgress,
   missionId: string
 ): PlayerProgress {
+  const now = new Date();
+  const activityDates = recordActivity(progress, now);
   if (
     progress.lastPlayedMissionId === missionId &&
-    progress.lastPlayedAt
+    progress.lastPlayedAt &&
+    activityDates === progress.activityDates
   ) {
     return progress;
   }
   return {
     ...progress,
     lastPlayedMissionId: missionId,
-    lastPlayedAt: new Date().toISOString(),
+    lastPlayedAt: now.toISOString(),
+    activityDates,
   };
 }
 

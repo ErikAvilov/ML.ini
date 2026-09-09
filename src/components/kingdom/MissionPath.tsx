@@ -1,53 +1,106 @@
 "use client";
 
+import { useRef } from "react";
+import { LocateFixed } from "lucide-react";
 import { MissionNode } from "@/components/kingdom/MissionNode";
+import { useLocale } from "@/i18n/locale-context";
 import { getMissionStatus } from "@/lib/progression";
 import { useProgress } from "@/lib/progress-context";
 import type { MissionDefinition } from "@/lib/types";
 
 interface MissionPathProps {
   missions: MissionDefinition[];
+  selectedMissionId: string;
+  activeMissionId?: string;
+  onSelectMission: (missionId: string) => void;
 }
 
-export function MissionPath({ missions }: MissionPathProps) {
+export function MissionPath({
+  missions,
+  selectedMissionId,
+  activeMissionId,
+  onSelectMission,
+}: MissionPathProps) {
   const { progress, ready } = useProgress();
+  const { messages } = useLocale();
+  const activeNodeRef = useRef<HTMLLIElement>(null);
+  const rows = [missions.slice(0, 5), missions.slice(5, 10)];
+
+  function centerActiveMission() {
+    activeNodeRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+  }
 
   return (
-    <div className="relative mx-auto max-w-3xl">
-      {/* Path spine */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-6 bottom-6 left-[28px] w-px bg-gradient-to-b from-signal/50 via-line to-amber/40 sm:left-1/2 sm:-translate-x-1/2"
-      />
+    <section className="min-w-0">
+      <div className="mb-3 flex items-center justify-between gap-4 rounded-ml border border-ml-border bg-ml-surface-1 px-4 py-3">
+        <p className="ml-section-label">{messages.expeditionMap}</p>
+        <button
+          type="button"
+          onClick={centerActiveMission}
+          className="flex shrink-0 items-center gap-2 text-sm font-semibold text-ml-accent transition hover:text-[var(--ml-accent-bright)]"
+        >
+          <LocateFixed size={16} />
+          <span className="hidden sm:inline">
+            {messages.centerActiveMission}
+          </span>
+        </button>
+      </div>
 
-      <ol className="relative space-y-1">
-        {missions.map((mission, index) => {
-          const status = ready
-            ? getMissionStatus(mission.id, progress, mission.order)
-            : mission.order === 1
-              ? "available"
-              : "locked";
+      <div className="relative min-h-[560px] overflow-x-auto rounded-ml-lg border border-ml-border bg-ml-surface-1">
+        <div className="map-grid pointer-events-none absolute inset-0" aria-hidden />
+        <div className="relative mx-auto flex min-h-[558px] min-w-[760px] max-w-[940px] flex-col justify-center gap-28 px-10 py-12">
+          <div
+            aria-hidden
+            className="absolute top-[31%] right-[11%] left-[11%] h-px bg-[var(--ml-connection-locked)]"
+          />
+          <div
+            aria-hidden
+            className="absolute top-[31%] right-[11%] h-[38%] w-px bg-[var(--ml-connection-locked)]"
+          />
+          <div
+            aria-hidden
+            className="absolute right-[11%] bottom-[31%] left-[11%] h-px bg-[var(--ml-connection-locked)]"
+          />
 
-          return (
-            <li key={mission.id} className="relative">
-              {/* Node connector dot on spine */}
-              <span
-                aria-hidden
-                className={`absolute top-8 left-[24px] z-10 h-2.5 w-2.5 rounded-full sm:left-1/2 sm:-translate-x-1/2 ${
-                  status === "completed"
-                    ? "bg-signal"
-                    : status === "available"
-                      ? "bg-signal-bright motion-safe:animate-pulse"
-                      : mission.kind === "boss"
-                        ? "bg-amber/50"
-                        : "bg-line"
-                }`}
-              />
-              <MissionNode mission={mission} status={status} index={index} />
-            </li>
-          );
-        })}
-      </ol>
-    </div>
+          {rows.map((row, rowIndex) => (
+            <ol
+              key={rowIndex}
+              className={`relative grid grid-cols-5 items-start justify-items-center ${
+                rowIndex === 1 ? "[direction:rtl]" : ""
+              }`}
+            >
+              {row.map((mission) => {
+                const status = ready
+                  ? getMissionStatus(mission.id, progress, mission.order)
+                  : mission.order === 1
+                    ? "available"
+                    : "locked";
+                const isActive = mission.id === activeMissionId;
+
+                return (
+                  <li
+                    key={mission.id}
+                    ref={isActive ? activeNodeRef : undefined}
+                    className="flex justify-center [direction:ltr]"
+                  >
+                    <MissionNode
+                      mission={mission}
+                      status={status}
+                      selected={mission.id === selectedMissionId}
+                      active={isActive}
+                      onSelect={onSelectMission}
+                    />
+                  </li>
+                );
+              })}
+            </ol>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

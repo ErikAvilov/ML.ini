@@ -46,15 +46,20 @@ function readStoredLocale(): Locale {
 }
 
 function subscribe(listener: () => void) {
-  if (!hydrated && typeof window !== "undefined") {
-    memoryLocale = readStoredLocale();
-    hydrated = true;
-  }
   listeners.add(listener);
+  // Defer localStorage so the first client render matches SSR (DEFAULT_LOCALE).
+  queueMicrotask(() => {
+    if (!hydrated && typeof window !== "undefined") {
+      memoryLocale = readStoredLocale();
+      hydrated = true;
+      emit();
+    }
+  });
   return () => listeners.delete(listener);
 }
 
 function getClientSnapshot(): Locale {
+  if (!hydrated) return DEFAULT_LOCALE;
   return memoryLocale;
 }
 

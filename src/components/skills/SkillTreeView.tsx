@@ -59,26 +59,26 @@ function nodeClasses(
   selected: boolean
 ) {
   const base =
-    "absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center border px-3 py-2 text-center outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--ml-accent)_45%,transparent)]";
+    "absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center border px-3 py-2 text-center outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--ml-accent)_45%,transparent)] before:absolute before:-top-1 before:left-1/2 before:h-1.5 before:w-1.5 before:-translate-x-1/2 before:rotate-45 before:border before:content-['']";
   const size =
     type === "major" || type === "keystone"
       ? "min-w-[11.5rem] min-h-[3.6rem]"
       : "min-w-[10rem] min-h-[3.25rem]";
   const selectedRing = selected
-    ? "ring-2 ring-[color-mix(in_srgb,var(--ml-accent)_55%,transparent)]"
+    ? "ring-2 ring-[color-mix(in_srgb,var(--ml-accent)_55%,transparent)] shadow-[0_0_18px_color-mix(in_srgb,var(--ml-accent)_18%,transparent)]"
     : "";
 
   if (state === "unlocked") {
     const major =
       type === "major" || type === "keystone"
-        ? "border-[color-mix(in_srgb,var(--ml-reward)_50%,transparent)] bg-[color-mix(in_srgb,var(--ml-surface-2)_86%,var(--ml-reward-soft))] shadow-[0_0_0_1px_color-mix(in_srgb,var(--ml-reward)_14%,transparent)]"
-        : "border-[color-mix(in_srgb,var(--ml-accent)_55%,transparent)] bg-[color-mix(in_srgb,var(--ml-surface-2)_88%,var(--ml-accent-soft))] shadow-[0_0_0_1px_color-mix(in_srgb,var(--ml-accent)_18%,transparent)]";
+        ? "border-[color-mix(in_srgb,var(--ml-reward)_50%,transparent)] bg-[color-mix(in_srgb,var(--ml-surface-2)_86%,var(--ml-reward-soft))] before:border-ml-reward before:bg-ml-reward"
+        : "border-[color-mix(in_srgb,var(--ml-accent)_55%,transparent)] bg-[color-mix(in_srgb,var(--ml-surface-2)_88%,var(--ml-accent-soft))] before:border-ml-accent before:bg-ml-accent";
     return `${base} ${size} ${selectedRing} ${major} text-ml-text`;
   }
   if (state === "available") {
-    return `${base} ${size} ${selectedRing} border-[color-mix(in_srgb,var(--ml-secondary)_65%,var(--ml-border))] bg-ml-surface-2/90 text-ml-text-secondary`;
+    return `${base} ${size} ${selectedRing} border-[color-mix(in_srgb,var(--ml-accent)_50%,var(--ml-border))] bg-ml-surface-2/90 text-ml-text-secondary before:border-ml-accent before:bg-[color-mix(in_srgb,var(--ml-accent)_30%,transparent)]`;
   }
-  return `${base} ${size} ${selectedRing} border-ml-border bg-ml-surface-1/80 text-ml-text-muted opacity-75`;
+  return `${base} ${size} ${selectedRing} border-ml-border bg-ml-surface-1/80 text-ml-text-muted opacity-75 before:border-ml-border before:bg-transparent`;
 }
 
 function stateLabel(
@@ -243,7 +243,15 @@ export function SkillTreeView() {
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden bg-transparent">
       <div className="shrink-0 border-b border-ml-border bg-ml-surface-1/60 px-4 py-3 sm:px-6">
-        <p className="ml-section-label">{messages.skillsNav}</p>
+        <div className="flex items-center gap-2">
+          <span
+            className="h-1.5 w-1.5 rotate-45 bg-ml-accent"
+            aria-hidden
+          />
+          <p className="font-mono text-[11px] tracking-[0.18em] text-ml-text-muted uppercase">
+            {messages.skillsTitle}
+          </p>
+        </div>
         <h1 className="mt-1 font-display text-[length:var(--ml-text-2xl)] text-ml-text">
           {messages.skillsTitle}
         </h1>

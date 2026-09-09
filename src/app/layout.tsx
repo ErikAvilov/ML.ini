@@ -1,18 +1,22 @@
 import type { Metadata } from "next";
-import { Source_Sans_3, Source_Serif_4, JetBrains_Mono } from "next/font/google";
+import {
+  Playfair_Display,
+  Plus_Jakarta_Sans,
+  JetBrains_Mono,
+} from "next/font/google";
 import { ProgressProvider } from "@/lib/progress-context";
 import { LocaleProvider } from "@/i18n/locale-context";
 import { SiteAtmosphere } from "@/components/ui/SiteAtmosphere";
 import { SiteHeader } from "@/components/ui/SiteHeader";
 import "./globals.css";
 
-const body = Source_Sans_3({
+const body = Plus_Jakarta_Sans({
   variable: "--font-body",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
 
-const display = Source_Serif_4({
+const display = Playfair_Display({
   variable: "--font-display",
   subsets: ["latin"],
   weight: ["500", "600", "700"],
@@ -38,7 +42,7 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      data-theme="arcane-academy"
+      data-theme="adventure-tech"
       className={`${body.variable} ${display.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="relative flex h-dvh flex-col overflow-hidden bg-ml-bg-0 text-ml-text-body">

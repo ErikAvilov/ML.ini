@@ -233,6 +233,7 @@ export interface PlayerProgress {
   xp: number;
   level: number;
   streak: number;
+  bestStreak: number;
   completedMissions: string[];
   unlockedMissions: string[];
   /** Proto skill ids (e.g. structured-output-1) */
@@ -242,6 +243,13 @@ export interface PlayerProgress {
   lastPlayedAt: string | null;
   /** Last mission the player opened (QoL / Continue) */
   lastPlayedMissionId: string | null;
+  equippedTitleId: string | null;
+  unlockedTitleIds: string[];
+  equippedFrameId: string;
+  unlockedFrameIds: string[];
+  unlockedAchievementIds: string[];
+  /** Local learning activity, stored as YYYY-MM-DD entries. */
+  activityDates: string[];
 }
 
 export interface ClassificationResult {
