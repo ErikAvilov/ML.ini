@@ -69,12 +69,16 @@ function nodeClasses(
     : "";
 
   if (state === "unlocked") {
-    return `${base} ${size} ${selectedRing} border-[color-mix(in_srgb,var(--ml-accent)_55%,transparent)] bg-[color-mix(in_srgb,var(--ml-surface-2)_88%,var(--ml-accent-soft))] text-ml-text shadow-[0_0_0_1px_color-mix(in_srgb,var(--ml-accent)_18%,transparent)]`;
+    const major =
+      type === "major" || type === "keystone"
+        ? "border-[color-mix(in_srgb,var(--ml-reward)_50%,transparent)] bg-[color-mix(in_srgb,var(--ml-surface-2)_86%,var(--ml-reward-soft))] shadow-[0_0_0_1px_color-mix(in_srgb,var(--ml-reward)_14%,transparent)]"
+        : "border-[color-mix(in_srgb,var(--ml-accent)_55%,transparent)] bg-[color-mix(in_srgb,var(--ml-surface-2)_88%,var(--ml-accent-soft))] shadow-[0_0_0_1px_color-mix(in_srgb,var(--ml-accent)_18%,transparent)]";
+    return `${base} ${size} ${selectedRing} ${major} text-ml-text`;
   }
   if (state === "available") {
-    return `${base} ${size} ${selectedRing} border-ml-border-strong bg-ml-surface-2/90 text-ml-text-secondary`;
+    return `${base} ${size} ${selectedRing} border-[color-mix(in_srgb,var(--ml-secondary)_65%,var(--ml-border))] bg-ml-surface-2/90 text-ml-text-secondary`;
   }
-  return `${base} ${size} ${selectedRing} border-ml-border bg-ml-surface-1/70 text-ml-text-muted opacity-70`;
+  return `${base} ${size} ${selectedRing} border-ml-border bg-ml-surface-1/80 text-ml-text-muted opacity-75`;
 }
 
 function stateLabel(
@@ -264,7 +268,7 @@ export function SkillTreeView() {
               className="pointer-events-none absolute inset-0 opacity-[0.35]"
               style={{
                 backgroundImage:
-                  "radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--ml-accent) 8%, transparent), transparent 55%), radial-gradient(rgba(154,171,187,0.07) 1px, transparent 1px)",
+                  "radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--ml-accent) 6%, transparent), transparent 55%), radial-gradient(color-mix(in srgb, var(--ml-secondary) 10%, transparent) 1px, transparent 1px)",
                 backgroundSize: "auto, 22px 22px",
               }}
               aria-hidden

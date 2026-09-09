@@ -9,60 +9,71 @@
 :root,
 [data-theme="arcane-academy"],
 [data-theme="arcane-tech"] {
-  /* --- Concentration (~80%) — night blue, not terminal black --- */
-  --ml-bg-0: #0a1018;
-  --ml-bg-1: #0f1722;
-  --ml-surface-1: #141d29;
-  --ml-surface-2: #1a2533;
-  --ml-surface-hover: #203041;
-  --ml-surface-warm: #171f2a;
+  /* ============================================================
+     Arcane Academy palette experiment (token source of truth)
+     TEXT #EEE8DA · BG #09131D · PRIMARY #42BDB1 · SECONDARY #607B92 · ACCENT #CFA552
+     ============================================================ */
 
-  /* --- Text (readable for long sessions) --- */
-  --ml-text: #e2e8ee;
-  --ml-text-body: #b8c5d1;
-  --ml-text-secondary: #9aabbb;
-  --ml-text-muted: #788a9d;
-  --ml-text-inverse: #0a1018;
+  /* --- Concentration (~80%) — night navy, not terminal black --- */
+  --ml-bg-0: #09131d;
+  --ml-bg-1: #0c1824;
+  --ml-surface-1: #101d29;
+  --ml-surface-2: #152433;
+  --ml-surface-hover: #1a2c3c;
+  --ml-surface-warm: #121f2c;
+
+  /* --- Text (warm ivory — not pure white) --- */
+  --ml-text: #eee8da;
+  --ml-text-body: #b8b5aa;
+  --ml-text-secondary: #9aa3a8;
+  --ml-text-muted: #7f8c96;
+  --ml-text-inverse: #071416;
+  --ml-text-on-primary: #071416;
 
   /* --- Borders hierarchy --- */
-  --ml-border: rgba(154, 171, 187, 0.12);
-  --ml-border-strong: rgba(154, 171, 187, 0.24);
-  --ml-border-accent: rgba(52, 189, 176, 0.4);
+  --ml-border: #263a4c;
+  --ml-border-strong: #3b596b;
+  --ml-border-accent: color-mix(in srgb, var(--ml-accent) 45%, transparent);
 
-  /* --- Interaction teal (functional, sparingly) --- */
-  --ml-accent: #34bdb0;
-  --ml-accent-muted: #248f86;
-  --ml-accent-soft: rgba(52, 189, 176, 0.1);
-  --ml-accent-bright: #5fd4c8;
+  /* --- Primary teal (interaction — sparingly) --- */
+  --ml-accent: #42bdb1;
+  --ml-accent-muted: #2f8f86;
+  --ml-accent-soft: color-mix(in srgb, var(--ml-accent) 12%, transparent);
+  --ml-accent-bright: #5ac9bd;
 
-  /* --- Prestige bronze (rare) --- */
-  --ml-reward: #b58a48;
-  --ml-reward-soft: rgba(181, 138, 72, 0.12);
-  --ml-reward-muted: #8f6c38;
+  /* --- Secondary blue-grey (support UI) --- */
+  --ml-secondary: #607b92;
+  --ml-secondary-muted: #4a6378;
+  --ml-secondary-soft: color-mix(in srgb, var(--ml-secondary) 14%, transparent);
 
-  /* --- Signals --- */
-  --ml-success: #4cbf8a;
-  --ml-success-soft: rgba(76, 191, 138, 0.1);
-  --ml-danger: #d07076;
-  --ml-danger-soft: rgba(208, 112, 118, 0.1);
-  --ml-warning: #b58a48;
+  /* --- Prestige gold (rare) --- */
+  --ml-reward: #cfa552;
+  --ml-reward-soft: color-mix(in srgb, var(--ml-reward) 12%, transparent);
+  --ml-reward-muted: #a8843f;
 
-  /* --- Node states --- */
-  --ml-node-locked: #2c3848;
-  --ml-node-available: rgba(52, 189, 176, 0.3);
+  /* --- Signals (restrained, not fluorescent) --- */
+  --ml-success: #55c89b;
+  --ml-success-soft: color-mix(in srgb, var(--ml-success) 12%, transparent);
+  --ml-danger: #d96870;
+  --ml-danger-soft: color-mix(in srgb, var(--ml-danger) 12%, transparent);
+  --ml-warning: #d6a44d;
+
+  /* --- Node / progression states --- */
+  --ml-node-locked: #243444;
+  --ml-node-available: color-mix(in srgb, var(--ml-secondary) 55%, transparent);
   --ml-node-active: var(--ml-accent);
-  --ml-node-completed: var(--ml-success);
-  --ml-node-major: var(--ml-accent-bright);
+  --ml-node-completed: var(--ml-accent);
+  --ml-node-major: var(--ml-reward);
   --ml-node-boss: var(--ml-reward);
 
-  --ml-connection-locked: rgba(120, 138, 157, 0.22);
-  --ml-connection-available: rgba(52, 189, 176, 0.22);
-  --ml-connection-completed: rgba(76, 191, 138, 0.4);
+  --ml-connection-locked: color-mix(in srgb, var(--ml-secondary) 22%, transparent);
+  --ml-connection-available: color-mix(in srgb, var(--ml-secondary) 35%, transparent);
+  --ml-connection-completed: color-mix(in srgb, var(--ml-accent) 42%, transparent);
 
   /* --- Frames --- */
   --ml-frame-basic: var(--ml-border);
   --ml-frame-focus: var(--ml-border-accent);
-  --ml-frame-boss: rgba(181, 138, 72, 0.42);
+  --ml-frame-boss: color-mix(in srgb, var(--ml-reward) 42%, transparent);
   --ml-frame-radius: 5px;
   --ml-frame-radius-lg: 8px;
 
@@ -85,6 +96,22 @@
   --ml-space-6: 1.5rem;
   --ml-space-7: 1.75rem;
   --ml-space-8: 2rem;
+
+  /* --- Semantic aliases (palette experiment) --- */
+  --color-bg: var(--ml-bg-0);
+  --color-bg-panel: var(--ml-surface-1);
+  --color-bg-elevated: var(--ml-surface-2);
+  --color-text: var(--ml-text);
+  --color-text-secondary: var(--ml-text-body);
+  --color-text-muted: var(--ml-text-muted);
+  --color-primary: var(--ml-accent);
+  --color-secondary: var(--ml-secondary);
+  --color-accent: var(--ml-reward);
+  --color-border: var(--ml-border);
+  --color-border-active: var(--ml-border-strong);
+  --color-success: var(--ml-success);
+  --color-error: var(--ml-danger);
+  --color-warning: var(--ml-warning);
 
   /* --- Backward-compatible aliases --- */
   --ink: var(--ml-bg-0);
@@ -135,6 +162,7 @@
   --color-ml-accent: var(--ml-accent);
   --color-ml-accent-muted: var(--ml-accent-muted);
   --color-ml-accent-soft: var(--ml-accent-soft);
+  --color-ml-secondary: var(--ml-secondary);
   --color-ml-reward: var(--ml-reward);
   --color-ml-reward-soft: var(--ml-reward-soft);
   --color-ml-success: var(--ml-success);
@@ -181,32 +209,102 @@ body {
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  /* Pull the bright source into slate/night before the wash */
-  filter: saturate(0.45) brightness(0.55) contrast(1.05);
-  opacity: 0.9;
+  /* Subdue bright source into slate/night before navy wash */
+  filter: saturate(0.4) brightness(0.52) contrast(1.04);
+  opacity: 0.88;
 }
 
 .ml-atmosphere__wash {
   position: absolute;
   inset: 0;
-  /* Primary night influence — texture remains a murmur underneath */
+  /* ~80% navy influence — texture remains a murmur */
   background: color-mix(in srgb, var(--ml-bg-0) 80%, transparent);
 }
 
 .ml-atmosphere__veil {
   position: absolute;
   inset: 0;
-  /* Soft edge darkening only — no spotlight */
   background: radial-gradient(
     ellipse 90% 85% at 50% 45%,
     transparent 50%,
-    color-mix(in srgb, var(--ml-bg-0) 28%, transparent) 100%
+    color-mix(in srgb, var(--ml-bg-0) 30%, transparent) 100%
   );
 }
 
 @media (prefers-reduced-motion: reduce) {
   .ml-atmosphere__stone {
-    filter: saturate(0.45) brightness(0.55) contrast(1.05);
+    filter: saturate(0.4) brightness(0.52) contrast(1.04);
+  }
+}
+
+/* Homepage: slightly more texture than mission shells */
+html[data-home="true"] .ml-atmosphere__wash {
+  background: color-mix(in srgb, var(--ml-bg-0) 72%, transparent);
+}
+
+html[data-home="true"] .ml-atmosphere__veil {
+  background: radial-gradient(
+    ellipse 95% 80% at 50% 28%,
+    transparent 42%,
+    color-mix(in srgb, var(--ml-bg-0) 22%, transparent) 100%
+  );
+}
+
+@keyframes ml-home-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ml-home-fade {
+  animation: ml-home-fade-up 0.55s ease both;
+}
+
+.ml-home-loop > li:nth-child(1) .ml-home-fade {
+  animation-delay: 0ms;
+}
+.ml-home-loop > li:nth-child(2) .ml-home-fade {
+  animation-delay: 60ms;
+}
+.ml-home-loop > li:nth-child(3) .ml-home-fade {
+  animation-delay: 120ms;
+}
+.ml-home-loop > li:nth-child(4) .ml-home-fade {
+  animation-delay: 180ms;
+}
+.ml-home-loop > li:nth-child(5) .ml-home-fade {
+  animation-delay: 240ms;
+}
+.ml-home-loop > li:nth-child(6) .ml-home-fade {
+  animation-delay: 300ms;
+}
+
+.ml-home-cta-glow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.ml-home-cta-glow:hover {
+  transform: translateY(-1px);
+}
+
+.ml-home-wordmark {
+  animation: ml-home-fade-up 0.7s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-home-fade,
+  .ml-home-wordmark {
+    animation: none;
+  }
+
+  .ml-home-cta-glow:hover {
+    transform: none;
   }
 }
 
@@ -251,11 +349,18 @@ body {
 
 .map-grid {
   background-image:
-    linear-gradient(rgba(154, 171, 187, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(154, 171, 187, 0.035) 1px, transparent 1px);
+    linear-gradient(
+      color-mix(in srgb, var(--ml-secondary) 8%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--ml-secondary) 8%, transparent) 1px,
+      transparent 1px
+    );
   background-size: 56px 56px;
   mask-image: radial-gradient(ellipse at center, black 28%, transparent 72%);
-  opacity: 0.7;
+  opacity: 0.55;
 }
 
 .ml-frame {

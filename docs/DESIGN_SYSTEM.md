@@ -69,39 +69,37 @@ Priorité des décisions :
 
 ---
 
-## 3. Palette
+## 3. Palette (expérience Arcane Academy)
 
-### Concentration (~80%)
+Source de vérité : `src/app/globals.css` (`:root` / `[data-theme="arcane-academy"]`).
 
-| Token | Rôle |
-|-------|------|
-| `--ml-bg-0` | Fond nuit bleu (`#0A1018`) |
-| `--ml-bg-1` | Fond secondaire |
-| `--ml-surface-1` / `--ml-surface-2` | Panels ardoise |
-| `--ml-surface-warm` | Surface légèrement minérale |
+### Core
 
-### Texte
+| Rôle | Hex | Token |
+|------|-----|-------|
+| Background | `#09131D` | `--ml-bg-0` / `--color-bg` |
+| Text (ivoire) | `#EEE8DA` | `--ml-text` / `--color-text` |
+| Primary (teal) | `#42BDB1` | `--ml-accent` / `--color-primary` |
+| Secondary | `#607B92` | `--ml-secondary` / `--color-secondary` |
+| Accent prestige | `#CFA552` | `--ml-reward` / `--color-accent` |
+
+### Surfaces & texte
 
 | Token | Approx | Rôle |
 |-------|--------|------|
-| `--ml-text` | `#E2E8EE` | Titres / emphase |
-| `--ml-text-body` | `#B8C5D1` | **Corps pédagogique** |
-| `--ml-text-secondary` | `#9AABBB` | Secondaire |
-| `--ml-text-muted` | `#788A9D` | Labels |
+| `--ml-surface-1` | `#101D29` | Panels |
+| `--ml-surface-2` | `#152433` | Panels élevés |
+| `--ml-text-body` | `#B8B5AA` | Corps pédagogique |
+| `--ml-text-muted` | `#7F8C96` | Labels |
+| `--ml-border` | `#263A4C` | Bordures |
+| `--ml-border-strong` | `#3B596B` | Hover / actif |
 
-Le body n’est **pas** aussi atténué qu’un metadata label.
+### Usage
 
-### Teal fonctionnel (sparing)
-
-`--ml-accent` = RUN, focus, node actif, progression — **pas** chaque titre / bordure / bullet.
-
-### Bronze prestige (rare)
-
-`--ml-reward` ≈ `#B58A48` — séparateurs Assignment, XP reveal, Boss, rewards.
-
-### Signals
-
-`--ml-success` / `--ml-danger` — PASS / FAIL, parcimonieux.
+- **Teal** : RUN, focus, nodes unlocked, connexions completed — pas partout.
+- **Gold** : XP, boss, milestones majeurs — rare.
+- **Secondary** : boutons secondaires, borders support, nodes available.
+- Body text reste ivoire / warm grey — **jamais** blanc pur.
 
 ---
 

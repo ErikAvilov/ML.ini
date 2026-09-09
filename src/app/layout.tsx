@@ -25,9 +25,9 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mlini — École technique de l'IA",
+  title: "Mlini — Apprends l'IA en la construisant",
   description:
-    "Une école technique de l'IA déguisée en jeu vidéo. Construis ton premier système IA.",
+    "Plateforme interactive pour apprendre l'IA par la pratique. Progresse à travers des Royaumes, résous des missions et construis de vrais systèmes.",
 };
 
 export default function RootLayout({

@@ -33,7 +33,7 @@ export function MissionBriefing({
 
   return (
     <div className="space-y-7 text-[length:var(--ml-text-base)] leading-[var(--ml-leading-body)]">
-      <header className="sticky top-0 z-10 -mx-5 border-b border-ml-border/80 bg-ml-bg-1/95 px-5 pb-3 pt-0 backdrop-blur-sm sm:-mx-6 sm:px-6">
+      <header className="pb-1">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <p className="ml-section-label">
             Mission {String(missionOrder).padStart(2, "0")}

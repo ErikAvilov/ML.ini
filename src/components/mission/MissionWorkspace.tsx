@@ -453,7 +453,7 @@ function MissionSession({
 
       <div className="grid min-h-0 flex-1 lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)]">
         <aside
-          className={`min-h-0 min-w-0 overflow-y-auto border-r border-ml-border bg-ml-bg-1/75 px-5 py-5 sm:px-6 sm:py-6 ${
+          className={`min-h-0 min-w-0 overflow-y-auto border-r border-ml-border bg-ml-bg-1 px-5 py-5 sm:px-6 sm:py-6 ${
             mobileTab === "brief" ? "block" : "hidden lg:block"
           }`}
         >

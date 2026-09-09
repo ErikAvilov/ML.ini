@@ -35,12 +35,12 @@ export function MissionPath({ missions }: MissionPathProps) {
                 aria-hidden
                 className={`absolute top-8 left-[24px] z-10 h-2.5 w-2.5 rounded-full sm:left-1/2 sm:-translate-x-1/2 ${
                   status === "completed"
-                    ? "bg-signal shadow-[0_0_12px_rgba(61,214,180,0.8)]"
+                    ? "bg-signal"
                     : status === "available"
-                      ? "bg-signal-bright shadow-[0_0_14px_rgba(61,214,180,0.9)] animate-pulse"
+                      ? "bg-signal-bright motion-safe:animate-pulse"
                       : mission.kind === "boss"
                         ? "bg-amber/50"
-                        : "bg-mist/40"
+                        : "bg-line"
                 }`}
               />
               <MissionNode mission={mission} status={status} index={index} />

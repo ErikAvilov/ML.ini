@@ -6,9 +6,9 @@ type Variant = "primary" | "secondary" | "ghost" | "danger";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-ml-accent text-[var(--ml-text-inverse)] hover:bg-ml-accent-bright active:translate-y-px disabled:translate-y-0",
+    "bg-ml-accent text-[var(--ml-text-on-primary)] hover:bg-ml-accent-bright active:translate-y-px disabled:translate-y-0",
   secondary:
-    "bg-ml-surface-2 text-ml-text border border-ml-border hover:border-ml-border-strong hover:bg-ml-surface-hover active:translate-y-px",
+    "bg-ml-surface-1 text-ml-text border border-[color-mix(in_srgb,var(--ml-secondary)_55%,var(--ml-border))] hover:border-ml-border-strong hover:bg-ml-surface-hover active:translate-y-px",
   ghost:
     "bg-transparent text-ml-text-secondary hover:text-ml-text hover:bg-ml-surface-hover",
   danger:
