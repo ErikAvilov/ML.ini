@@ -72,6 +72,12 @@ const common = {
     profileEquipped: "Équipé",
     profileLocked: "Verrouillé",
     profileXpToNext: "{xp} XP restant pour le niveau {level}",
+    profileResetTitle: "Réinitialiser la progression",
+    profileResetHelp:
+      "Efface XP, niveau, missions terminées, compétences et cosmétiques débloqués. Action locale, irréversible.",
+    profileResetAction: "Reset niveaux & missions",
+    profileResetConfirm:
+      "Réinitialiser toute ta progression locale (XP, niveaux, missions) ? Cette action est définitive.",
     launchMission: "Lancer la mission",
     missionObjectives: "Objectif",
     missionReward: "Récompense",
@@ -101,6 +107,10 @@ const common = {
     workspaceTab: "Workspace",
     statusInProgress: "En cours",
     statusClearedReplay: "Terminée — tu peux rejouer",
+    objectiveLabel: "Objectif",
+    expectedFormatLabel: "Format attendu",
+    introLabel: "Intro",
+    introCompleteCta: "Commencer la Mission 01",
     howItWorks: "Comment ça marche",
     yourTask: "Ta tâche",
     hints: "Indices",
@@ -150,6 +160,19 @@ const common = {
     skillUnlocked: "Compétence débloquée",
     skillLevel: "Niveau {level}",
     technicalTermsLearned: "Termes techniques appris",
+    progressionLevelUp: "LEVEL UP",
+    progressionMilestone: "JALON MAJEUR",
+    progressionKingdomComplete: "ROYAUME TERMINÉ",
+    progressionLevelReached: "Niveau {level}",
+    progressionXpGained: "+{xp} XP",
+    progressionXpProgress: "{current} / {needed} XP",
+    progressionMissionsCount: "{done} / {total} MISSIONS",
+    progressionNewTitle: "NOUVEAU TITRE",
+    progressionNewFrame: "NOUVEAU CADRE",
+    progressionNewAchievement: "HAUT FAIT",
+    progressionEquip: "ÉQUIPER",
+    progressionEquipped: "ÉQUIPÉ",
+    progressionContinue: "CONTINUER",
     continueAdventure: "Continuer l'aventure",
     viewMap: "Voir la carte",
     nextMissionUnlocked: "Mission suivante débloquée sur la carte d'expédition.",
@@ -169,6 +192,44 @@ const common = {
     feedbackSentimentError: "La priorité semble correcte. Le sentiment, non.",
     feedbackPriorityError: "Vérifie la politique support de Veyra.",
     feedbackPartial: "{passed} / {total} tests réussis. Ajuste ton instruction et réessaie.",
+    feedbackJsonContentOkFormatBad:
+      "L’information est correcte, mais la réponse n’est pas du JSON valide.",
+    feedbackJsonProseWrapper:
+      "Le service suivant attend uniquement l’objet JSON. Enlève tout texte avant ou après.",
+    feedbackJsonTrailingComma:
+      "JSON n’autorise pas de virgule après la dernière propriété.",
+    feedbackJsonUnquotedKeys:
+      "Les noms de propriétés doivent être entourés de guillemets doubles.",
+    feedbackJsonSingleQuotes:
+      "Les chaînes JSON utilisent des guillemets doubles, pas des simples.",
+    feedbackJsonUnclosed:
+      "L’objet JSON n’est pas correctement fermé.",
+    feedbackJsonInvalid:
+      "La réponse n’est pas du JSON valide. Le service suivant a rejeté le payload.",
+    feedbackJsonExtraFields:
+      "Le contrat n’accepte que sentiment et priority — aucune propriété en plus.",
+    feedbackJsonWrongKeys:
+      "Les propriétés attendues sont exactement sentiment et priority.",
+    jsonCheckLabel: "JSON",
+    fieldsCheckLabel: "FIELDS",
+    payloadRepairCheck: "Vérifier le payload",
+    payloadRepairReset: "Réinitialiser",
+    payloadRepairContentFail:
+      "Le JSON est valide, mais les valeurs ne correspondent pas au payload attendu.",
+    payloadRepairRequired:
+      "Les tests passent, mais il reste à réparer le payload cassé à gauche — la syntaxe JSON se valide là, pas dans ton prompt.",
+    codeFillCheck: "Vérifier la condition",
+    codeFillReset: "Effacer",
+    codeFillFail:
+      "Pas encore. Il faut comparer priority à la chaîne URGENT avec ==.",
+    codeFillRequired:
+      "Complète d’abord la condition dans le brief, puis lance les scénarios.",
+    logicFixtureLabel: "Entrée (priority)",
+    logicScenarioCount: "{count} scénarios de décision",
+    logicDecisionLabel: "Décision du système",
+    logicDecisionHelp: "Complète la condition à gauche, puis teste les routes.",
+    logicConditionReady: "Condition prête · lance les scénarios",
+    logicConditionNeeded: "Complète la condition dans le brief",
     nextMissionUnlockedMap: "Mission suivante débloquée sur la carte.",
     outputContractTitle: "Format attendu",
     humanReadableLabel: "Réponse lisible (humain)",
@@ -286,6 +347,12 @@ const common = {
     profileEquipped: "Equipped",
     profileLocked: "Locked",
     profileXpToNext: "{xp} XP left to level {level}",
+    profileResetTitle: "Reset progress",
+    profileResetHelp:
+      "Clears XP, level, completed missions, skills and unlocked cosmetics. Local only, irreversible.",
+    profileResetAction: "Reset levels & missions",
+    profileResetConfirm:
+      "Reset all local progress (XP, levels, missions)? This cannot be undone.",
     launchMission: "Launch mission",
     missionObjectives: "Objective",
     missionReward: "Reward",
@@ -316,6 +383,10 @@ const common = {
     workspaceTab: "Workspace",
     statusInProgress: "In progress",
     statusClearedReplay: "Cleared — you can replay",
+    objectiveLabel: "Objective",
+    expectedFormatLabel: "Expected format",
+    introLabel: "Intro",
+    introCompleteCta: "Start Mission 01",
     howItWorks: "How it works",
     yourTask: "Your task",
     hints: "Hints",
@@ -365,6 +436,19 @@ const common = {
     skillUnlocked: "Skill unlocked",
     skillLevel: "Level {level}",
     technicalTermsLearned: "Technical terms learned",
+    progressionLevelUp: "LEVEL UP",
+    progressionMilestone: "MAJOR MILESTONE",
+    progressionKingdomComplete: "KINGDOM COMPLETE",
+    progressionLevelReached: "Level {level}",
+    progressionXpGained: "+{xp} XP",
+    progressionXpProgress: "{current} / {needed} XP",
+    progressionMissionsCount: "{done} / {total} MISSIONS",
+    progressionNewTitle: "NEW TITLE",
+    progressionNewFrame: "NEW FRAME",
+    progressionNewAchievement: "ACHIEVEMENT",
+    progressionEquip: "EQUIP",
+    progressionEquipped: "EQUIPPED",
+    progressionContinue: "CONTINUE",
     continueAdventure: "Continue the adventure",
     viewMap: "View map",
     nextMissionUnlocked: "Next mission unlocked on the expedition map.",
@@ -385,6 +469,43 @@ const common = {
     feedbackPriorityError: "Check Veyra's support policy.",
     feedbackPartial:
       "{passed} / {total} tests passed. Adjust your instruction and try again.",
+    feedbackJsonContentOkFormatBad:
+      "The information is correct, but the response is not valid JSON.",
+    feedbackJsonProseWrapper:
+      "The receiving service expects the entire response to be the JSON object. Remove text before and after it.",
+    feedbackJsonTrailingComma:
+      "JSON does not allow an extra comma after the final property.",
+    feedbackJsonUnquotedKeys:
+      "Property names must be surrounded by double quotes.",
+    feedbackJsonSingleQuotes:
+      "JSON strings use double quotes, not single quotes.",
+    feedbackJsonUnclosed: "The JSON object is not closed.",
+    feedbackJsonInvalid:
+      "The response is not valid JSON. The next service rejected the payload.",
+    feedbackJsonExtraFields:
+      "The contract only accepts sentiment and priority — no extra properties.",
+    feedbackJsonWrongKeys:
+      "The required properties are exactly sentiment and priority.",
+    jsonCheckLabel: "JSON",
+    fieldsCheckLabel: "FIELDS",
+    payloadRepairCheck: "Check payload",
+    payloadRepairReset: "Reset",
+    payloadRepairContentFail:
+      "JSON is valid, but the values do not match the expected payload.",
+    payloadRepairRequired:
+      "Tests pass, but you still need to repair the broken payload on the left — JSON syntax is checked there, not in your prompt.",
+    codeFillCheck: "Check condition",
+    codeFillReset: "Clear",
+    codeFillFail:
+      "Not yet. Compare priority to the string URGENT with ==.",
+    codeFillRequired:
+      "Complete the condition in the brief first, then run the scenarios.",
+    logicFixtureLabel: "Input (priority)",
+    logicScenarioCount: "{count} decision scenarios",
+    logicDecisionLabel: "System decision",
+    logicDecisionHelp: "Complete the condition on the left, then test the routes.",
+    logicConditionReady: "Condition ready · run scenarios",
+    logicConditionNeeded: "Complete the condition in the brief",
     nextMissionUnlockedMap: "Next mission unlocked on the map.",
     outputContractTitle: "Required format",
     humanReadableLabel: "Human-readable answer",

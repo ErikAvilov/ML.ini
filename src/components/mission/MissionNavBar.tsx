@@ -19,17 +19,26 @@ export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
   const router = useRouter();
   const { progress, ready } = useProgress();
   const { messages, t } = useLocale();
-  const total = missions.length;
   const sorted = [...missions].sort((a, b) => a.order - b.order);
 
   function statusOf(m: MissionDefinition): MissionStatus {
-    if (!ready) return m.order === 1 ? "available" : "locked";
+    if (!ready) return m.order === 0 ? "available" : "locked";
     return getMissionStatus(m.id, progress, m.order);
   }
+
+  const coreMissions = sorted.filter((m) => m.kind !== "intro");
+  const coreIndex = coreMissions.findIndex((m) => m.id === mission.id);
+  const progressLabel =
+    mission.kind === "intro"
+      ? messages.introLabel
+      : `${coreIndex + 1}/${coreMissions.length}`;
 
   function lockedReason(m: MissionDefinition): string {
     const prior = sorted.find((x) => x.order === m.order - 1);
     if (prior) {
+      if (prior.kind === "intro") {
+        return messages.missionLocked;
+      }
       return t(messages.missionLockedCompletePrev, {
         order: String(prior.order).padStart(2, "0"),
       });
@@ -43,6 +52,11 @@ export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
     if (m.id === mission.id) return;
     router.push(`/missions/${m.slug}`);
   }
+
+  const titlePrefix =
+    mission.kind === "intro"
+      ? messages.introLabel
+      : `Mission ${String(mission.order).padStart(2, "0")}`;
 
   return (
     <div className="shrink-0 border-b border-ml-border bg-ml-surface-1/75">
@@ -59,15 +73,15 @@ export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
         <div className="flex min-w-0 flex-col items-center justify-center gap-1 sm:flex-row sm:gap-5">
           <p
             className="w-[min(100%,15rem)] shrink-0 truncate text-center text-[length:var(--ml-text-sm)] text-ml-text-secondary sm:w-[15rem] sm:text-left lg:w-[17rem]"
-            title={`Mission ${String(mission.order).padStart(2, "0")} — ${mission.title}`}
+            title={`${titlePrefix} — ${mission.title}`}
           >
-            Mission {String(mission.order).padStart(2, "0")} —{" "}
+            {titlePrefix} —{" "}
             <span className="font-medium text-ml-text">{mission.title}</span>
           </p>
 
           <div className="flex min-w-0 flex-1 items-center justify-center gap-2.5">
             <span className="hidden shrink-0 font-mono text-[length:var(--ml-text-xs)] text-ml-text-muted tabular-nums sm:inline">
-              {mission.order}/{total}
+              {progressLabel}
             </span>
             <div
               className="flex items-center gap-1"
@@ -90,7 +104,10 @@ export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
                   st === "locked"
                     ? lockedReason(m)
                     : t(messages.missionNavLabel, {
-                        order: String(m.order).padStart(2, "0"),
+                        order:
+                          m.kind === "intro"
+                            ? "00"
+                            : String(m.order).padStart(2, "0"),
                         title: m.title,
                       });
 
@@ -110,6 +127,7 @@ export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
                           status={st}
                           current={isCurrent}
                           boss={m.kind === "boss"}
+                          intro={m.kind === "intro"}
                           title={title}
                         />
                       </button>
@@ -123,6 +141,7 @@ export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
                           status={st}
                           current={isCurrent}
                           boss={m.kind === "boss"}
+                          intro={m.kind === "intro"}
                           title={title}
                         />
                       </span>

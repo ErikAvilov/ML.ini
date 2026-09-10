@@ -1,12 +1,11 @@
 import type { Locale } from "@/i18n/config";
 import { getSentimentLabels } from "@/i18n/sentiment";
-import { getNarrativeHeader, getMiraSuccessLines } from "@/data/narrative/voice";
+import { getMiraSuccessLines } from "@/data/narrative/voice";
 import type { MissionDefinition } from "@/lib/types";
 
 export function createMission01(locale: Locale): MissionDefinition {
   const labels = getSentimentLabels(locale);
   const [positive, neutral, negative] = labels;
-  const header = getNarrativeHeader(locale);
   const miraSuccess = getMiraSuccessLines(locale);
 
   if (locale === "en") {
@@ -26,47 +25,17 @@ export function createMission01(locale: Locale): MissionDefinition {
         "You've joined Veyra Automation. MILDRED already has an AI model connected. Your job is to write the instruction it will reuse on every customer message.",
       showcaseMessage: "My order arrived broken and nobody is answering me.",
       briefing: {
-        narrativeHeader: header,
-        welcomeTitle: "Welcome to Veyra",
-        welcomeParagraphs: [
-          "You’ve just joined the Automation team.",
-          "Your timing is… interesting.",
-          "Our support team receives hundreds of customer messages every day.",
-          "Before anything can happen, someone has to read each one and decide whether the customer is satisfied, neutral, or unhappy.",
-          "Veyra wants that first step automated.",
-          "The good news:",
-          "MILDRED already has an AI model connected to the system.",
-          "The bad news:",
-        ],
-        roleHighlight: "Nobody told it what we want.",
-        roleDetails: [
-          "That’s your first assignment.",
-          "Write the instruction MILDRED will reuse every time a new customer message arrives.",
-          "You are not replying to customers yourself.",
-        ],
-        systemNote: "You are configuring how the system behaves.",
-        flowSteps: [
-          "CUSTOMER MESSAGE",
-          "YOUR INSTRUCTION",
-          "AI MODEL",
-          "RESULT",
-          "APPLICATION",
-        ],
-        flowCaption: "One instruction. Every incoming message.",
-        assignmentTitle: "Assignment",
-        assignmentIntro:
-          "MILDRED must classify every customer message as exactly one of:",
+        shortBrief:
+          "MILDRED has a model connected. Nobody told it what we want. Write the instruction it will reuse on every customer message.",
+        objectiveText: `Make MILDRED answer only with ${positive}, ${neutral}, or ${negative} — nothing else.`,
+        newConcept: {
+          title: "INPUT → INSTRUCTION → MODEL → OUTPUT",
+          example: "CUSTOMER MESSAGE → YOUR INSTRUCTION → AI MODEL → LABEL",
+          labels: ["INPUT", "INSTRUCTION", "MODEL", "OUTPUT"],
+        },
         categories: labels,
-        assignmentNote:
-          "Your instruction will be reused on several messages you haven't seen.",
-        taskSteps: [
-          "Read the customer message.",
-          "Write MILDRED's instruction.",
-          "Make it return only one of the three allowed labels.",
-          "Run the system.",
-          "Survive all hidden tests.",
-        ],
-        taskReminder: "One instruction. Multiple inputs. Make it reliable.",
+        flowSteps: ["MESSAGE", "INSTRUCTION", "MODEL", "RESULT"],
+        flowCaption: "One instruction. Every incoming message.",
         miraSuccess,
         successInsight: miraSuccess.join(" "),
       },
@@ -197,47 +166,17 @@ export function createMission01(locale: Locale): MissionDefinition {
     showcaseMessage:
       "Ma commande est arrivée cassée et personne ne me répond.",
     briefing: {
-      narrativeHeader: header,
-      welcomeTitle: "Bienvenue chez Veyra",
-      welcomeParagraphs: [
-        "Tu viens d’intégrer l’équipe Automation.",
-        "Et ton timing est… intéressant.",
-        "Notre équipe support reçoit chaque jour des centaines de messages clients.",
-        "Avant de pouvoir agir, quelqu’un doit encore les lire un par un pour déterminer si le client est satisfait, neutre ou mécontent.",
-        "Veyra veut automatiser cette première étape.",
-        "La bonne nouvelle :",
-        "MILDRED est déjà connecté à un modèle d’intelligence artificielle.",
-        "La mauvaise :",
-      ],
-      roleHighlight: "personne ne lui a expliqué ce qu’on attend de lui.",
-      roleDetails: [
-        "C’est ta première mission.",
-        "Écris l’instruction que MILDRED réutilisera automatiquement à chaque nouveau message client.",
-        "Tu ne réponds pas directement aux clients.",
-      ],
-      systemNote: "Tu configures le comportement du système.",
-      flowSteps: [
-        "MESSAGE CLIENT",
-        "TON INSTRUCTION",
-        "MODÈLE IA",
-        "RÉSULTAT",
-        "APPLICATION",
-      ],
-      flowCaption: "Une instruction. Tous les messages entrants.",
-      assignmentTitle: "Mission",
-      assignmentIntro:
-        "MILDRED doit classer chaque message client dans exactement une catégorie :",
+      shortBrief:
+        "MILDRED a un modèle branché. Personne ne lui a dit ce qu’on veut. Écris l’instruction qu’il réutilisera sur chaque message client.",
+      objectiveText: `Fais répondre MILDRED uniquement par ${positive}, ${neutral} ou ${negative} — rien d'autre.`,
+      newConcept: {
+        title: "INPUT → INSTRUCTION → MODEL → OUTPUT",
+        example: "MESSAGE CLIENT → TON INSTRUCTION → MODÈLE IA → LABEL",
+        labels: ["INPUT", "INSTRUCTION", "MODEL", "OUTPUT"],
+      },
       categories: labels,
-      assignmentNote:
-        "Ton instruction sera réutilisée sur plusieurs messages que tu n’as pas encore vus.",
-      taskSteps: [
-        "Lis le message client.",
-        "Écris l’instruction de MILDRED.",
-        "Fais-lui retourner uniquement l’une des trois catégories autorisées.",
-        "Lance le système.",
-        "Passe tous les tests cachés.",
-      ],
-      taskReminder: "Une instruction. Plusieurs entrées. Rends-la fiable.",
+      flowSteps: ["MESSAGE", "INSTRUCTION", "MODEL", "RÉSULTAT"],
+      flowCaption: "Une instruction. Chaque message entrant.",
       miraSuccess,
       successInsight: miraSuccess.join(" "),
     },

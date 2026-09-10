@@ -14,6 +14,7 @@ export function createKingdomConstruireAvecIA(
       description:
         "You've joined Automation at Veyra. Your job: turn MILDRED from a half-wired prototype into a real automation system — one failure at a time.",
       missionIds: [
+        "mission-00",
         "mission-01",
         "mission-02",
         "mission-03",
@@ -36,6 +37,7 @@ export function createKingdomConstruireAvecIA(
     description:
       "Tu as intégré Automation chez Veyra. Ta mission : faire passer MILDRED d’un prototype à moitié branché à un vrai système d’automatisation — une panne après l’autre.",
     missionIds: [
+      "mission-00",
       "mission-01",
       "mission-02",
       "mission-03",

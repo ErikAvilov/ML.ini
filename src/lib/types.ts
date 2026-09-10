@@ -3,7 +3,7 @@ import type { SentimentKey } from "@/i18n/sentiment";
 
 export type MissionStatus = "locked" | "available" | "completed";
 
-export type MissionKind = "standard" | "boss" | "coming-soon";
+export type MissionKind = "standard" | "boss" | "coming-soon" | "intro";
 
 export interface ClassificationTest {
   id: string;
@@ -32,6 +32,8 @@ export interface OutputFieldSpec {
 /** Schema for multi-field machine-readable output (pre-JSON) */
 export interface StructuredOutputSchema {
   fields: OutputFieldSpec[];
+  /** Default: KEY: VALUE lines. Mission 04+ may use `"json"`. */
+  format?: "key-value" | "json";
 }
 
 export type MissionTestErrorKind =
@@ -39,6 +41,7 @@ export type MissionTestErrorKind =
   | "sentiment"
   | "priority"
   | "value"
+  | "json"
   | null;
 
 export interface MissionHint {
@@ -159,34 +162,131 @@ export interface SentimentPolicyContent {
   note: string;
 }
 
-export interface MissionBriefingContent {
-  narrativeHeader?: NarrativeHeaderContent;
-  welcomeTitle: string;
-  welcomeParagraphs: string[];
-  /** Ligne d’accent (ex. mauvaise nouvelle) */
-  roleHighlight: string;
-  /** Paragraphes de clôture du contexte (pas une liste à puces) */
-  roleDetails: string[];
-  /** Dernière phrase forte du contexte */
-  systemNote: string;
-  /** Politique métier optionnelle (Mission 2+) */
-  policy?: SupportPolicyContent;
-  /** Règles sentiment déterministes (Mission 3+) */
+/** Compact “new knowledge” block (dominant in the brief) */
+export interface MissionConceptBlock {
+  title: string;
+  example?: string;
+  labels?: string[];
+}
+
+/** Side-by-side rejected vs expected format */
+export interface FormatCompareContent {
+  currentLabel: string;
+  currentExample: string;
+  currentStatusLabel: string;
+  expectedLabel: string;
+  expectedExample: string;
+  expectedStatusLabel: string;
+}
+
+export interface ContractLine {
+  name: string;
+  values: string;
+}
+
+export interface CollapsibleContent {
+  title: string;
+  body: string[];
+}
+
+/** Previously learned rules — accessible, collapsed by default */
+export interface PreviousRulesContent {
+  title: string;
   sentimentPolicy?: SentimentPolicyContent;
-  /** Contrat de sortie machine (Mission 3+) */
+  policy?: SupportPolicyContent;
+}
+
+/** Lightweight onboarding sections (Mission 0) */
+export interface MissionIntroSection {
+  title: string;
+  body: string[];
+}
+
+export interface MissionIntroContent {
+  sections: MissionIntroSection[];
+  ctaLabel: string;
+  /** Next mission slug after completing intro */
+  nextSlug: string;
+}
+
+export interface MissionBriefingContent {
+  /**
+   * Compact Mira problem statement (2–4 lines).
+   * When set, the brief uses the compact workspace layout.
+   */
+  shortBrief?: string;
+  /** Prominent objective; falls back to mission.objective */
+  objectiveText?: string;
+  newConcept?: MissionConceptBlock;
+  formatCompare?: FormatCompareContent;
+  expectedFormat?: string;
+  contractLines?: ContractLine[];
+  optionalTheory?: CollapsibleContent;
+  previousRules?: PreviousRulesContent;
+  /**
+   * Current-mission rules shown prominently (e.g. M02 policy).
+   * Prefer this over legacy `policy` when using compact layout.
+   */
+  currentPolicy?: SupportPolicyContent;
+  currentSentimentPolicy?: SentimentPolicyContent;
+
+  /** @deprecated Prefer shortBrief — still accepted for legacy data */
+  narrativeHeader?: NarrativeHeaderContent;
+  welcomeTitle?: string;
+  welcomeParagraphs?: string[];
+  roleHighlight?: string;
+  roleDetails?: string[];
+  systemNote?: string;
+  /** Legacy policy slot — rendered as current unless moved to previousRules */
+  policy?: SupportPolicyContent;
+  sentimentPolicy?: SentimentPolicyContent;
   outputContract?: OutputContractContent;
-  flowSteps: string[];
-  flowCaption: string;
-  /** Titre section assignment (EN Assignment / FR Mission) */
-  assignmentTitle: string;
-  assignmentIntro: string;
-  categories: string[];
-  assignmentNote: string;
-  taskSteps: string[];
-  taskReminder: string;
-  /** Réplique Mira à la réussite (lignes courtes) */
+  flowSteps?: string[];
+  flowCaption?: string;
+  assignmentTitle?: string;
+  assignmentIntro?: string;
+  categories?: string[];
+  assignmentNote?: string;
+  taskSteps?: string[];
+  taskReminder?: string;
   miraSuccess?: string[];
   successInsight: string;
+}
+
+/** Deterministic JSON syntax drill — graded on player edit, not the AI prompt. */
+export interface PayloadRepairTask {
+  title: string;
+  description: string;
+  brokenPayload: string;
+  expectedFields: Record<string, string>;
+  checkLabel: string;
+  passLabel: string;
+}
+
+/**
+ * Deterministic code fill-in (Mission 05+).
+ * Player completes a blank in a mostly-written snippet — no sandbox.
+ */
+export interface CodeFillTask {
+  title: string;
+  description: string;
+  /** Code shown before the blank (includes trailing `if `). */
+  prefix: string;
+  /** Code shown after the blank (starts with `:`). */
+  suffix: string;
+  /** Placeholder shown in the blank input. */
+  blankPlaceholder: string;
+  checkLabel: string;
+  passLabel: string;
+  /** Route when the condition is true / false — used by logic scenario tests. */
+  trueRoute: string;
+  falseRoute: string;
+  /**
+   * Variable name compared in the blank (e.g. priority).
+   * Accepted blank ≈ `priority == "URGENT"` (quotes/spaces flexible).
+   */
+  compareVariable: string;
+  compareValue: string;
 }
 
 export interface MissionDefinition {
@@ -205,9 +305,25 @@ export interface MissionDefinition {
   comingSoonMessage?: string;
   showcaseMessage?: string;
   briefing?: MissionBriefingContent;
+  /** Mission 0 style onboarding (no playground) */
+  intro?: MissionIntroContent;
   allowedOutputs?: string[];
   /** When set, tests use structured multi-field validation */
   outputSchema?: StructuredOutputSchema;
+  /**
+   * Optional deterministic micro-task (e.g. Mission 04 JSON repair).
+   * Graded separately from the AI instruction — no prompt-template matching.
+   */
+  payloadRepair?: PayloadRepairTask;
+  /**
+   * Optional deterministic code fill-in (e.g. Mission 05 if/else).
+   * Graded separately from AI — no Python runtime.
+   */
+  codeFill?: CodeFillTask;
+  /**
+   * When `codeFill` is set, tests are logic scenarios:
+   * `message` = priority fixture label, `expected` = route.
+   */
   tests?: ClassificationTest[];
   hints?: MissionHint[];
   /** Debrief pédagogique (écran de réussite) */
@@ -271,6 +387,22 @@ export interface ClassificationResult {
   contentOk?: boolean | null;
   /** Structured missions: machine output contract respected */
   contractOk?: boolean;
+  /** JSON missions: raw output parsed as a JSON object */
+  jsonOk?: boolean;
+  /** JSON missions: exact required keys, no extras, values in allow-list */
+  fieldsOk?: boolean;
+  /** Beginner-friendly JSON parse failure code for i18n */
+  jsonErrorCode?:
+    | "trailing_comma"
+    | "unquoted_keys"
+    | "single_quotes"
+    | "prose_wrapper"
+    | "unclosed"
+    | "not_object"
+    | "extra_fields"
+    | "wrong_keys"
+    | "invalid_values"
+    | "generic";
   /** Field names wrong when the contract parsed successfully */
   fieldMismatches?: string[];
 }

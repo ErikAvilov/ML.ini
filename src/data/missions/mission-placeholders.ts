@@ -19,44 +19,6 @@ const PLACEHOLDERS: Record<
     xpReward?: number;
   }
 > = {
-  "mission-04": {
-    fr: {
-      title: "Payload Cassé",
-      shortTitle: "Payload",
-      brief: "Les données structurées arrivent mal formées. Le pipeline lâche.",
-      objective: "Contenu à venir.",
-      context: "Projet MILDRED — limite suivante.",
-      comingSoonMessage: "Mission 4 en construction.",
-    },
-    en: {
-      title: "Broken Payload",
-      shortTitle: "Payload",
-      brief: "Structured data arrives malformed. The pipeline breaks.",
-      objective: "Content coming soon.",
-      context: "Project MILDRED — next limit.",
-      comingSoonMessage: "Mission 4 under construction.",
-    },
-  },
-  "mission-05": {
-    fr: {
-      title: "La Bifurcation",
-      shortTitle: "Bifurcation",
-      brief:
-        "MILDRED sait analyser. L’application doit encore décider quoi en faire.",
-      objective: "Contenu à venir.",
-      context: "Projet MILDRED — limite suivante.",
-      comingSoonMessage: "Mission 5 en construction.",
-    },
-    en: {
-      title: "The Fork",
-      shortTitle: "The Fork",
-      brief:
-        "MILDRED can analyze. The application still has to decide what to do.",
-      objective: "Content coming soon.",
-      context: "Project MILDRED — next limit.",
-      comingSoonMessage: "Mission 5 under construction.",
-    },
-  },
   "mission-06": {
     fr: {
       title: "Lui Donner Vie",
@@ -155,8 +117,6 @@ const PLACEHOLDERS: Record<
 };
 
 const META: Record<string, { order: number; slug: string }> = {
-  "mission-04": { order: 4, slug: "double-entree" },
-  "mission-05": { order: 5, slug: "garde-frontiere" },
   "mission-06": { order: 6, slug: "echo-controle" },
   "mission-07": { order: 7, slug: "chaine-de-confiance" },
   "mission-08": { order: 8, slug: "seuil-critique" },
@@ -186,12 +146,6 @@ function createLockedMission(id: string, locale: Locale): MissionDefinition {
   };
 }
 
-export function createMission04(locale: Locale) {
-  return createLockedMission("mission-04", locale);
-}
-export function createMission05(locale: Locale) {
-  return createLockedMission("mission-05", locale);
-}
 export function createMission06(locale: Locale) {
   return createLockedMission("mission-06", locale);
 }

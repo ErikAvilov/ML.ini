@@ -83,13 +83,13 @@ export function HomeHero({
         <div className="mt-5 flex justify-center">
           <HomeMissionPath missions={missions} getStatus={getStatus} compact />
         </div>
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-[length:var(--ml-text-sm)]">
-          <p className="text-ml-accent">
+        <div className="mt-4 flex items-baseline justify-between gap-2 font-mono text-[length:var(--ml-text-xs)] leading-none">
+          <p className="min-w-0 truncate text-ml-accent">
             {activeMission
               ? `${messages.activeMission} ${activeMission.title}`
               : null}
           </p>
-          <p className="font-mono text-[length:var(--ml-text-xs)] text-ml-text-muted">
+          <p className="shrink-0 text-ml-text-muted">
             {t(messages.homeKingdomStep, {
               current: currentStep,
               total: missions.length,

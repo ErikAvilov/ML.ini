@@ -20,7 +20,13 @@ export function HomeMildredSection({
   unlockedCapabilities,
 }: HomeMildredSectionProps) {
   const catalog = (
-    ["classification", "business-rules", "structured-output"] as const
+    [
+      "classification",
+      "business-rules",
+      "structured-output",
+      "data-parsing",
+      "decision-logic",
+    ] as const
   ).map((id) => ({
     id,
     label: MILDRED_CAPABILITY_CATALOG[id].label[locale],
@@ -33,8 +39,6 @@ export function HomeMildredSection({
 
   const nextLocked = catalog.find((c) => !c.online);
   const future = [
-    { id: "data-parsing", label: messages.homeMildredCapParsing },
-    { id: "decision-logic", label: messages.homeMildredCapDecision },
     { id: "ai-integration", label: messages.homeMildredCapIntegration },
   ];
 

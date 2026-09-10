@@ -34,7 +34,7 @@ const SKILL_SEEDS: SkillSeed[] = [
     prerequisites: [],
     unlockedByMissionId: "mission-01",
     kingdomId: KINGDOM_I,
-    position: { x: 0, y: 220 },
+    position: { x: 0, y: 330 },
     copy: {
       en: {
         displayName: "Understanding AI Inputs & Outputs",
@@ -58,7 +58,7 @@ const SKILL_SEEDS: SkillSeed[] = [
     prerequisites: ["llm-fundamentals-1"],
     unlockedByMissionId: "mission-02",
     kingdomId: KINGDOM_I,
-    position: { x: 0, y: 110 },
+    position: { x: 0, y: 220 },
     copy: {
       en: {
         displayName: "Giving Rules to an AI",
@@ -82,7 +82,7 @@ const SKILL_SEEDS: SkillSeed[] = [
     prerequisites: ["prompting-1"],
     unlockedByMissionId: "mission-03",
     kingdomId: KINGDOM_I,
-    position: { x: 0, y: 0 },
+    position: { x: 0, y: 110 },
     copy: {
       en: {
         displayName: "Structuring AI Responses",
@@ -98,11 +98,61 @@ const SKILL_SEEDS: SkillSeed[] = [
       },
     },
   },
+  {
+    id: "json-basics-1",
+    name: "JSON I",
+    level: 1,
+    type: "normal",
+    prerequisites: ["structured-output-1"],
+    unlockedByMissionId: "mission-04",
+    kingdomId: KINGDOM_I,
+    position: { x: 0, y: 0 },
+    copy: {
+      en: {
+        displayName: "Producing Valid JSON",
+        description:
+          "You can instruct a language model to return a valid JSON object another service can parse.",
+        category: "Structured Data",
+      },
+      fr: {
+        displayName: "Produire du JSON valide",
+        description:
+          "Tu peux demander à un modèle de langage de renvoyer un objet JSON valide qu’un autre service peut parser.",
+        category: "Données structurées",
+      },
+    },
+  },
+  {
+    id: "logic-1",
+    name: "Logic I",
+    level: 1,
+    type: "major",
+    prerequisites: ["json-basics-1"],
+    unlockedByMissionId: "mission-05",
+    kingdomId: KINGDOM_I,
+    position: { x: 0, y: -110 },
+    copy: {
+      en: {
+        displayName: "Making Decisions with Code",
+        description:
+          "You can write a simple condition that routes work based on structured data.",
+        category: "Program Logic",
+      },
+      fr: {
+        displayName: "Prendre des décisions avec du code",
+        description:
+          "Tu peux écrire une condition simple qui aiguille le travail à partir de données structurées.",
+        category: "Logique programme",
+      },
+    },
+  },
 ];
 
 export const SKILL_EDGES: SkillEdge[] = [
   { from: "llm-fundamentals-1", to: "prompting-1" },
   { from: "prompting-1", to: "structured-output-1" },
+  { from: "structured-output-1", to: "json-basics-1" },
+  { from: "json-basics-1", to: "logic-1" },
 ];
 
 export function getSkillDefinitions(locale: Locale): SkillDefinition[] {

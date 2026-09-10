@@ -13,7 +13,7 @@ export const DEFAULT_PROGRESS: PlayerProgress = {
   streak: 0,
   bestStreak: 0,
   completedMissions: [],
-  unlockedMissions: ["mission-01"],
+  unlockedMissions: ["mission-00"],
   unlockedSkills: [],
   unlockedCapabilities: [],
   lastPlayedAt: null,
@@ -31,6 +31,33 @@ export interface MissionRewardMeta {
   capabilityId?: string;
 }
 
+function ensureIntroMigration(progress: PlayerProgress): PlayerProgress {
+  const completed = new Set(progress.completedMissions);
+  const unlocked = new Set(progress.unlockedMissions);
+
+  const coreStarted =
+    progress.xp > 0 ||
+    [...completed].some((id) => id !== "mission-00") ||
+    unlocked.has("mission-01") ||
+    (progress.lastPlayedMissionId != null &&
+      progress.lastPlayedMissionId !== "mission-00");
+
+  if (coreStarted) {
+    // Existing players skip Mission 0 without XP distortion.
+    completed.add("mission-00");
+    unlocked.add("mission-00");
+    unlocked.add("mission-01");
+  } else {
+    unlocked.add("mission-00");
+  }
+
+  return {
+    ...progress,
+    completedMissions: Array.from(completed),
+    unlockedMissions: Array.from(unlocked),
+  };
+}
+
 function normalizeProgress(parsed: Partial<PlayerProgress>): PlayerProgress {
   const streak = Math.max(Number(parsed.streak) || 0, 0);
   const base: PlayerProgress = {
@@ -40,7 +67,7 @@ function normalizeProgress(parsed: Partial<PlayerProgress>): PlayerProgress {
     bestStreak: Math.max(Number(parsed.bestStreak) || streak, streak),
     unlockedMissions: parsed.unlockedMissions?.length
       ? parsed.unlockedMissions
-      : ["mission-01"],
+      : ["mission-00"],
     completedMissions: parsed.completedMissions ?? [],
     unlockedSkills: parsed.unlockedSkills ?? [],
     unlockedCapabilities: parsed.unlockedCapabilities ?? [],
@@ -56,30 +83,32 @@ function normalizeProgress(parsed: Partial<PlayerProgress>): PlayerProgress {
     ),
   };
 
+  const withIntro = ensureIntroMigration(base);
+
   const unlockedTitleIds = Array.from(
-    new Set([...base.unlockedTitleIds, ...resolveUnlockedTitleIds(base)])
+    new Set([...withIntro.unlockedTitleIds, ...resolveUnlockedTitleIds(withIntro)])
   );
   const unlockedFrameIds = Array.from(
-    new Set([...base.unlockedFrameIds, ...resolveUnlockedFrameIds(base)])
+    new Set([...withIntro.unlockedFrameIds, ...resolveUnlockedFrameIds(withIntro)])
   );
 
   return {
-    ...base,
-    unlockedSkills: syncSkillsFromCompletedMissions(base),
+    ...withIntro,
+    unlockedSkills: syncSkillsFromCompletedMissions(withIntro),
     unlockedTitleIds,
     equippedTitleId:
-      base.equippedTitleId &&
-      unlockedTitleIds.includes(base.equippedTitleId)
-        ? base.equippedTitleId
+      withIntro.equippedTitleId &&
+      unlockedTitleIds.includes(withIntro.equippedTitleId)
+        ? withIntro.equippedTitleId
         : null,
     unlockedFrameIds,
-    equippedFrameId: unlockedFrameIds.includes(base.equippedFrameId)
-      ? base.equippedFrameId
+    equippedFrameId: unlockedFrameIds.includes(withIntro.equippedFrameId)
+      ? withIntro.equippedFrameId
       : "basalt",
     unlockedAchievementIds: Array.from(
       new Set([
-        ...base.unlockedAchievementIds,
-        ...resolveUnlockedAchievementIds(base),
+        ...withIntro.unlockedAchievementIds,
+        ...resolveUnlockedAchievementIds(withIntro),
       ])
     ),
   };
@@ -117,7 +146,7 @@ export function getMissionStatus(
 ): MissionStatus {
   if (progress.completedMissions.includes(missionId)) return "completed";
   if (progress.unlockedMissions.includes(missionId)) return "available";
-  if (order === 1) return "available";
+  if (order === 0) return "available";
   return "locked";
 }
 

@@ -21,6 +21,14 @@ export const MILDRED_CAPABILITY_CATALOG: Record<
     label: { en: "Structured Output", fr: "Structured Output" },
     status: "ONLINE",
   },
+  "data-parsing": {
+    label: { en: "Data Parsing", fr: "Data Parsing" },
+    status: "ONLINE",
+  },
+  "decision-logic": {
+    label: { en: "Decision Logic", fr: "Decision Logic" },
+    status: "ONLINE",
+  },
 };
 
 export function resolveCapabilities(

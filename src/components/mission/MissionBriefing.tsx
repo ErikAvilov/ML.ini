@@ -1,8 +1,23 @@
 "use client";
 
 import { useLocale } from "@/i18n/locale-context";
-import type { MissionBriefingContent, MissionHint } from "@/lib/types";
+import type {
+  CodeFillTask,
+  MissionBriefingContent,
+  MissionHint,
+  PayloadRepairTask,
+  StructuredOutputSchema,
+} from "@/lib/types";
 import { HintPanel } from "@/components/mission/HintPanel";
+import { MiraMessage } from "@/components/mission/MiraMessage";
+import { CollapsibleBlock } from "@/components/mission/CollapsibleBlock";
+import {
+  FormatCompare,
+  SentimentPolicyBody,
+  SupportPolicyBody,
+} from "@/components/mission/BriefBlocks";
+import { PayloadRepairPanel } from "@/components/mission/PayloadRepairPanel";
+import { CodeFillPanel } from "@/components/mission/CodeFillPanel";
 
 interface MissionBriefingProps {
   briefing: MissionBriefingContent;
@@ -13,6 +28,13 @@ interface MissionBriefingProps {
   instruction: string;
   objective: string;
   missionId: string;
+  payloadRepair?: PayloadRepairTask;
+  codeFill?: CodeFillTask;
+  outputSchema?: StructuredOutputSchema;
+  repairPassed?: boolean;
+  onRepairPassedChange?: (passed: boolean) => void;
+  codeFillPassed?: boolean;
+  onCodeFillPassedChange?: (passed: boolean) => void;
 }
 
 export function MissionBriefing({
@@ -24,261 +46,240 @@ export function MissionBriefing({
   instruction,
   objective,
   missionId,
+  payloadRepair,
+  codeFill,
+  outputSchema,
+  repairPassed = false,
+  onRepairPassedChange,
+  codeFillPassed = false,
+  onCodeFillPassedChange,
 }: MissionBriefingProps) {
   const { messages } = useLocale();
-  const header = briefing.narrativeHeader;
-  const policy = briefing.policy;
-  const sentimentPolicy = briefing.sentimentPolicy;
-  const outputContract = briefing.outputContract;
+  const objectiveText = briefing.objectiveText ?? objective;
+  const shortBrief =
+    briefing.shortBrief ??
+    briefing.welcomeParagraphs?.filter(Boolean).slice(0, 2).join(" ") ??
+    "";
+
+  const currentSentiment =
+    briefing.currentSentimentPolicy ??
+    (!briefing.previousRules ? briefing.sentimentPolicy : undefined);
+  const currentPolicy =
+    briefing.currentPolicy ??
+    (!briefing.previousRules ? briefing.policy : undefined);
+
+  const previous = briefing.previousRules;
 
   return (
-    <div className="space-y-7 text-[length:var(--ml-text-base)] leading-[var(--ml-leading-body)]">
-      <header className="pb-1">
+    <div className="space-y-3.5 text-[length:var(--ml-text-sm)] leading-snug">
+      <header>
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <p className="ml-section-label">
+          <p className="font-mono text-[11px] tracking-[0.14em] text-ml-text-muted uppercase">
             Mission {String(missionOrder).padStart(2, "0")}
           </p>
-          <p className="text-[length:var(--ml-text-sm)] text-ml-text-muted">
+          <p className="font-mono text-[11px] tracking-[0.08em] text-ml-accent uppercase">
             {alreadyCleared
               ? messages.statusClearedReplay
               : messages.statusInProgress}
           </p>
         </div>
-        <h1 className="mt-3 font-display text-[length:var(--ml-text-2xl)] leading-[1.15] text-ml-text">
+        <h1 className="mt-1 font-display text-[1.75rem] leading-tight text-ml-text sm:text-[1.875rem]">
           {missionTitle}
         </h1>
-        <div className="mt-4 h-px w-14 bg-[color-mix(in_srgb,var(--ml-reward)_55%,transparent)]" />
       </header>
 
-      {header && (
-        <section
-          className="border border-ml-border bg-ml-bg-1/40 px-3.5 py-3"
-          style={{ borderRadius: "var(--ml-frame-radius)" }}
-        >
-          <p className="font-mono text-[length:var(--ml-text-xs)] tracking-[0.14em] text-ml-text-muted uppercase">
-            {header.company}
-          </p>
-          <p className="mt-0.5 font-mono text-[length:var(--ml-text-xs)] tracking-[0.12em] text-ml-text-secondary uppercase">
-            {header.division}
-          </p>
-          <p className="mt-3 font-mono text-[length:var(--ml-text-xs)] tracking-[0.16em] text-ml-accent uppercase">
-            {header.project}
-          </p>
-          <p className="mt-3 text-[length:var(--ml-text-xs)] font-medium tracking-[0.08em] text-ml-text uppercase">
-            {header.assignmentLabel}
-          </p>
-          <p className="mt-2 text-[length:var(--ml-text-sm)] text-ml-text-body">
-            <span className="text-ml-text-muted">{header.fromLabel}:</span>{" "}
-            <span className="text-ml-text">{header.fromName}</span>
-          </p>
-          <p className="text-[length:var(--ml-text-xs)] text-ml-text-muted">
-            {header.fromTitle}
-          </p>
-        </section>
-      )}
+      {shortBrief ? <MiraMessage message={shortBrief} /> : null}
 
-      <section>
-        <h2 className="font-display text-[length:var(--ml-text-lg)] text-ml-text">
-          {briefing.welcomeTitle}
-        </h2>
-        <div className="mt-3 space-y-3 text-ml-text-body">
-          {briefing.welcomeParagraphs.map((paragraph) => (
-            <p
-              key={paragraph}
-              className={
-                paragraph.endsWith(":")
-                  ? "text-[length:var(--ml-text-sm)] font-medium text-ml-text-muted"
-                  : undefined
-              }
-            >
-              {paragraph}
-            </p>
-          ))}
-        </div>
-        <p className="mt-3 font-medium text-ml-text">{briefing.roleHighlight}</p>
-        {briefing.roleDetails.length > 0 && (
-          <div className="mt-3 space-y-3 text-ml-text-body">
-            {briefing.roleDetails.map((detail) => (
-              <p key={detail}>{detail}</p>
+      <section
+        className="border border-[color-mix(in_srgb,var(--ml-accent)_35%,var(--ml-border))] bg-[color-mix(in_srgb,var(--ml-accent)_8%,transparent)] px-3 py-2.5"
+        style={{ borderRadius: "var(--ml-frame-radius)" }}
+      >
+        <p className="font-mono text-[11px] tracking-[0.14em] text-ml-accent uppercase">
+          {messages.objectiveLabel}
+        </p>
+        <p className="mt-1 text-[length:var(--ml-text-md)] font-medium leading-snug whitespace-pre-line text-ml-text">
+          {objectiveText}
+        </p>
+        {briefing.categories && briefing.categories.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {briefing.categories.map((category) => (
+              <span
+                key={category}
+                className="border border-ml-border-strong bg-ml-bg-1 px-2 py-0.5 font-mono text-[11px] text-ml-text"
+                style={{ borderRadius: "var(--ml-frame-radius)" }}
+              >
+                {category}
+              </span>
             ))}
           </div>
-        )}
-        {briefing.systemNote && (
-          <p className="mt-3 text-ml-text-body">{briefing.systemNote}</p>
         )}
       </section>
 
-      {sentimentPolicy && (
-        <section
-          className="border border-ml-border bg-ml-surface-1/50 px-3.5 py-3.5"
-          style={{ borderRadius: "var(--ml-frame-radius)" }}
-        >
-          <h2 className="ml-section-label">{sentimentPolicy.title}</h2>
-          <div className="mt-3 space-y-3 text-[length:var(--ml-text-sm)]">
-            {(
-              [
-                {
-                  label: sentimentPolicy.positiveLabel,
-                  items: sentimentPolicy.positiveItems,
-                },
-                {
-                  label: sentimentPolicy.negativeLabel,
-                  items: sentimentPolicy.negativeItems,
-                },
-                {
-                  label: sentimentPolicy.neutralLabel,
-                  items: sentimentPolicy.neutralItems,
-                },
-              ] as const
-            ).map((block) => (
-              <div key={block.label}>
-                <p className="font-mono text-[length:var(--ml-text-xs)] text-ml-text-secondary">
-                  {block.label}
-                </p>
-                <ul className="mt-1.5 space-y-1 text-ml-text-body">
-                  {block.items.map((item) => (
-                    <li key={item} className="flex gap-2">
-                      <span className="mt-[0.55em] h-1 w-1 shrink-0 rounded-full bg-ml-text-muted" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-            <p className="border-l-2 border-ml-reward/50 pl-3 text-ml-text">
-              {sentimentPolicy.note}
-            </p>
-          </div>
-        </section>
+      {payloadRepair && outputSchema && onRepairPassedChange && (
+        <PayloadRepairPanel
+          missionId={missionId}
+          task={payloadRepair}
+          schema={outputSchema}
+          passed={repairPassed}
+          onPassedChange={onRepairPassedChange}
+        />
       )}
 
-      {policy && (
-        <section
-          className="border border-ml-border bg-ml-surface-1/50 px-3.5 py-3.5"
-          style={{ borderRadius: "var(--ml-frame-radius)" }}
-        >
-          <h2 className="ml-section-label">{policy.title}</h2>
-          <div className="mt-3 space-y-3 text-[length:var(--ml-text-sm)]">
-            <div>
-              <p className="font-mono text-[length:var(--ml-text-xs)] text-ml-accent">
-                {policy.urgentLabel}
-              </p>
-              <ul className="mt-1.5 space-y-1 text-ml-text-body">
-                {policy.urgentItems.map((item) => (
-                  <li key={item} className="flex gap-2">
-                    <span className="mt-[0.55em] h-1 w-1 shrink-0 rounded-full bg-ml-text-muted" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="font-mono text-[length:var(--ml-text-xs)] text-ml-text-secondary">
-                {policy.normalLabel}
-              </p>
-              <p className="mt-1.5 text-ml-text-body">{policy.normalBody}</p>
-            </div>
-            <p className="border-l-2 border-ml-reward/50 pl-3 text-ml-text">
-              {policy.note}
-            </p>
-          </div>
-        </section>
+      {codeFill && onCodeFillPassedChange && (
+        <CodeFillPanel
+          missionId={missionId}
+          task={codeFill}
+          passed={codeFillPassed}
+          onPassedChange={onCodeFillPassedChange}
+        />
       )}
 
-      {outputContract && (
+      {briefing.formatCompare && (
+        <FormatCompare compare={briefing.formatCompare} />
+      )}
+
+      {briefing.newConcept && (
         <section
-          className="border border-ml-border bg-ml-bg-1/50 px-3.5 py-3.5"
+          className="border border-ml-border bg-ml-surface-1/40 px-3 py-2.5"
           style={{ borderRadius: "var(--ml-frame-radius)" }}
         >
-          <h2 className="ml-section-label">
-            {outputContract.title || messages.outputContractTitle}
-          </h2>
-          <div className="mt-3 space-y-3">
-            <div>
-              <p className="text-[length:var(--ml-text-xs)] font-medium text-ml-text-muted">
-                {messages.humanReadableLabel}
-              </p>
-              <p className="mt-1.5 text-[length:var(--ml-text-sm)] leading-relaxed text-ml-text-body italic">
-                “{outputContract.humanReadableExample}”
-              </p>
-            </div>
-            <div>
-              <p className="text-[length:var(--ml-text-xs)] font-medium text-ml-accent">
-                {messages.machineReadableLabel}
-              </p>
-              <pre className="mt-1.5 overflow-x-auto border border-ml-border bg-ml-bg-0/60 px-3 py-2 font-mono text-[length:var(--ml-text-xs)] leading-relaxed text-ml-text whitespace-pre-wrap"
-                style={{ borderRadius: "var(--ml-frame-radius)" }}
-              >
-                {outputContract.requiredFormat}
-              </pre>
-            </div>
-            {outputContract.fieldLabels && outputContract.fieldLabels.length > 0 && (
-              <ul className="space-y-1 font-mono text-[length:var(--ml-text-xs)] text-ml-text-secondary">
-                {outputContract.fieldLabels.map((label) => (
+          <p className="font-mono text-[11px] tracking-[0.14em] text-ml-accent uppercase">
+            {briefing.newConcept.title}
+          </p>
+          {briefing.newConcept.example && (
+            <pre className="mt-1.5 overflow-x-auto font-mono text-[12px] leading-snug whitespace-pre-wrap text-ml-text">
+              {briefing.newConcept.example}
+            </pre>
+          )}
+          {briefing.newConcept.labels &&
+            briefing.newConcept.labels.length > 0 && (
+              <ul className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 font-mono text-[11px] text-ml-secondary">
+                {briefing.newConcept.labels.map((label) => (
                   <li key={label}>{label}</li>
                 ))}
               </ul>
             )}
+        </section>
+      )}
+
+      {(briefing.expectedFormat ||
+        (briefing.contractLines && briefing.contractLines.length > 0)) && (
+        <section
+          className="border border-ml-border bg-ml-bg-1/40 px-3 py-2.5"
+          style={{ borderRadius: "var(--ml-frame-radius)" }}
+        >
+          <p className="font-mono text-[11px] tracking-[0.14em] text-ml-accent uppercase">
+            {messages.expectedFormatLabel}
+          </p>
+          {briefing.expectedFormat && (
+            <pre className="mt-1.5 overflow-x-auto font-mono text-[12px] leading-snug whitespace-pre-wrap text-ml-text">
+              {briefing.expectedFormat}
+            </pre>
+          )}
+          {briefing.contractLines && briefing.contractLines.length > 0 && (
+            <ul className="mt-2 space-y-1 font-mono text-[11px] text-ml-text-secondary">
+              {briefing.contractLines.map((line) => (
+                <li key={line.name}>
+                  <span className="text-ml-text">{line.name}</span>
+                  <span className="text-ml-text-muted"> · </span>
+                  {line.values}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
+
+      {currentSentiment && (
+        <section
+          className="border border-ml-border bg-ml-surface-1/40 px-3 py-2.5"
+          style={{ borderRadius: "var(--ml-frame-radius)" }}
+        >
+          <p className="font-mono text-[11px] tracking-[0.14em] text-ml-accent uppercase">
+            {currentSentiment.title}
+          </p>
+          <div className="mt-2">
+            <SentimentPolicyBody policy={currentSentiment} />
           </div>
         </section>
       )}
 
-      <hr className="ml-rule" />
+      {currentPolicy && (
+        <section
+          className="border border-ml-border bg-ml-surface-1/40 px-3 py-2.5"
+          style={{ borderRadius: "var(--ml-frame-radius)" }}
+        >
+          <p className="font-mono text-[11px] tracking-[0.14em] text-ml-accent uppercase">
+            {currentPolicy.title}
+          </p>
+          <div className="mt-2">
+            <SupportPolicyBody policy={currentPolicy} />
+          </div>
+        </section>
+      )}
 
-      <section>
-        <h2 className="ml-section-label">{messages.howItWorks}</h2>
-        <p className="mt-3 text-[length:var(--ml-text-md)] text-ml-text">
-          {briefing.flowSteps.join(" → ")}
-        </p>
-        <p className="mt-2.5 text-ml-text-muted">{briefing.flowCaption}</p>
-      </section>
+      {briefing.flowSteps && briefing.flowSteps.length > 0 && (
+        <section>
+          <p className="font-mono text-[11px] tracking-[0.12em] text-ml-secondary uppercase">
+            {messages.howItWorks}
+          </p>
+          <p className="mt-1 text-[length:var(--ml-text-sm)] text-ml-text">
+            {briefing.flowSteps.join(" → ")}
+          </p>
+          {briefing.flowCaption && (
+            <p className="mt-0.5 text-[length:var(--ml-text-xs)] text-ml-text-muted">
+              {briefing.flowCaption}
+            </p>
+          )}
+        </section>
+      )}
 
-      <section className="ml-assignment">
-        <div className="mb-4 flex items-center gap-3">
-          <div className="h-px flex-1 bg-[color-mix(in_srgb,var(--ml-reward)_30%,transparent)]" />
-          <h2 className="font-display text-[length:var(--ml-text-xl)] text-ml-text">
-            {briefing.assignmentTitle}
-          </h2>
-          <div className="h-px flex-1 bg-[color-mix(in_srgb,var(--ml-reward)_30%,transparent)]" />
-        </div>
+      {previous && (previous.sentimentPolicy || previous.policy) && (
+        <CollapsibleBlock title={previous.title}>
+          <div className="space-y-3">
+            {previous.sentimentPolicy && (
+              <div>
+                <p className="mb-1.5 font-mono text-[11px] text-ml-secondary">
+                  {previous.sentimentPolicy.title}
+                </p>
+                <SentimentPolicyBody policy={previous.sentimentPolicy} />
+              </div>
+            )}
+            {previous.policy && (
+              <div>
+                <p className="mb-1.5 font-mono text-[11px] text-ml-secondary">
+                  {previous.policy.title}
+                </p>
+                <SupportPolicyBody policy={previous.policy} />
+              </div>
+            )}
+          </div>
+        </CollapsibleBlock>
+      )}
 
-        <p className="text-ml-text-body">{briefing.assignmentIntro}</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {briefing.categories.map((category) => (
-            <span
-              key={category}
-              className="border border-ml-border-strong bg-ml-bg-1 px-2.5 py-1 font-mono text-[length:var(--ml-text-xs)] text-ml-text"
-              style={{ borderRadius: "var(--ml-frame-radius)" }}
-            >
-              {category}
-            </span>
-          ))}
-        </div>
-        <p className="mt-3 text-ml-text-body">{briefing.assignmentNote}</p>
+      {briefing.optionalTheory && (
+        <CollapsibleBlock title={briefing.optionalTheory.title}>
+          <div className="space-y-2">
+            {briefing.optionalTheory.body.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+        </CollapsibleBlock>
+      )}
 
-        <ol className="mt-5 space-y-2">
-          {briefing.taskSteps.map((step, index) => (
-            <li key={step} className="flex gap-2.5 text-ml-text-body">
-              <span className="font-medium text-ml-text">{index + 1}.</span>
-              <span>{step}</span>
-            </li>
-          ))}
-        </ol>
-        <p className="mt-4 border-l-2 border-ml-reward/50 pl-3.5 text-ml-text">
-          {briefing.taskReminder}
-        </p>
-      </section>
-
-      <section>
-        <HintPanel
-          key={missionId}
-          missionId={missionId}
-          hints={hints}
-          instruction={instruction}
-          objective={objective}
-          compact
-        />
-      </section>
+      {hints.length > 0 && (
+        <CollapsibleBlock title={messages.hints}>
+          <HintPanel
+            key={missionId}
+            missionId={missionId}
+            hints={hints}
+            instruction={instruction}
+            objective={objective}
+            compact
+            hideHeader
+          />
+        </CollapsibleBlock>
+      )}
     </div>
   );
 }

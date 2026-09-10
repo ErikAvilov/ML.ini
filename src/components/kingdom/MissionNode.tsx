@@ -21,26 +21,33 @@ export function MissionNode({
 }: MissionNodeProps) {
   const { messages } = useLocale();
   const isBoss = mission.kind === "boss";
+  const isIntro = mission.kind === "intro";
 
   return (
     <button
       type="button"
       onClick={() => onSelect(mission.id)}
       aria-pressed={selected}
-      className="group relative z-10 flex w-32 flex-col items-center text-center outline-none focus-visible:rounded-ml focus-visible:ring-2 focus-visible:ring-[var(--ml-border-accent)]"
+      className="group relative z-10 flex w-32 cursor-pointer flex-col items-center text-center outline-none focus-visible:rounded-ml focus-visible:ring-2 focus-visible:ring-[var(--ml-border-accent)]"
     >
       <span
-        className={`relative flex h-16 w-16 items-center justify-center border bg-ml-surface-2 transition duration-200 group-hover:-translate-y-0.5 ${
+        className={`relative flex items-center justify-center border bg-ml-surface-2 transition duration-200 group-hover:-translate-y-0.5 ${
+          isIntro
+            ? "h-12 w-12 border-ml-reward text-ml-reward"
+            : "h-16 w-16"
+        } ${
           isBoss
             ? "border-[var(--ml-frame-boss)] text-ml-reward"
-            : status === "locked"
-              ? "border-ml-border text-ml-text-muted"
-              : status === "completed"
-                ? "border-[var(--ml-border-accent)] text-ml-accent"
-                : "border-ml-accent text-ml-accent"
+            : isIntro
+              ? ""
+              : status === "locked"
+                ? "border-ml-border text-ml-text-muted"
+                : status === "completed"
+                  ? "border-[var(--ml-border-accent)] text-ml-accent"
+                  : "border-ml-accent text-ml-accent"
         } ${
           selected
-            ? isBoss
+            ? isBoss || isIntro
               ? "ring-2 ring-[var(--ml-reward-soft)]"
               : "ring-2 ring-[var(--ml-accent-soft)]"
             : ""
@@ -48,8 +55,10 @@ export function MissionNode({
         style={{ borderRadius: "var(--ml-frame-radius-lg)" }}
       >
         <span
-          className={`flex h-8 w-8 rotate-45 items-center justify-center border ${
-            isBoss
+          className={`flex items-center justify-center border ${
+            isIntro ? "h-6 w-6 rotate-45" : "h-8 w-8 rotate-45"
+          } ${
+            isBoss || isIntro
               ? "border-ml-reward bg-ml-reward-soft"
               : status === "locked"
                 ? "border-ml-border bg-ml-bg-1"
@@ -61,20 +70,20 @@ export function MissionNode({
           {status === "completed" ? (
             <Check
               className="-rotate-45 text-[var(--ml-text-on-primary)]"
-              size={17}
+              size={isIntro ? 14 : 17}
             />
           ) : status === "locked" ? (
-            <Lock className="-rotate-45" size={15} />
+            <Lock className="-rotate-45" size={isIntro ? 12 : 15} />
           ) : isBoss ? (
             <Shield className="-rotate-45" size={17} />
           ) : (
-            <Play className="-rotate-45" size={16} />
+            <Play className="-rotate-45" size={isIntro ? 13 : 16} />
           )}
         </span>
         {active && (
           <span
             className={`absolute -top-1 -right-1 h-3 w-3 rounded-full border-2 border-ml-surface-2 motion-safe:animate-pulse ${
-              isBoss ? "bg-ml-reward" : "bg-ml-accent"
+              isBoss || isIntro ? "bg-ml-reward" : "bg-ml-accent"
             }`}
           />
         )}
@@ -82,16 +91,18 @@ export function MissionNode({
 
       <span
         className={`mt-3 font-mono text-xs ${
-          isBoss
+          isBoss || isIntro
             ? "text-ml-reward"
             : status === "locked"
               ? "text-ml-text-muted"
               : "text-ml-accent"
         }`}
       >
-        {isBoss
-          ? `${messages.homeKingdomBoss} · ${mission.order}`
-          : `M-${String(mission.order).padStart(2, "0")}`}
+        {isIntro
+          ? messages.introLabel
+          : isBoss
+            ? `${messages.homeKingdomBoss} · ${mission.order}`
+            : `M-${String(mission.order).padStart(2, "0")}`}
       </span>
       <span
         className={`mt-1 line-clamp-2 text-sm font-semibold leading-tight ${

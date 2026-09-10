@@ -25,7 +25,7 @@ const frameClasses = {
 
 export function ProfileView() {
   const { locale, messages, t } = useLocale();
-  const { progress, equipTitle, equipFrame } = useProgress();
+  const { progress, equipTitle, equipFrame, resetProgress } = useProgress();
   const view = progress;
   const missions = getMissions(locale);
   const kingdoms = getKingdoms(locale);
@@ -301,6 +301,28 @@ export function ProfileView() {
             </div>
           </div>
         </div>
+      </section>
+
+      <section
+        className={`${panel} p-5 sm:p-6`}
+        style={{ borderRadius: "var(--ml-frame-radius-lg)" }}
+      >
+        <h2 className="font-display text-lg text-ml-text">
+          {messages.profileResetTitle}
+        </h2>
+        <p className="mt-2 max-w-xl text-[length:var(--ml-text-sm)] text-ml-text-muted">
+          {messages.profileResetHelp}
+        </p>
+        <Button
+          variant="danger"
+          className="mt-4"
+          onClick={() => {
+            if (!window.confirm(messages.profileResetConfirm)) return;
+            resetProgress();
+          }}
+        >
+          {messages.profileResetAction}
+        </Button>
       </section>
     </div>
   );

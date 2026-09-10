@@ -7,7 +7,7 @@ Documentation pour les agents et contributeurs.
 | [../DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md) | **Tokens, palette, frames, nodes, règles UI** |
 | [PRODUCT.md](./PRODUCT.md) | Vision produit / scope |
 | [VISUAL.md](./VISUAL.md) | Résumé direction artistique |
-| [MISSION-UX.md](./MISSION-UX.md) | Shell mission plein écran |
+| [MISSION-UX.md](./MISSION-UX.md) | Shell mission plein écran + hiérarchie info + Mission 0 |
 | [PEDAGOGY.md](./PEDAGOGY.md) | Boucle d’apprentissage |
 | [../NARRATIVE.md](../NARRATIVE.md) | **Canon fiction Royaume I** (Veyra, MILDRED, Mira) |
 | [../SKILL_TREE.md](../SKILL_TREE.md) | Arbre de compétences (meta-progression) |

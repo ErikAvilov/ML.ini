@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { MissionIntro } from "@/components/mission/MissionIntro";
 import { MissionBriefing } from "@/components/mission/MissionBriefing";
 import { MissionNavBar } from "@/components/mission/MissionNavBar";
 import { MissionPlayground } from "@/components/mission/MissionPlayground";
@@ -12,15 +13,22 @@ import {
   SuccessToast,
   type SuccessToastData,
 } from "@/components/mission/SuccessToast";
+import { ProgressionPopup } from "@/components/progression/ProgressionPopup";
 import { useProgress } from "@/lib/progress-context";
 import { getMissionStatus } from "@/lib/progression";
+import {
+  buildCelebrationsAfterMission,
+  type ProgressionCelebration,
+  type ProgressionReward,
+} from "@/lib/progression-celebrations";
 import {
   loadMissionDraft,
   saveMissionDraft,
 } from "@/lib/persistence/mission-drafts";
-import { evaluateMissionTest, summarizeSuite } from "@/lib/validation";
+import { evaluateMissionTest, evaluateLogicRoute, summarizeSuite } from "@/lib/validation";
 import { useLocale } from "@/i18n/locale-context";
 import { getMissionBySlug, getMissions } from "@/data/missions";
+import { createKingdomConstruireAvecIA } from "@/data/kingdoms/construire-avec-ia";
 import type { ClassificationResult, MissionDefinition } from "@/lib/types";
 import type { Locale } from "@/i18n/config";
 import type { CommonMessages } from "@/i18n/messages/common";
@@ -53,7 +61,7 @@ export function MissionWorkspace({ missionSlug }: MissionWorkspaceProps) {
 
   const status = ready
     ? getMissionStatus(mission.id, progress, mission.order)
-    : mission.order === 1
+    : mission.order === 0
       ? "available"
       : "locked";
 
@@ -101,6 +109,17 @@ export function MissionWorkspace({ missionSlug }: MissionWorkspaceProps) {
     );
   }
 
+  if (mission.kind === "intro") {
+    return (
+      <MissionIntro
+        key={`${locale}-${mission.id}`}
+        mission={mission}
+        missions={missions}
+        nextMissionId={nextMissionId}
+      />
+    );
+  }
+
   return (
     <MissionSession
       key={`${locale}-${mission.id}`}
@@ -129,9 +148,18 @@ function MissionSession({
   messages,
 }: MissionSessionProps) {
   const router = useRouter();
-  const { progress, completeMissionAndUnlock, markMissionPlayed } =
-    useProgress();
+  const {
+    progress,
+    completeMissionAndUnlock,
+    markMissionPlayed,
+    equipTitle,
+    equipFrame,
+  } = useProgress();
   const alreadyCleared = progress.completedMissions.includes(mission.id);
+  const kingdom = useMemo(
+    () => createKingdomConstruireAvecIA(locale),
+    [locale]
+  );
   const tests = mission.tests ?? [];
   const showcase =
     mission.showcaseMessage ?? tests[0]?.message ?? "";
@@ -141,6 +169,12 @@ function MissionSession({
 
   const [instruction, setInstruction] = useState(() =>
     typeof window !== "undefined" ? loadMissionDraft(mission.id) : ""
+  );
+  const [repairPassed, setRepairPassed] = useState(
+    () => !mission.payloadRepair
+  );
+  const [codeFillPassed, setCodeFillPassed] = useState(
+    () => !mission.codeFill
   );
   const [activeMessage, setActiveMessage] = useState(showcase);
   const [liveOutput, setLiveOutput] = useState<string | null>(null);
@@ -157,17 +191,32 @@ function MissionSession({
   const [successToast, setSuccessToast] = useState<SuccessToastData | null>(
     null
   );
+  const [celebrationQueue, setCelebrationQueue] = useState<
+    ProgressionCelebration[]
+  >([]);
   const [justUnlocked, setJustUnlocked] = useState(false);
   const [mobileTab, setMobileTab] = useState<MobileTab>("brief");
 
+  const activeCelebration = celebrationQueue[0] ?? null;
+
   const runningRef = useRef(running);
   const instructionRef = useRef(instruction);
+  const repairPassedRef = useRef(repairPassed);
+  const codeFillPassedRef = useRef(codeFillPassed);
   const handleRunRef = useRef<() => Promise<void>>(async () => {});
 
   useEffect(() => {
     runningRef.current = running;
     instructionRef.current = instruction;
   }, [running, instruction]);
+
+  useEffect(() => {
+    repairPassedRef.current = repairPassed;
+  }, [repairPassed]);
+
+  useEffect(() => {
+    codeFillPassedRef.current = codeFillPassed;
+  }, [codeFillPassed]);
 
   useEffect(() => {
     markMissionPlayed(mission.id);
@@ -194,16 +243,25 @@ function MissionSession({
     return data.output ?? "";
   }
 
+  function handleCelebrationContinue() {
+    const rest = celebrationQueue.slice(1);
+    setCelebrationQueue(rest);
+  }
+
+  function handleEquipReward(reward: ProgressionReward) {
+    if (reward.type === "title") equipTitle(reward.id);
+    if (reward.type === "profile-frame") equipFrame(reward.id);
+  }
+
   function grantMissionSuccess() {
-    const levelBefore = progress.level;
+    const before = progress;
     const wasCleared = alreadyCleared;
     let xpGained = 0;
-    let leveledUp = false;
-    let newLevel: number | null = null;
+    let after = before;
 
     if (!wasCleared) {
       const skill = mission.completion?.skillUnlocked;
-      const next = completeMissionAndUnlock(
+      after = completeMissionAndUnlock(
         mission.id,
         nextMissionId,
         mission.xpReward,
@@ -213,20 +271,52 @@ function MissionSession({
         }
       );
       xpGained = mission.xpReward;
-      leveledUp = next.level > levelBefore;
-      newLevel = leveledUp ? next.level : null;
       setJustUnlocked(Boolean(nextMissionId));
     }
 
+    const celebrations = buildCelebrationsAfterMission({
+      wasCleared,
+      before,
+      after,
+      xpGained,
+      mission,
+      locale,
+      kingdom: {
+        id: kingdom.id,
+        name: kingdom.name,
+        missionIds: kingdom.missionIds,
+      },
+    });
+    setCelebrationQueue(celebrations);
+
+    const leveledUp = after.level > before.level;
+    // Mission clear = toast bas-droite only (all missions). Centered popup
+    // only for level-up / milestone / kingdom.
     setSuccessToast({
       missionTitle: mission.title,
       xpGained,
       leveledUp,
-      newLevel,
+      newLevel: leveledUp ? after.level : null,
       replay: wasCleared,
       nextMissionHref: nextMission ? `/missions/${nextMission.slug}` : null,
       nextMissionTitle: nextMission?.shortTitle ?? nextMission?.title ?? null,
     });
+  }
+
+  function tryGrantMissionSuccess() {
+    if (mission.payloadRepair && !repairPassedRef.current) {
+      setFeedback(messages.payloadRepairRequired);
+      setFeedbackSpeaker("mira");
+      setMobileTab("brief");
+      return;
+    }
+    if (mission.codeFill && !codeFillPassedRef.current) {
+      setFeedback(messages.codeFillRequired);
+      setFeedbackSpeaker("mira");
+      setMobileTab("brief");
+      return;
+    }
+    grantMissionSuccess();
   }
 
   function handleDevComplete() {
@@ -240,12 +330,43 @@ function MissionSession({
     grantMissionSuccess();
   }
 
+  function priorityFromLogicFixture(message: string): string {
+    const match = message.match(/"([A-Z_]+)"/);
+    return match?.[1] ?? "";
+  }
+
+  function evaluateLogicTest(
+    test: (typeof tests)[number]
+  ): ClassificationResult {
+    const fill = mission.codeFill!;
+    const priority = priorityFromLogicFixture(test.message);
+    const route = evaluateLogicRoute(
+      priority,
+      fill.compareValue,
+      fill.trueRoute,
+      fill.falseRoute
+    );
+    const matches = route === test.expected;
+    return {
+      raw: route,
+      normalized: route,
+      isValidCategory: true,
+      matchesExpected: matches,
+      expected: test.expected,
+      message: test.message,
+      testId: test.id,
+      failHint: matches ? undefined : test.failHint,
+    };
+  }
+
   async function handleRun() {
-    if (
-      !instructionRef.current.trim() ||
-      runningRef.current ||
-      tests.length === 0
-    ) {
+    const isLogic = Boolean(mission.codeFill);
+    if (runningRef.current || tests.length === 0) return;
+    if (!isLogic && !instructionRef.current.trim()) return;
+    if (isLogic && !codeFillPassedRef.current) {
+      setFeedback(messages.codeFillRequired);
+      setFeedbackSpeaker("mira");
+      setMobileTab("brief");
       return;
     }
 
@@ -267,24 +388,30 @@ function MissionSession({
         setCurrentIndex(i);
         setActiveMessage(test.message);
         setStage("input");
-        await wait(280);
+        await wait(isLogic ? 180 : 280);
         setStage("instruction");
-        await wait(320);
+        await wait(isLogic ? 160 : 320);
         setStage("model");
 
-        const output = await runClassify(test.message);
-        setLiveOutput(output);
+        let evaluated: ClassificationResult;
+        if (isLogic) {
+          await wait(120);
+          evaluated = evaluateLogicTest(test);
+        } else {
+          const output = await runClassify(test.message);
+          setLiveOutput(output);
+          evaluated = evaluateMissionTest(
+            output,
+            test,
+            mission.allowedOutputs ?? [],
+            mission.outputSchema
+          );
+        }
+        setLiveOutput(evaluated.raw);
         setStage("output");
-
-        const evaluated = evaluateMissionTest(
-          output,
-          test,
-          mission.allowedOutputs ?? [],
-          mission.outputSchema
-        );
         collected.push(evaluated);
         setResults([...collected]);
-        await wait(450);
+        await wait(isLogic ? 280 : 450);
       }
 
       const summary = summarizeSuite(collected, locale);
@@ -292,7 +419,7 @@ function MissionSession({
       setFeedbackSpeaker(summary.feedbackSpeaker);
 
       if (summary.allPassed) {
-        grantMissionSuccess();
+        tryGrantMissionSuccess();
       }
     } catch (err) {
       setSystemError(
@@ -347,7 +474,15 @@ function MissionSession({
   }, [mission.order, missions, progress, router]);
 
   async function handleRunBatch() {
-    if (!instruction.trim() || running || tests.length === 0) return;
+    const isLogic = Boolean(mission.codeFill);
+    if (running || tests.length === 0) return;
+    if (!isLogic && !instruction.trim()) return;
+    if (isLogic && !codeFillPassedRef.current) {
+      setFeedback(messages.codeFillRequired);
+      setFeedbackSpeaker("mira");
+      setMobileTab("brief");
+      return;
+    }
 
     setMobileTab("workspace");
     setRunning(true);
@@ -363,36 +498,43 @@ function MissionSession({
     setStage("model");
 
     try {
-      const res = await fetch("/api/ai/classify-batch", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          instruction,
-          locale,
-          tests: tests.map((t) => ({ id: t.id, message: t.message })),
-        }),
-      });
-      const data = (await res.json()) as {
-        results?: Array<{ testId: string; rawOutput: string }>;
-        error?: string;
-      };
-      if (!res.ok) {
-        throw new Error(data.error || messages.apiError);
-      }
+      let collected: ClassificationResult[];
 
-      const byId = new Map(
-        (data.results ?? []).map((r) => [r.testId, r.rawOutput] as const)
-      );
+      if (isLogic) {
+        await wait(280);
+        collected = tests.map((test) => evaluateLogicTest(test));
+      } else {
+        const res = await fetch("/api/ai/classify-batch", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            instruction,
+            locale,
+            tests: tests.map((t) => ({ id: t.id, message: t.message })),
+          }),
+        });
+        const data = (await res.json()) as {
+          results?: Array<{ testId: string; rawOutput: string }>;
+          error?: string;
+        };
+        if (!res.ok) {
+          throw new Error(data.error || messages.apiError);
+        }
 
-      const collected: ClassificationResult[] = tests.map((test) => {
-        const output = byId.get(test.id) ?? "";
-        return evaluateMissionTest(
-          output,
-          test,
-          mission.allowedOutputs ?? [],
-          mission.outputSchema
+        const byId = new Map(
+          (data.results ?? []).map((r) => [r.testId, r.rawOutput] as const)
         );
-      });
+
+        collected = tests.map((test) => {
+          const output = byId.get(test.id) ?? "";
+          return evaluateMissionTest(
+            output,
+            test,
+            mission.allowedOutputs ?? [],
+            mission.outputSchema
+          );
+        });
+      }
 
       const lastRaw =
         collected[collected.length - 1]?.raw ??
@@ -408,7 +550,7 @@ function MissionSession({
       setFeedbackSpeaker(summary.feedbackSpeaker);
 
       if (summary.allPassed) {
-        grantMissionSuccess();
+        tryGrantMissionSuccess();
       }
     } catch (err) {
       setSystemError(
@@ -420,6 +562,42 @@ function MissionSession({
       setRunMode("idle");
       setStage("idle");
     }
+  }
+
+  const dismissSuccessToast = useCallback(() => {
+    setSuccessToast(null);
+  }, []);
+
+  function onRepairPassedChange(passed: boolean) {
+    setRepairPassed(passed);
+    repairPassedRef.current = passed;
+    if (
+      !passed ||
+      alreadyCleared ||
+      !mission.payloadRepair ||
+      results.length !== tests.length ||
+      tests.length === 0 ||
+      !results.every((r) => r.matchesExpected)
+    ) {
+      return;
+    }
+    queueMicrotask(() => tryGrantMissionSuccess());
+  }
+
+  function onCodeFillPassedChange(passed: boolean) {
+    setCodeFillPassed(passed);
+    codeFillPassedRef.current = passed;
+    if (
+      !passed ||
+      alreadyCleared ||
+      !mission.codeFill ||
+      results.length !== tests.length ||
+      tests.length === 0 ||
+      !results.every((r) => r.matchesExpected)
+    ) {
+      return;
+    }
+    queueMicrotask(() => tryGrantMissionSuccess());
   }
 
   return (
@@ -451,9 +629,9 @@ function MissionSession({
         </button>
       </div>
 
-      <div className="grid min-h-0 flex-1 lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)]">
+      <div className="grid min-h-0 flex-1 lg:grid-cols-[minmax(0,40fr)_minmax(0,60fr)]">
         <aside
-          className={`min-h-0 min-w-0 overflow-y-auto border-r border-ml-border bg-ml-bg-1 px-5 py-5 sm:px-6 sm:py-6 ${
+          className={`min-h-0 min-w-0 overflow-y-auto border-r border-ml-border bg-ml-bg-1 px-4 py-3.5 sm:px-5 sm:py-4 ${
             mobileTab === "brief" ? "block" : "hidden lg:block"
           }`}
         >
@@ -467,6 +645,13 @@ function MissionSession({
               instruction={instruction}
               objective={mission.objective}
               missionId={mission.id}
+              payloadRepair={mission.payloadRepair}
+              codeFill={mission.codeFill}
+              outputSchema={mission.outputSchema}
+              repairPassed={repairPassed}
+              onRepairPassedChange={onRepairPassedChange}
+              codeFillPassed={codeFillPassed}
+              onCodeFillPassedChange={onCodeFillPassedChange}
             />
           )}
         </aside>
@@ -499,14 +684,33 @@ function MissionSession({
             testCount={tests.length}
             error={systemError}
             justUnlocked={justUnlocked}
-            showSuccess={Boolean(successToast)}
+            showSuccess={
+              Boolean(successToast) || Boolean(activeCelebration)
+            }
+            exerciseMode={mission.codeFill ? "logic" : "prompt"}
+            canRun={mission.codeFill ? codeFillPassed : undefined}
           />
         </section>
       </div>
 
+      {activeCelebration && (
+        <ProgressionPopup
+          celebration={activeCelebration}
+          onContinue={handleCelebrationContinue}
+          onEquipReward={handleEquipReward}
+          equippedRewardId={
+            activeCelebration.reward?.type === "title"
+              ? progress.equippedTitleId
+              : activeCelebration.reward?.type === "profile-frame"
+                ? progress.equippedFrameId
+                : null
+          }
+        />
+      )}
+
       <SuccessToast
         data={successToast}
-        onDismiss={() => setSuccessToast(null)}
+        onDismiss={dismissSuccessToast}
       />
     </div>
   );

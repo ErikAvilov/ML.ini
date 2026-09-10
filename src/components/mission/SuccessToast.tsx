@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { X } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useLocale } from "@/i18n/locale-context";
 
 export interface SuccessToastData {
@@ -22,104 +22,83 @@ interface SuccessToastProps {
 }
 
 const TOAST_DURATION_MS = 7000;
+const SLIDE_S = 0.4;
 
 export function SuccessToast({ data, onDismiss }: SuccessToastProps) {
-  const reduceMotion = useReducedMotion();
-  const toastKey = data
-    ? `${data.missionTitle}-${data.xpGained}-${data.newLevel ?? "x"}-${data.replay}`
-    : null;
-
   return (
-    <AnimatePresence>
-      {data && toastKey && (
-        <SuccessToastCard
-          key={toastKey}
-          data={data}
-          onDismiss={onDismiss}
-          reduceMotion={Boolean(reduceMotion)}
-        />
-      )}
-    </AnimatePresence>
+    <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
+      <AnimatePresence>
+        {data ? (
+          <SuccessToastCard
+            key="mission-success-toast"
+            data={data}
+            onDismiss={onDismiss}
+          />
+        ) : null}
+      </AnimatePresence>
+    </div>
   );
 }
 
 function SuccessToastCard({
   data,
   onDismiss,
-  reduceMotion,
 }: {
   data: SuccessToastData;
   onDismiss: () => void;
-  reduceMotion: boolean;
 }) {
   const { messages, t } = useLocale();
-  const [progress, setProgress] = useState(1);
-  const pausedRef = useRef(false);
   const onDismissRef = useRef(onDismiss);
+  const barRef = useRef<HTMLDivElement>(null);
+  const dismissedRef = useRef(false);
 
   useEffect(() => {
     onDismissRef.current = onDismiss;
   }, [onDismiss]);
 
+  function dismiss() {
+    if (dismissedRef.current) return;
+    dismissedRef.current = true;
+    onDismissRef.current();
+  }
+
+  // Progress bar: write transform on the DOM node (no React setState → hover-safe).
   useEffect(() => {
-    pausedRef.current = false;
-    let remaining = TOAST_DURATION_MS;
-    let last = performance.now();
-    let frame = 0;
+    const el = barRef.current;
+    if (!el) return;
+
+    let raf = 0;
+    const start = performance.now();
 
     function tick(now: number) {
-      const dt = now - last;
-      last = now;
-      if (!pausedRef.current) {
-        remaining -= dt;
-        setProgress(Math.max(0, remaining / TOAST_DURATION_MS));
-        if (remaining <= 0) {
-          onDismissRef.current();
-          return;
-        }
+      const t = Math.min(1, (now - start) / TOAST_DURATION_MS);
+      el!.style.transform = `scaleX(${1 - t})`;
+      if (t >= 1) {
+        dismiss();
+        return;
       }
-      frame = requestAnimationFrame(tick);
+      raf = requestAnimationFrame(tick);
     }
 
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
+    el.style.transformOrigin = "left center";
+    el.style.transform = "scaleX(1)";
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   return (
     <motion.div
       role="status"
       aria-live="polite"
-      className="pointer-events-none fixed right-4 bottom-4 z-50 w-[min(100%-2rem,22rem)] sm:right-6 sm:bottom-6"
-      initial={reduceMotion ? false : { opacity: 0, x: "110%" }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={
-        reduceMotion
-          ? { opacity: 0 }
-          : {
-              opacity: 1,
-              x: "110%",
-              transition: { duration: 0.35, ease: [0.4, 0, 0.2, 1] },
-            }
-      }
-      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      className="pointer-events-none absolute right-4 bottom-4 w-[min(100%-2rem,22rem)] sm:right-6 sm:bottom-6"
+      initial={{ x: "100%" }}
+      animate={{ x: 0 }}
+      exit={{ x: "100%" }}
+      transition={{ duration: SLIDE_S, ease: [0.22, 1, 0.36, 1] }}
     >
       <div
         className="pointer-events-auto overflow-hidden border border-[color-mix(in_srgb,var(--ml-reward)_40%,var(--ml-border))] bg-ml-surface-1/95 shadow-[0_12px_40px_color-mix(in_srgb,var(--ml-bg-0)_55%,transparent)] backdrop-blur-md"
         style={{ borderRadius: "var(--ml-frame-radius)" }}
-        onMouseEnter={() => {
-          pausedRef.current = true;
-        }}
-        onMouseLeave={() => {
-          pausedRef.current = false;
-        }}
-        onFocusCapture={() => {
-          pausedRef.current = true;
-        }}
-        onBlurCapture={(e) => {
-          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
-            pausedRef.current = false;
-          }
-        }}
       >
         <div className="p-4">
           <div className="flex items-start justify-between gap-3">
@@ -133,7 +112,7 @@ function SuccessToastCard({
             </div>
             <button
               type="button"
-              onClick={onDismiss}
+              onClick={dismiss}
               className="shrink-0 cursor-pointer p-1 text-ml-text-muted transition hover:bg-ml-surface-hover hover:text-ml-text"
               style={{ borderRadius: "var(--ml-frame-radius)" }}
               aria-label={messages.dismissToast}
@@ -172,7 +151,7 @@ function SuccessToastCard({
               </Link>
               <button
                 type="button"
-                onClick={onDismiss}
+                onClick={dismiss}
                 className="cursor-pointer px-2 py-2 text-[length:var(--ml-text-sm)] text-ml-text-muted transition hover:text-ml-text"
               >
                 {messages.stayOnMission}
@@ -183,8 +162,9 @@ function SuccessToastCard({
 
         <div className="h-0.5 w-full bg-ml-bg-0/50" aria-hidden>
           <div
-            className="h-full origin-left bg-ml-reward transition-[width] duration-75 ease-linear"
-            style={{ width: `${progress * 100}%` }}
+            ref={barRef}
+            className="h-full w-full bg-ml-reward"
+            style={{ transformOrigin: "left center", transform: "scaleX(1)" }}
           />
         </div>
       </div>

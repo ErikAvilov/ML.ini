@@ -1,5 +1,4 @@
 import type { Locale } from "@/i18n/config";
-import { getNarrativeHeader } from "@/data/narrative/voice";
 import type {
   MissionDefinition,
   SentimentPolicyContent,
@@ -127,7 +126,6 @@ const FORMAT_HINT_FR =
   "MILDRED a compris le client. L’application suivante n’a toujours pas pu lire la réponse.";
 
 export function createMission03(locale: Locale): MissionDefinition {
-  const header = getNarrativeHeader(locale);
   const mira = miraSuccess(locale);
   const policy = priorityPolicy(locale);
   const sentiment = sentimentPolicy(locale);
@@ -151,57 +149,31 @@ export function createMission03(locale: Locale): MissionDefinition {
       showcaseMessage:
         "I don't recognize this payment and I'm really worried someone accessed my account.",
       briefing: {
-        narrativeHeader: header,
-        welcomeTitle: "Incoming assignment",
-        welcomeParagraphs: [
-          "We've got another problem.",
-          "MILDRED knows what the customer feels.",
-          "It knows what support should prioritize.",
-          "Unfortunately, it also likes explaining itself.",
-          "The next service doesn't care about explanations.",
-          "It needs two values:",
-        ],
-        roleHighlight: "sentiment · priority",
-        roleDetails: ["Nothing else."],
-        systemNote: "Humans like sentences. Machines prefer structure.",
-        sentimentPolicy: sentiment,
-        policy,
-        outputContract: {
-          title: "Required format",
-          humanReadableExample:
-            "The customer is negative and this request is urgent because the payment appears unauthorized.",
-          requiredFormat: "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
-          fieldLabels: [
-            "SENTIMENT: POSITIVE | NEUTRAL | NEGATIVE",
-            "PRIORITY: URGENT | NORMAL",
-          ],
+        shortBrief:
+          "Readable prose is not enough for software. MILDRED must return predictable structured fields.",
+        objectiveText:
+          "Return exactly two lines: SENTIMENT: … and PRIORITY: … — nothing else.",
+        newConcept: {
+          title: "Structured fields",
+          example: "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+          labels: ["SENTIMENT", "PRIORITY"],
         },
-        flowSteps: [
-          "CUSTOMER MESSAGE",
-          "YOUR INSTRUCTION",
-          "AI MODEL",
-          "STRUCTURED OUTPUT",
-          "NEXT SERVICE",
+        expectedFormat: `SENTIMENT: NEGATIVE
+PRIORITY: URGENT`,
+        contractLines: [
+          { name: "SENTIMENT", values: "POSITIVE / NEUTRAL / NEGATIVE" },
+          { name: "PRIORITY", values: "URGENT / NORMAL" },
         ],
-        flowCaption: "Two fields. Predictable. No prose.",
-        assignmentTitle: "Assignment",
-        assignmentIntro: "For every message, MILDRED must output exactly:",
-        categories: ["SENTIMENT: <VALUE>", "PRIORITY: <VALUE>"],
-        assignmentNote:
-          "One reusable instruction. Structure is the hard part — the cases are intentionally clear under Veyra's rules.",
-        taskSteps: [
-          "Read the customer message.",
-          "Write one instruction that covers sentiment rules, priority policy, and exact format.",
-          "Force the exact machine format — no explanations.",
-          "Run the system.",
-          "Survive every case, including hidden ones.",
-        ],
-        taskReminder:
-          "A correct answer in the wrong shape still fails.",
+        currentSentimentPolicy: sentiment,
+        previousRules: {
+          title: "Veyra priority rules (already learned)",
+          policy,
+        },
+        categories: ["SENTIMENT: …", "PRIORITY: …"],
         miraSuccess: mira,
-        successInsight: mira.join(" "),
+        successInsight:
+          "Software needs predictable fields — not a paragraph a human has to interpret.",
       },
-      allowedOutputs: [],
       outputSchema: OUTPUT_SCHEMA,
       tests: [
         {
@@ -398,57 +370,31 @@ export function createMission03(locale: Locale): MissionDefinition {
     showcaseMessage:
       "Je ne reconnais pas ce paiement et je suis vraiment inquiet que quelqu’un ait accédé à mon compte.",
     briefing: {
-      narrativeHeader: header,
-      welcomeTitle: "Nouvelle mission",
-      welcomeParagraphs: [
-        "On a un nouveau problème.",
-        "MILDRED comprend maintenant l’humeur du client.",
-        "Elle sait aussi ce que le support doit traiter en priorité.",
-        "Malheureusement, elle adore expliquer son raisonnement.",
-        "Le service suivant, lui, s’en fiche.",
-        "Il lui faut seulement deux informations :",
-      ],
-      roleHighlight: "sentiment · priority",
-      roleDetails: ["Rien d’autre."],
-      systemNote: "Les humains aiment les phrases. Les machines préfèrent la structure.",
-      sentimentPolicy: sentiment,
-      policy,
-      outputContract: {
-        title: "Format attendu",
-        humanReadableExample:
-          "Le client est négatif et cette demande est urgente car le paiement semble non autorisé.",
-        requiredFormat: "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
-        fieldLabels: [
-          "SENTIMENT: POSITIVE | NEUTRAL | NEGATIVE",
-          "PRIORITY: URGENT | NORMAL",
-        ],
+      shortBrief:
+        "Une prose lisible ne suffit pas pour un logiciel. MILDRED doit renvoyer des champs structurés prévisibles.",
+      objectiveText:
+        "Renvoie exactement deux lignes : SENTIMENT: … et PRIORITY: … — rien d’autre.",
+      newConcept: {
+        title: "Champs structurés",
+        example: "SENTIMENT: NEGATIVE\nPRIORITY: URGENT",
+        labels: ["SENTIMENT", "PRIORITY"],
       },
-      flowSteps: [
-        "MESSAGE CLIENT",
-        "TON INSTRUCTION",
-        "MODÈLE IA",
-        "SORTIE STRUCTURÉE",
-        "SERVICE SUIVANT",
+      expectedFormat: `SENTIMENT: NEGATIVE
+PRIORITY: URGENT`,
+      contractLines: [
+        { name: "SENTIMENT", values: "POSITIVE / NEUTRAL / NEGATIVE" },
+        { name: "PRIORITY", values: "URGENT / NORMAL" },
       ],
-      flowCaption: "Deux champs. Prévisibles. Sans prose.",
-      assignmentTitle: "Mission",
-      assignmentIntro: "Pour chaque message, MILDRED doit produire exactement :",
-      categories: ["SENTIMENT: <VALUE>", "PRIORITY: <VALUE>"],
-      assignmentNote:
-        "Une seule instruction réutilisable. La structure est le vrai défi — les cas sont volontairement clairs selon les règles Veyra.",
-      taskSteps: [
-        "Lis le message client.",
-        "Écris une instruction qui couvre les règles de sentiment, la politique de priorité et le format exact.",
-        "Impose le format machine exact — sans explication.",
-        "Lance le système.",
-        "Passe tous les cas, y compris les cachés.",
-      ],
-      taskReminder:
-        "Une bonne réponse dans la mauvaise forme échoue quand même.",
+      currentSentimentPolicy: sentiment,
+      previousRules: {
+        title: "Règles de priorité Veyra (déjà apprises)",
+        policy,
+      },
+      categories: ["SENTIMENT: …", "PRIORITY: …"],
       miraSuccess: mira,
-      successInsight: mira.join(" "),
+      successInsight:
+        "Un logiciel a besoin de champs prévisibles — pas d’un paragraphe à interpréter.",
     },
-    allowedOutputs: [],
     outputSchema: OUTPUT_SCHEMA,
     tests: [
       {

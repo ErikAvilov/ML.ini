@@ -1,15 +1,11 @@
 import type { Locale } from "@/i18n/config";
-import {
-  getNarrativeHeader,
-  getMiraSuccessLinesMission02,
-} from "@/data/narrative/voice";
+import { getMiraSuccessLinesMission02 } from "@/data/narrative/voice";
 import type { MissionDefinition } from "@/lib/types";
 
 const PRIORITY_LABELS = ["URGENT", "NORMAL"] as const;
 
 export function createMission02(locale: Locale): MissionDefinition {
   const labels = [...PRIORITY_LABELS];
-  const header = getNarrativeHeader(locale);
   const miraSuccess = getMiraSuccessLinesMission02(locale);
 
   if (locale === "en") {
@@ -31,22 +27,16 @@ export function createMission02(locale: Locale): MissionDefinition {
       showcaseMessage:
         "THIS IS URGENT!!! My package is two days late!",
       briefing: {
-        narrativeHeader: header,
-        welcomeTitle: "Incoming assignment",
-        welcomeParagraphs: [
-          "Good. MILDRED can read the room now.",
-          "Unfortunately, support has another problem.",
-          "A negative message isn't necessarily an urgent one.",
-          "Some customers write like the building is on fire because their package is a day late.",
-          "Others calmly mention that they've been charged twice.",
-          "Guess which one support needs to see first.",
-          "Sentiment isn't enough anymore.",
-        ],
-        roleHighlight: "MILDRED needs rules.",
-        roleDetails: [],
-        systemNote:
-          "The customer's tone does not decide priority. Veyra's policy does — and it is intentionally specific.",
-        policy: {
+        shortBrief:
+          "Sentiment isn't enough. Support needs priority — and Veyra's rules are not common sense.",
+        objectiveText:
+          "Make MILDRED return only URGENT or NORMAL, using Veyra's support policy — not customer emotion.",
+        newConcept: {
+          title: "Explicit rules",
+          example: "POLICY + MESSAGE → PRIORITY",
+          labels: ["context", "criteria", "constraints"],
+        },
+        currentPolicy: {
           title: "Veyra Support Policy",
           urgentLabel: "URGENT",
           urgentItems: [
@@ -60,27 +50,9 @@ export function createMission02(locale: Locale): MissionDefinition {
             "delivery delay · refund request · wrong product / wrong size · forgotten password · package marked delivered but missing · general complaints",
           note: "Customer emotion must not affect priority. A calm customer can be URGENT. An extremely angry customer can be NORMAL.",
         },
-        flowSteps: [
-          "CUSTOMER MESSAGE",
-          "YOUR INSTRUCTION + POLICY",
-          "AI MODEL",
-          "PRIORITY",
-        ],
-        flowCaption: "Tone is noise. Rules are signal.",
-        assignmentTitle: "Assignment",
-        assignmentIntro: "MILDRED must return exactly one of:",
         categories: labels,
-        assignmentNote:
-          "One reusable instruction. Several messages you haven't seen — including hidden ones. No extra text.",
-        taskSteps: [
-          "Read the customer message.",
-          "Write MILDRED's instruction — transfer Veyra's policy into it.",
-          "Make it return only URGENT or NORMAL.",
-          "Run the system.",
-          "Survive every case, including the hidden ones.",
-        ],
-        taskReminder:
-          "Common-sense urgency will fail. Veyra's written rules must win.",
+        flowSteps: ["MESSAGE", "INSTRUCTION + POLICY", "MODEL", "PRIORITY"],
+        flowCaption: "Tone is noise. Rules are signal.",
         miraSuccess,
         successInsight: miraSuccess.join(" "),
       },
@@ -258,56 +230,32 @@ export function createMission02(locale: Locale): MissionDefinition {
     showcaseMessage:
       "C’EST URGENT !!! Mon colis a deux jours de retard !",
     briefing: {
-      narrativeHeader: header,
-      welcomeTitle: "Nouvelle mission",
-      welcomeParagraphs: [
-        "Bien. MILDRED sait maintenant comprendre l’humeur générale d’un client.",
-        "Malheureusement, le support a un autre problème.",
-        "Un message négatif n’est pas forcément urgent.",
-        "Certains clients écrivent comme si le bâtiment était en feu parce que leur colis a un jour de retard.",
-        "D’autres signalent très calmement qu’ils ont été débités deux fois.",
-        "Devine lequel le support doit traiter en premier.",
-        "Le sentiment ne suffit plus.",
-      ],
-      roleHighlight: "MILDRED a besoin de règles.",
-      roleDetails: [],
-      systemNote:
-        "Le ton du client ne décide pas de la priorité. La politique Veyra, si — et elle est volontairement précise.",
-      policy: {
+      shortBrief:
+        "Le sentiment ne suffit plus. Le support a besoin d’une priorité — et les règles Veyra ne sont pas du bon sens.",
+      objectiveText:
+        "Fais répondre MILDRED uniquement par URGENT ou NORMAL, selon la politique support Veyra — pas selon l’émotion du client.",
+      newConcept: {
+        title: "Règles explicites",
+        example: "POLITIQUE + MESSAGE → PRIORITÉ",
+        labels: ["contexte", "critères", "contraintes"],
+      },
+      currentPolicy: {
         title: "Politique Support Veyra",
         urgentLabel: "URGENT",
         urgentItems: [
           "paiement en double",
           "paiement non autorisé / non reconnu",
           "compte verrouillé après plusieurs échecs d’accès",
-          "suspicion de problème de sécurité (compte ou paiement)",
+          "suspicion de problème de sécurité compte ou paiement",
         ],
         normalLabel: "NORMAL",
         normalBody:
-          "retard de livraison · demande de remboursement · mauvais produit / mauvaise taille · mot de passe oublié · colis marqué livré mais introuvable · plaintes générales",
+          "retard de livraison · demande de remboursement · mauvais produit / mauvaise taille · mot de passe oublié · colis livré introuvable · plaintes générales",
         note: "L’émotion du client ne doit pas influencer la priorité. Un client calme peut être URGENT. Un client très en colère peut être NORMAL.",
       },
-      flowSteps: [
-        "MESSAGE CLIENT",
-        "TON INSTRUCTION + POLITIQUE",
-        "MODÈLE IA",
-        "PRIORITÉ",
-      ],
-      flowCaption: "Le ton est du bruit. Les règles sont le signal.",
-      assignmentTitle: "Mission",
-      assignmentIntro: "MILDRED doit retourner exactement l’un de :",
       categories: labels,
-      assignmentNote:
-        "Une seule instruction réutilisable. Plusieurs messages que tu n’as pas encore vus — y compris des cas cachés. Aucun texte en plus.",
-      taskSteps: [
-        "Lis le message client.",
-        "Écris l’instruction de MILDRED — transfère-y la politique Veyra.",
-        "Fais-lui retourner uniquement URGENT ou NORMAL.",
-        "Lance le système.",
-        "Passe tous les cas, y compris les cachés.",
-      ],
-      taskReminder:
-        "L’urgence « de bon sens » va échouer. Les règles écrites de Veyra doivent gagner.",
+      flowSteps: ["MESSAGE", "INSTRUCTION + POLITIQUE", "MODÈLE", "PRIORITÉ"],
+      flowCaption: "Le ton est du bruit. Les règles sont le signal.",
       miraSuccess,
       successInsight: miraSuccess.join(" "),
     },

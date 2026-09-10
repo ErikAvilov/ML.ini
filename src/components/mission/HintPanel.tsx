@@ -17,6 +17,8 @@ interface HintPanelProps {
   instruction: string;
   objective: string;
   compact?: boolean;
+  /** When nested in CollapsibleBlock — skip duplicate title */
+  hideHeader?: boolean;
 }
 
 export function HintPanel({
@@ -25,6 +27,7 @@ export function HintPanel({
   instruction,
   objective,
   compact = false,
+  hideHeader = false,
 }: HintPanelProps) {
   const { locale, messages, t } = useLocale();
   const [revealed, setRevealed] = useState(() =>
@@ -70,30 +73,45 @@ export function HintPanel({
       className={compact ? "" : "border border-ml-border bg-ml-surface-1/60 p-4"}
       style={compact ? undefined : { borderRadius: "var(--ml-frame-radius)" }}
     >
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <Lightbulb className="h-4 w-4 text-ml-reward" />
-          <span className="ml-section-label">{messages.hints}</span>
+      {!hideHeader && (
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <Lightbulb className="h-4 w-4 text-ml-reward" />
+            <span className="ml-section-label">{messages.hints}</span>
+          </div>
+          <div className="flex gap-1" aria-label={messages.hints}>
+            {hints.map((h) => (
+              <span
+                key={h.level}
+                className={`h-1 w-5 ${
+                  revealed >= h.level ? "bg-ml-reward" : "bg-ml-border"
+                }`}
+                title={
+                  h.fromMira
+                    ? LEAD.displayName
+                    : t(messages.hintLevel, {
+                        level: h.level,
+                        title: h.title,
+                      })
+                }
+              />
+            ))}
+          </div>
         </div>
-        <div className="flex gap-1" aria-label={messages.hints}>
+      )}
+
+      {hideHeader && (
+        <div className="mb-2 flex gap-1" aria-label={messages.hints}>
           {hints.map((h) => (
             <span
               key={h.level}
               className={`h-1 w-5 ${
                 revealed >= h.level ? "bg-ml-reward" : "bg-ml-border"
               }`}
-              title={
-                h.fromMira
-                  ? LEAD.displayName
-                  : t(messages.hintLevel, {
-                      level: h.level,
-                      title: h.title,
-                    })
-              }
             />
           ))}
         </div>
-      </div>
+      )}
 
       {shown.length > 0 && (
         <ul className="mb-3 space-y-2.5">

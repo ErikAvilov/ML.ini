@@ -31,6 +31,9 @@ interface MissionPlaygroundProps {
   error: string | null;
   justUnlocked: boolean;
   showSuccess: boolean;
+  /** Logic missions: no prompt editor; RUN when fill-in is ready. */
+  exerciseMode?: "prompt" | "logic";
+  canRun?: boolean;
 }
 
 export function MissionPlayground({
@@ -53,8 +56,13 @@ export function MissionPlayground({
   error,
   justUnlocked,
   showSuccess,
+  exerciseMode = "prompt",
+  canRun,
 }: MissionPlaygroundProps) {
   const { messages, t } = useLocale();
+  const isLogic = exerciseMode === "logic";
+  const runEnabled =
+    canRun ?? (!isLogic && instruction.trim().length > 0);
   const displayedMessage =
     running && runMode === "sequential" ? activeMessage : showcaseMessage;
   const allDone = !running && results.length === testCount && testCount > 0;
@@ -66,7 +74,7 @@ export function MissionPlayground({
       <div className="shrink-0 border-b border-ml-border px-4 py-2.5 sm:px-5">
         <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
           <p className="ml-section-label">
-            {messages.clientMessage}
+            {isLogic ? messages.logicFixtureLabel : messages.clientMessage}
             {running && runMode === "sequential" && (
               <span className="ml-2 text-ml-accent">
                 ·{" "}
@@ -83,37 +91,69 @@ export function MissionPlayground({
             )}
           </p>
           <p className="text-[length:var(--ml-text-xs)] text-ml-text-muted">
-            {t(messages.oneInstructionTests, { count: testCount })}
+            {isLogic
+              ? t(messages.logicScenarioCount, { count: testCount })
+              : t(messages.oneInstructionTests, { count: testCount })}
           </p>
         </div>
-        <p className="mt-1.5 line-clamp-2 text-[length:var(--ml-text-md)] leading-snug text-ml-text italic">
-          “{displayedMessage}”
+        <p className="mt-1.5 line-clamp-2 font-mono text-[length:var(--ml-text-md)] leading-snug text-ml-text">
+          {displayedMessage}
         </p>
       </div>
 
       <div className="flex min-h-[14rem] flex-[1.7] flex-col border-b border-ml-border px-4 py-3 sm:min-h-[16rem] sm:px-5">
         <div className="mb-2 shrink-0">
-          <p className="ml-section-label">{messages.systemInstruction}</p>
+          <p className="ml-section-label">
+            {isLogic ? messages.logicDecisionLabel : messages.systemInstruction}
+          </p>
           <p className="mt-0.5 text-[length:var(--ml-text-xs)] text-ml-text-muted">
-            {messages.systemInstructionHelp}
+            {isLogic
+              ? messages.logicDecisionHelp
+              : messages.systemInstructionHelp}
           </p>
         </div>
-        <textarea
-          id="instruction"
-          value={instruction}
-          onChange={(e) => onInstructionChange(e.target.value)}
-          placeholder={messages.instructionPlaceholder}
-          disabled={running}
-          className="min-h-0 w-full flex-1 cursor-text resize-none border border-ml-border bg-ml-bg-1 px-3.5 py-3 text-[length:var(--ml-text-md)] leading-[1.55] text-ml-text outline-none transition placeholder:text-ml-text-muted/55 hover:border-ml-border-strong focus:border-ml-border-strong focus:ring-1 focus:ring-[color-mix(in_srgb,var(--ml-accent)_20%,transparent)] disabled:cursor-not-allowed disabled:opacity-60"
-          style={{ borderRadius: "var(--ml-frame-radius)" }}
-        />
+        {isLogic ? (
+          <div
+            className="min-h-0 w-full flex-1 border border-ml-border bg-ml-bg-1 px-3.5 py-3 font-mono text-[length:var(--ml-text-sm)] leading-relaxed text-ml-text-body"
+            style={{ borderRadius: "var(--ml-frame-radius)" }}
+          >
+            <p>
+              if priority == &quot;URGENT&quot;:
+              <br />
+              &nbsp;&nbsp;route = &quot;HUMAN_REVIEW&quot;
+              <br />
+              else:
+              <br />
+              &nbsp;&nbsp;route = &quot;STANDARD_QUEUE&quot;
+            </p>
+            <p
+              className={`mt-3 font-mono text-[11px] tracking-[0.1em] uppercase ${
+                runEnabled ? "text-ml-accent" : "text-ml-text-muted"
+              }`}
+            >
+              {runEnabled
+                ? messages.logicConditionReady
+                : messages.logicConditionNeeded}
+            </p>
+          </div>
+        ) : (
+          <textarea
+            id="instruction"
+            value={instruction}
+            onChange={(e) => onInstructionChange(e.target.value)}
+            placeholder={messages.instructionPlaceholder}
+            disabled={running}
+            className="min-h-0 w-full flex-1 cursor-text resize-none border border-ml-border bg-ml-bg-1 px-3.5 py-3 text-[length:var(--ml-text-md)] leading-[1.55] text-ml-text outline-none transition placeholder:text-ml-text-muted/55 hover:border-ml-border-strong focus:border-ml-border-strong focus:ring-1 focus:ring-[color-mix(in_srgb,var(--ml-accent)_20%,transparent)] disabled:cursor-not-allowed disabled:opacity-60"
+            style={{ borderRadius: "var(--ml-frame-radius)" }}
+          />
+        )}
           <div className="mt-2.5 flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 flex-wrap items-center gap-3">
             <Button
               variant="primary"
               size="md"
               onClick={onRun}
-              disabled={Boolean(running || instruction.trim().length === 0)}
+              disabled={Boolean(running || !runEnabled)}
               aria-busy={running && runMode === "sequential"}
               title={messages.runShortcutHint}
             >
@@ -129,7 +169,7 @@ export function MissionPlayground({
               variant="secondary"
               size="md"
               onClick={onRunBatch}
-              disabled={Boolean(running || instruction.trim().length === 0)}
+              disabled={Boolean(running || !runEnabled)}
               title={messages.runBatch}
             >
               <Layers className="h-3.5 w-3.5" />

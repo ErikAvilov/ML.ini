@@ -264,6 +264,329 @@ export function evaluateStructuredTest(
   };
 }
 
+function canonicalizeJsonFields(
+  fields: Record<string, string>,
+  schema: StructuredOutputSchema
+): string {
+  const obj: Record<string, string> = {};
+  for (const field of schema.fields) {
+    obj[field.name] = fields[field.name];
+  }
+  return `${JSON.stringify(obj, null, 2)}`;
+}
+
+export type JsonErrorCode = NonNullable<
+  import("@/lib/types").ClassificationResult["jsonErrorCode"]
+>;
+
+export function classifyJsonParseFailure(raw: string, err: unknown): JsonErrorCode {
+  const trimmed = raw.trim();
+  const msg = err instanceof Error ? err.message.toLowerCase() : "";
+
+  if (
+    trimmed.includes("```") ||
+    /^(here|voici|result|the result|output|réponse)\b/i.test(trimmed)
+  ) {
+    return "prose_wrapper";
+  }
+  if (/,\s*[}\]]/.test(trimmed)) return "trailing_comma";
+  if (/(^|[{,]\s*)'[A-Za-z_]/.test(trimmed) || /:\s*'/.test(trimmed)) {
+    return "single_quotes";
+  }
+  if (/[{,]\s*[A-Za-z_][A-Za-z0-9_]*\s*:/.test(trimmed)) {
+    return "unquoted_keys";
+  }
+  if (
+    msg.includes("unexpected end") ||
+    (trimmed.startsWith("{") && !trimmed.endsWith("}"))
+  ) {
+    return "unclosed";
+  }
+  return "generic";
+}
+
+/**
+ * Parse the entire model response as a JSON object matching the schema.
+ * No fence stripping, no substring extraction, no repair.
+ */
+export function parseJsonStructuredOutput(
+  raw: string,
+  schema: StructuredOutputSchema
+):
+  | {
+      ok: true;
+      fields: Record<string, string>;
+      canonical: string;
+    }
+  | {
+      ok: false;
+      jsonOk: boolean;
+      fieldsOk: boolean;
+      jsonErrorCode: JsonErrorCode;
+      fields?: Record<string, string>;
+      receivedKeys?: string[];
+    } {
+  const trimmed = raw.trim();
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(trimmed);
+  } catch (err) {
+    return {
+      ok: false,
+      jsonOk: false,
+      fieldsOk: false,
+      jsonErrorCode: classifyJsonParseFailure(raw, err),
+    };
+  }
+
+  if (
+    parsed === null ||
+    typeof parsed !== "object" ||
+    Array.isArray(parsed)
+  ) {
+    return {
+      ok: false,
+      jsonOk: true,
+      fieldsOk: false,
+      jsonErrorCode: "not_object",
+    };
+  }
+
+  const record = parsed as Record<string, unknown>;
+  const receivedKeys = Object.keys(record);
+  const required = schema.fields.map((f) => f.name);
+  const requiredSet = new Set(required);
+  const extra = receivedKeys.filter((k) => !requiredSet.has(k));
+  const missing = required.filter((k) => !receivedKeys.includes(k));
+
+  // Prefer wrong_keys when required names are absent (aliases / renames).
+  if (missing.length > 0) {
+    return {
+      ok: false,
+      jsonOk: true,
+      fieldsOk: false,
+      jsonErrorCode: "wrong_keys",
+      receivedKeys,
+    };
+  }
+  if (extra.length > 0) {
+    return {
+      ok: false,
+      jsonOk: true,
+      fieldsOk: false,
+      jsonErrorCode: "extra_fields",
+      receivedKeys,
+    };
+  }
+  if (receivedKeys.length !== required.length) {
+    return {
+      ok: false,
+      jsonOk: true,
+      fieldsOk: false,
+      jsonErrorCode: "wrong_keys",
+      receivedKeys,
+    };
+  }
+
+  const fields: Record<string, string> = {};
+  for (const spec of schema.fields) {
+    const value = record[spec.name];
+    if (typeof value !== "string") {
+      return {
+        ok: false,
+        jsonOk: true,
+        fieldsOk: false,
+        jsonErrorCode: "invalid_values",
+        receivedKeys,
+      };
+    }
+    // Strict: exact allow-list match (no case folding).
+    if (!spec.allowedValues.includes(value)) {
+      return {
+        ok: false,
+        jsonOk: true,
+        fieldsOk: false,
+        jsonErrorCode: "invalid_values",
+        fields: { ...fields, [spec.name]: value },
+        receivedKeys,
+      };
+    }
+    fields[spec.name] = value;
+  }
+
+  return {
+    ok: true,
+    fields,
+    canonical: canonicalizeJsonFields(fields, schema),
+  };
+}
+
+/**
+ * Deterministic micro-task: player repairs broken JSON themselves.
+ * Same strict parse rules as Mission 04 model-output validation — no repair, no extract.
+ */
+export function evaluatePayloadRepair(
+  raw: string,
+  expectedFields: Record<string, string>,
+  schema: StructuredOutputSchema
+):
+  | { ok: true }
+  | {
+      ok: false;
+      jsonErrorCode?: JsonErrorCode;
+      contentMismatch?: boolean;
+    } {
+  const parsed = parseJsonStructuredOutput(raw, schema);
+  if (!parsed.ok) {
+    return { ok: false, jsonErrorCode: parsed.jsonErrorCode };
+  }
+  for (const [key, expected] of Object.entries(expectedFields)) {
+    if (parsed.fields[key] !== expected) {
+      return { ok: false, contentMismatch: true };
+    }
+  }
+  return { ok: true };
+}
+
+/** Normalize a code-fill blank for comparison (quotes + whitespace). */
+export function normalizeCodeBlank(raw: string): string {
+  return raw
+    .trim()
+    .replace(/\s+/g, " ")
+    .replace(/'/g, '"');
+}
+
+/**
+ * Accept blanks like: priority == "URGENT" (flexible spaces / quotes / optional parens).
+ */
+export function evaluateCodeFill(
+  blank: string,
+  compareVariable: string,
+  compareValue: string
+): boolean {
+  const n = normalizeCodeBlank(blank);
+  const escapedVar = compareVariable.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const escapedVal = compareValue.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp(
+    `^\\(?\\s*${escapedVar}\\s*==\\s*"${escapedVal}"\\s*\\)?$`
+  );
+  return re.test(n);
+}
+
+/** Route from a verified priority==value condition (no Python runtime). */
+export function evaluateLogicRoute(
+  priority: string,
+  compareValue: string,
+  trueRoute: string,
+  falseRoute: string
+): string {
+  return priority === compareValue ? trueRoute : falseRoute;
+}
+
+export function evaluateJsonStructuredTest(
+  raw: string,
+  test: ClassificationTest,
+  schema: StructuredOutputSchema
+): ClassificationResult {
+  const expectedFields = test.expectedFields ?? {};
+  const expected =
+    test.expected || canonicalizeJsonFields(expectedFields, schema);
+  const parsed = parseJsonStructuredOutput(raw, schema);
+
+  if (!parsed.ok) {
+    const formatHint = test.failHints?.format ?? test.failHint;
+    let contentOk: boolean | null = null;
+    if (parsed.fields) {
+      contentOk = assessProbedContent(
+        Object.fromEntries(
+          schema.fields.map((f) => [f.name, parsed.fields?.[f.name] ?? null])
+        ),
+        expectedFields,
+        schema
+      );
+    } else if (parsed.jsonOk === false) {
+      // Prose / invalid JSON: soft-probe legacy KEY: VALUE style for pedagogy
+      const probed = probeStructuredFieldValues(raw, {
+        fields: schema.fields.map((f) => ({
+          name: f.name.toUpperCase(),
+          allowedValues: f.allowedValues,
+        })),
+      });
+      // Map uppercase probe keys back — soft content signal only
+      const mapped: Record<string, string | null> = {};
+      for (const f of schema.fields) {
+        mapped[f.name] =
+          probed[f.name.toUpperCase()] ?? probed[f.name] ?? null;
+      }
+      contentOk = assessProbedContent(mapped, expectedFields, schema);
+    }
+
+    return {
+      raw,
+      normalized: null,
+      isValidCategory: false,
+      matchesExpected: false,
+      expected,
+      message: test.message,
+      testId: test.id,
+      failHint:
+        parsed.jsonErrorCode === "prose_wrapper" || contentOk === true
+          ? formatHint
+          : undefined,
+      errorKind: "json",
+      parsedFields: parsed.fields ?? null,
+      contentOk,
+      contractOk: false,
+      jsonOk: parsed.jsonOk,
+      fieldsOk: parsed.fieldsOk,
+      jsonErrorCode: parsed.jsonErrorCode,
+      fieldMismatches: [],
+    };
+  }
+
+  const mismatched = schema.fields.filter(
+    (f) => parsed.fields[f.name] !== expectedFields[f.name]
+  );
+
+  if (mismatched.length === 0) {
+    return {
+      raw,
+      normalized: parsed.canonical,
+      isValidCategory: true,
+      matchesExpected: true,
+      expected,
+      message: test.message,
+      testId: test.id,
+      errorKind: null,
+      parsedFields: parsed.fields,
+      contentOk: true,
+      contractOk: true,
+      jsonOk: true,
+      fieldsOk: true,
+      fieldMismatches: [],
+    };
+  }
+
+  const primary = mismatched[0];
+  return {
+    raw,
+    normalized: parsed.canonical,
+    isValidCategory: true,
+    matchesExpected: false,
+    expected,
+    message: test.message,
+    testId: test.id,
+    failHint: test.failHints?.fields?.[primary.name] ?? test.failHint,
+    errorKind: semanticErrorKind(primary.name),
+    parsedFields: parsed.fields,
+    contentOk: false,
+    contractOk: true,
+    jsonOk: true,
+    fieldsOk: true,
+    fieldMismatches: mismatched.map((f) => f.name),
+  };
+}
+
 export function evaluateMissionTest(
   raw: string,
   test: ClassificationTest,
@@ -271,6 +594,9 @@ export function evaluateMissionTest(
   schema?: StructuredOutputSchema
 ): ClassificationResult {
   if (schema && test.expectedFields) {
+    if (schema.format === "json") {
+      return evaluateJsonStructuredTest(raw, test, schema);
+    }
     return evaluateStructuredTest(raw, test, schema);
   }
   return evaluateClassification(
@@ -311,6 +637,67 @@ export function buildFeedback(
   const structured = results.some(isStructuredResult);
 
   if (structured) {
+    const jsonResults = results.filter((r) => r.jsonOk !== undefined);
+    if (jsonResults.length > 0) {
+      const jsonFails = jsonResults.filter((r) => r.jsonOk === false);
+      const fieldFails = jsonResults.filter(
+        (r) => r.jsonOk === true && r.fieldsOk === false
+      );
+      const contentFails = jsonResults.filter(
+        (r) => r.contractOk === true && !r.matchesExpected
+      );
+
+      if (jsonFails.some((r) => r.contentOk === true)) {
+        return {
+          feedback: messages.feedbackJsonContentOkFormatBad,
+          feedbackSpeaker: null,
+        };
+      }
+      if (jsonFails.some((r) => r.jsonErrorCode === "prose_wrapper")) {
+        return {
+          feedback: messages.feedbackJsonProseWrapper,
+          feedbackSpeaker: null,
+        };
+      }
+      if (jsonFails.length > 0) {
+        const code = jsonFails[0].jsonErrorCode;
+        const mapped =
+          code === "trailing_comma"
+            ? messages.feedbackJsonTrailingComma
+            : code === "unquoted_keys"
+              ? messages.feedbackJsonUnquotedKeys
+              : code === "single_quotes"
+                ? messages.feedbackJsonSingleQuotes
+                : code === "unclosed"
+                  ? messages.feedbackJsonUnclosed
+                  : messages.feedbackJsonInvalid;
+        return { feedback: mapped, feedbackSpeaker: null };
+      }
+      if (fieldFails.length > 0) {
+        const code = fieldFails[0].jsonErrorCode;
+        if (code === "extra_fields") {
+          return {
+            feedback: messages.feedbackJsonExtraFields,
+            feedbackSpeaker: null,
+          };
+        }
+        return {
+          feedback: messages.feedbackJsonWrongKeys,
+          feedbackSpeaker: null,
+        };
+      }
+      if (contentFails.length > 0) {
+        return {
+          feedback: messages.feedbackWrongClass,
+          feedbackSpeaker: null,
+        };
+      }
+      return {
+        feedback: t(messages.feedbackPartial, { passed, total }),
+        feedbackSpeaker: null,
+      };
+    }
+
     const formatFails = results.filter((r) => r.contractOk === false);
     const contentFails = results.filter(
       (r) => r.contractOk === true && !r.matchesExpected

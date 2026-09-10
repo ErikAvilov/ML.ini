@@ -35,15 +35,16 @@ export function KingdomHub() {
   const kingdomMissions = kingdom.missionIds
     .map((id) => allMissions.find((m) => m.id === id))
     .filter((m): m is NonNullable<typeof m> => Boolean(m));
+  const coreMissions = kingdomMissions.filter((m) => m.kind !== "intro");
 
   const completed = ready
-    ? kingdomMissions.filter((m) =>
+    ? coreMissions.filter((m) =>
         progress.completedMissions.includes(m.id)
       ).length
     : 0;
-  const total = kingdomMissions.length;
+  const total = coreMissions.length;
   const active = kingdomMissions.find((m) => {
-    if (!ready) return m.order === 1;
+    if (!ready) return m.order === 0;
     return getMissionStatus(m.id, progress, m.order) === "available";
   });
   const selectedMission =
@@ -57,7 +58,7 @@ export function KingdomHub() {
           progress,
           selectedMission.order
         )
-      : selectedMission.order === 1
+      : selectedMission.order === 0
         ? "available"
         : "locked"
     : "locked";
@@ -148,7 +149,9 @@ function MissionDetailsPanel({
         >
           {isBoss
             ? `${messages.homeKingdomBoss} · ${mission.order}`
-            : `M-${String(mission.order).padStart(2, "0")}`}
+            : mission.kind === "intro"
+              ? messages.introLabel
+              : `M-${String(mission.order).padStart(2, "0")}`}
         </span>
         <span className="rounded-ml border border-ml-border bg-ml-surface-2 px-2 py-1 text-xs text-ml-text-muted">
           {statusLabel}
@@ -157,7 +160,7 @@ function MissionDetailsPanel({
 
       <h2
         className={`mt-4 font-display text-2xl leading-tight ${
-          isBoss ? "text-ml-reward" : "text-ml-text"
+          isBoss || mission.kind === "intro" ? "text-ml-reward" : "text-ml-text"
         }`}
       >
         {mission.title}
@@ -181,7 +184,9 @@ function MissionDetailsPanel({
             {messages.missionReward}
           </p>
           <p className="mt-1 font-mono text-sm font-semibold text-ml-reward">
-            +{mission.xpReward} XP
+            {mission.xpReward > 0
+              ? `+${mission.xpReward} XP`
+              : messages.introLabel}
           </p>
         </div>
         {skill && (
@@ -228,15 +233,13 @@ function MildredPanel() {
       online: onlineIds.has(id),
     })
   );
-  const futureCapabilities = [
-    messages.homeMildredCapParsing,
-    messages.homeMildredCapDecision,
-    messages.homeMildredCapIntegration,
-  ].map((label, index) => ({
-    id: `future-${index}`,
-    label,
-    online: false,
-  }));
+  const futureCapabilities = [messages.homeMildredCapIntegration].map(
+    (label, index) => ({
+      id: `future-${index}`,
+      label,
+      online: false,
+    })
+  );
   const capabilities = [...catalogCapabilities, ...futureCapabilities];
   const onlineCount = catalogCapabilities.filter(
     (capability) => capability.online

@@ -160,7 +160,69 @@ export function TestResults({
                       </p>
                     </div>
 
-                    {result.contractOk !== undefined && (
+                    {result.jsonOk !== undefined ? (
+                      <div className="grid gap-2 sm:grid-cols-3">
+                        <div
+                          className="border border-ml-border bg-ml-bg-1/50 px-2.5 py-2"
+                          style={{ borderRadius: "var(--ml-frame-radius)" }}
+                        >
+                          <p className="font-mono text-[length:var(--ml-text-xs)] tracking-[0.08em] text-ml-text-muted uppercase">
+                            {messages.contentCheckLabel}
+                          </p>
+                          <p
+                            className={`mt-1 text-[length:var(--ml-text-sm)] font-medium ${
+                              result.contentOk === true
+                                ? "text-ml-success"
+                                : result.contentOk === false
+                                  ? "text-ml-danger"
+                                  : "text-ml-text-muted"
+                            }`}
+                          >
+                            {result.contentOk === true
+                              ? `✓ ${messages.contentCorrect}`
+                              : result.contentOk === false
+                                ? `✕ ${messages.contentIncorrect}`
+                                : `· ${messages.contentUnclear}`}
+                          </p>
+                        </div>
+                        <div
+                          className="border border-ml-border bg-ml-bg-1/50 px-2.5 py-2"
+                          style={{ borderRadius: "var(--ml-frame-radius)" }}
+                        >
+                          <p className="font-mono text-[length:var(--ml-text-xs)] tracking-[0.08em] text-ml-text-muted uppercase">
+                            {messages.jsonCheckLabel}
+                          </p>
+                          <p
+                            className={`mt-1 text-[length:var(--ml-text-sm)] font-medium ${
+                              result.jsonOk ? "text-ml-success" : "text-ml-danger"
+                            }`}
+                          >
+                            {result.jsonOk
+                              ? `✓ ${messages.contractValid}`
+                              : `✕ ${messages.contractInvalid}`}
+                          </p>
+                        </div>
+                        <div
+                          className="border border-ml-border bg-ml-bg-1/50 px-2.5 py-2"
+                          style={{ borderRadius: "var(--ml-frame-radius)" }}
+                        >
+                          <p className="font-mono text-[length:var(--ml-text-xs)] tracking-[0.08em] text-ml-text-muted uppercase">
+                            {messages.fieldsCheckLabel}
+                          </p>
+                          <p
+                            className={`mt-1 text-[length:var(--ml-text-sm)] font-medium ${
+                              result.fieldsOk
+                                ? "text-ml-success"
+                                : "text-ml-danger"
+                            }`}
+                          >
+                            {result.fieldsOk
+                              ? `✓ ${messages.contractValid}`
+                              : `✕ ${messages.contractInvalid}`}
+                          </p>
+                        </div>
+                      </div>
+                    ) : result.contractOk !== undefined ? (
                       <div className="grid gap-2 sm:grid-cols-2">
                         <div
                           className="border border-ml-border bg-ml-bg-1/50 px-2.5 py-2"
@@ -205,7 +267,7 @@ export function TestResults({
                           </p>
                         </div>
                       </div>
-                    )}
+                    ) : null}
 
                     {result.contractOk && result.parsedFields ? (
                       <div className="space-y-2.5">
