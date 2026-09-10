@@ -19,24 +19,6 @@ const PLACEHOLDERS: Record<
     xpReward?: number;
   }
 > = {
-  "mission-06": {
-    fr: {
-      title: "Lui Donner Vie",
-      shortTitle: "Vie",
-      brief: "Le prototype doit sortir du bac à sable et parler au vrai code.",
-      objective: "Contenu à venir.",
-      context: "Projet MILDRED — limite suivante.",
-      comingSoonMessage: "Mission 6 en construction.",
-    },
-    en: {
-      title: "Bring It to Life",
-      shortTitle: "Bring Alive",
-      brief: "The prototype has to leave the sandbox and talk to real code.",
-      objective: "Content coming soon.",
-      context: "Project MILDRED — next limit.",
-      comingSoonMessage: "Mission 6 under construction.",
-    },
-  },
   "mission-07": {
     fr: {
       title: "Au-delà des Murs",
@@ -117,7 +99,6 @@ const PLACEHOLDERS: Record<
 };
 
 const META: Record<string, { order: number; slug: string }> = {
-  "mission-06": { order: 6, slug: "echo-controle" },
   "mission-07": { order: 7, slug: "chaine-de-confiance" },
   "mission-08": { order: 8, slug: "seuil-critique" },
   "mission-09": { order: 9, slug: "derniere-ligne" },
@@ -146,9 +127,6 @@ function createLockedMission(id: string, locale: Locale): MissionDefinition {
   };
 }
 
-export function createMission06(locale: Locale) {
-  return createLockedMission("mission-06", locale);
-}
 export function createMission07(locale: Locale) {
   return createLockedMission("mission-07", locale);
 }

@@ -7,8 +7,8 @@ import { createMission02 } from "./mission-02";
 import { createMission03 } from "./mission-03";
 import { createMission04 } from "./mission-04";
 import { createMission05 } from "./mission-05";
+import { createMission06 } from "./mission-06";
 import {
-  createMission06,
   createMission07,
   createMission08,
   createMission09,

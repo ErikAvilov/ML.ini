@@ -16,15 +16,26 @@ Pour toute mission normale, le premier viewport doit répondre :
 2. **Que dois-je faire ?** — bloc OBJECTIF (teal)
 3. **Où le faire ?** — workspace + Run visibles sans scroll page
 
+### Règle colonnes (non négociable)
+
+| Colonne | Rôle | Contient | Ne contient PAS |
+|---------|------|----------|-----------------|
+| **GAUCHE — Brief** | Comprendre | Mira, problème, objectif, nouveau concept, règles, rappels repliés, indices | L’éditeur d’exercice principal |
+| **DROITE — Workspace** | Faire | prompt, codeFill, éditeur JSON, RUN, outputs, tests, feedback | Longue exposition narrative |
+
+Modèle mental joueur : *« À gauche, MLINI m’explique. À droite, je construis. »*
+
+Si le joueur doit **taper** pour résoudre la mission, ça va à **droite**.
+
 Ordre de contenu dans le brief :
 
 1. Problème court (Mira)
 2. Objectif clair
 3. Nouveau concept / règles actuelles
-4. Workspace (colonne droite dominante)
-5. Tests / feedback
-6. Règles déjà apprises — **repliées**
-7. Indices — **repliés**
+4. Workspace (**colonne droite** dominante — code / prompt / RUN)
+5. Tests / feedback (colonne droite)
+6. Règles déjà apprises — **repliées** (gauche)
+7. Indices — **repliés** (gauche)
 
 ### Connaissance
 
@@ -50,18 +61,20 @@ Ordre de contenu dans le brief :
 ┌─────────────────────────────────────────────┐
 │ GLOBAL HEADER / MISSION NAV (compact)       │
 ├──────────────────────┬──────────────────────┤
-│ LEFT ~40%            │ RIGHT ~60%           │
-│ Objectif / concept   │ Playground           │
+│ LEFT ~38–40%         │ RIGHT ~60–62%        │
+│ Brief (comprendre)   │ Workspace (faire)    │
 │ overflow-y: auto     │ éditeur + RUN + tests│
 └──────────────────────┴──────────────────────┘
 ```
+
+Missions code (05+) : préfère `38fr / 62fr`. Missions prompt : `40fr / 60fr`.
 
 ### Règles CSS mentales
 
 - Page mission : hauteur viewport, `overflow: hidden` sur le shell
 - **Pas de scroll global** de la page pendant une mission desktop normale
-- Colonnes : `minmax(0, 40fr) / minmax(0, 60fr)`, enfants `min-width: 0`, `min-height: 0`
-- Seul le panneau briefing (et la zone résultats) scroll en interne
+- Colonnes : `minmax(0, 38fr|40fr) / minmax(0, 62fr|60fr)`, enfants `min-width: 0`, `min-height: 0`
+- Seul le panneau briefing (et la zone résultats / codeFill) scroll en interne
 
 ## Mission Nav Bar
 
@@ -75,17 +88,29 @@ Toujours visible. Progression cœur : `1/10` (intro exclue du compteur).
 - Nouveau concept / format comparé / contrat
 - Règles actuelles si nouvelles
 - `CollapsibleBlock` : règles précédentes, théorie optionnelle, indices
+- **Pas** de `CodeFillPanel` / éditeur d’exercice principal
 
 Contenu : `src/data/missions/*.ts` via champs `shortBrief`, `objectiveText`, `newConcept`, `formatCompare`, `previousRules`, etc.
 
 ## Panneau droit — Playground
 
-Toujours visible sans scroller la page :
+### Missions prompt (01–04)
 
 1. Message client  
 2. Instruction + textarea + **RUN**  
 3. Pipeline horizontal compact  
 4. Tests (scroll interne si besoin)
+
+### Missions code (05+)
+
+Layout IDE — l’éditeur domine (~80 % de la hauteur utile) :
+
+1. Barre fixture / message (1 ligne)  
+2. **Code** (toolbar compacte : statut + Vérifier)  
+3. Barre RUN  
+4. Tests (bandeau bas, ~20 %)
+
+Pas de description / aide redondante dans le workspace code (ça vit dans le brief).
 
 ## Responsive
 
@@ -111,3 +136,4 @@ Toujours visible sans scroller la page :
 - Empiler briefing + playground en une seule colonne scrollable sur desktop
 - Remettre de grosses cards / longs paragraphes avant l’exercice
 - Afficher les règles déjà apprises en bloc permanent
+- Mettre le codeFill / éditeur principal dans la colonne Brief (gauche)

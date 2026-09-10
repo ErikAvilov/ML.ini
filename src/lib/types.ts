@@ -265,16 +265,35 @@ export interface PayloadRepairTask {
   passLabel: string;
 }
 
-/**
- * Deterministic code fill-in (Mission 05+).
- * Player completes blanks in a mostly-written snippet — no sandbox.
- */
-export interface CodeFillTask {
+/** Code-fill execution mode — do not overload `logic` with AI calls. */
+export type CodeFillMode = "logic" | "ai-integration";
+
+export interface CodeFillBlank {
+  id: string;
+  placeholder: string;
+  /** Expected identifier after normalize (and optional quote strip). */
+  expected: string;
+  /** Dict-key style: accept `"priority"` or `priority`. */
+  stripQuotes?: boolean;
+}
+
+interface CodeFillTaskBase {
+  mode: CodeFillMode;
   title: string;
   description: string;
+  checkLabel: string;
+  passLabel: string;
+}
+
+/**
+ * Mission 05: deterministic if/else fill — no AI on RUN.
+ * Player completes blanks in a mostly-written snippet — no sandbox.
+ */
+export interface LogicCodeFillTask extends CodeFillTaskBase {
+  mode: "logic";
   /** Code before the dict-key blank (ends with `result["`). */
   prefix: string;
-  /** Code between the key blank and the condition blank (starts after key, ends with `if `). */
+  /** Code between the key blank and the condition blank. */
   middle: string;
   /** Code after the condition blank (starts with `:`). */
   suffix: string;
@@ -282,18 +301,28 @@ export interface CodeFillTask {
   conditionPlaceholder: string;
   /** Expected dict key (e.g. priority) — quotes optional in the blank. */
   expectedKey: string;
-  checkLabel: string;
-  passLabel: string;
-  /** Route when the condition is true / false — used by logic scenario tests. */
   trueRoute: string;
   falseRoute: string;
-  /**
-   * Variable name compared in the condition blank (e.g. priority).
-   * Accepted blank ≈ `priority == "URGENT"` (quotes/spaces flexible).
-   */
   compareVariable: string;
   compareValue: string;
 }
+
+/**
+ * Mission 06: wire `ai.ask` + parse + read key — then real Gemini on RUN.
+ * `segments.length === blanks.length + 1` (code around each blank).
+ */
+export interface AiIntegrationCodeFillTask extends CodeFillTaskBase {
+  mode: "ai-integration";
+  segments: string[];
+  blanks: CodeFillBlank[];
+  /** Fixed instruction sent to the model (not a prompting exercise). */
+  providedInstruction: string;
+  trueRoute: string;
+  falseRoute: string;
+  compareValue: string;
+}
+
+export type CodeFillTask = LogicCodeFillTask | AiIntegrationCodeFillTask;
 
 export interface MissionDefinition {
   id: string;
@@ -322,13 +351,14 @@ export interface MissionDefinition {
    */
   payloadRepair?: PayloadRepairTask;
   /**
-   * Optional deterministic code fill-in (e.g. Mission 05 if/else).
-   * Graded separately from AI — no Python runtime.
+   * Optional code fill-in (Mission 05 logic / Mission 06 ai-integration).
+   * Mode is on `codeFill.mode` — do not infer AI vs logic from presence alone.
    */
   codeFill?: CodeFillTask;
   /**
-   * When `codeFill` is set, tests are logic scenarios:
-   * `message` = priority fixture label, `expected` = route.
+   * Tests: prompt missions use messages + expected labels/fields;
+   * `logic` fill uses priority fixtures → route;
+   * `ai-integration` uses customer messages → route after real model JSON.
    */
   tests?: ClassificationTest[];
   hints?: MissionHint[];

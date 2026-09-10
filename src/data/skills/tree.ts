@@ -146,6 +146,30 @@ const SKILL_SEEDS: SkillSeed[] = [
       },
     },
   },
+  {
+    id: "ai-integration-i",
+    name: "AI Integration I",
+    level: 1,
+    type: "major",
+    prerequisites: ["logic-1"],
+    unlockedByMissionId: "mission-06",
+    kingdomId: KINGDOM_I,
+    position: { x: 0, y: -220 },
+    copy: {
+      en: {
+        displayName: "Calling an AI from Code",
+        description:
+          "You can call a model from a program and use its structured response in the rest of the pipeline.",
+        category: "AI Integration",
+      },
+      fr: {
+        displayName: "Appeler une IA depuis du code",
+        description:
+          "Tu sais appeler un modèle depuis un programme et utiliser sa réponse structurée dans la suite du traitement.",
+        category: "AI Integration",
+      },
+    },
+  },
 ];
 
 export const SKILL_EDGES: SkillEdge[] = [
@@ -153,6 +177,7 @@ export const SKILL_EDGES: SkillEdge[] = [
   { from: "prompting-1", to: "structured-output-1" },
   { from: "structured-output-1", to: "json-basics-1" },
   { from: "json-basics-1", to: "logic-1" },
+  { from: "logic-1", to: "ai-integration-i" },
 ];
 
 export function getSkillDefinitions(locale: Locale): SkillDefinition[] {

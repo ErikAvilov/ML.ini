@@ -13,7 +13,7 @@ export const DEFAULT_PROGRESS: PlayerProgress = {
   streak: 0,
   bestStreak: 0,
   completedMissions: [],
-  unlockedMissions: ["mission-00"],
+  unlockedMissions: ["mission-00", "mission-01"],
   unlockedSkills: [],
   unlockedCapabilities: [],
   lastPlayedAt: null,
@@ -35,20 +35,19 @@ function ensureIntroMigration(progress: PlayerProgress): PlayerProgress {
   const completed = new Set(progress.completedMissions);
   const unlocked = new Set(progress.unlockedMissions);
 
+  // Intro + Mission 01 always reachable from a fresh start.
+  unlocked.add("mission-00");
+  unlocked.add("mission-01");
+
   const coreStarted =
     progress.xp > 0 ||
     [...completed].some((id) => id !== "mission-00") ||
-    unlocked.has("mission-01") ||
     (progress.lastPlayedMissionId != null &&
       progress.lastPlayedMissionId !== "mission-00");
 
   if (coreStarted) {
     // Existing players skip Mission 0 without XP distortion.
     completed.add("mission-00");
-    unlocked.add("mission-00");
-    unlocked.add("mission-01");
-  } else {
-    unlocked.add("mission-00");
   }
 
   return {
@@ -67,7 +66,7 @@ function normalizeProgress(parsed: Partial<PlayerProgress>): PlayerProgress {
     bestStreak: Math.max(Number(parsed.bestStreak) || streak, streak),
     unlockedMissions: parsed.unlockedMissions?.length
       ? parsed.unlockedMissions
-      : ["mission-00"],
+      : ["mission-00", "mission-01"],
     completedMissions: parsed.completedMissions ?? [],
     unlockedSkills: parsed.unlockedSkills ?? [],
     unlockedCapabilities: parsed.unlockedCapabilities ?? [],
@@ -159,8 +158,12 @@ export function completeMission(
 ): PlayerProgress {
   const now = new Date();
   if (progress.completedMissions.includes(missionId)) {
+    const unlockedMissions = new Set(progress.unlockedMissions);
+    unlockedMissions.add(missionId);
+    if (nextMissionId) unlockedMissions.add(nextMissionId);
     return normalizeProgress({
       ...progress,
+      unlockedMissions: Array.from(unlockedMissions),
       lastPlayedMissionId: missionId,
       lastPlayedAt: now.toISOString(),
       activityDates: recordActivity(progress, now),

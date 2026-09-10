@@ -2,7 +2,6 @@
 
 import { useLocale } from "@/i18n/locale-context";
 import type {
-  CodeFillTask,
   MissionBriefingContent,
   MissionHint,
   PayloadRepairTask,
@@ -17,7 +16,6 @@ import {
   SupportPolicyBody,
 } from "@/components/mission/BriefBlocks";
 import { PayloadRepairPanel } from "@/components/mission/PayloadRepairPanel";
-import { CodeFillPanel } from "@/components/mission/CodeFillPanel";
 
 interface MissionBriefingProps {
   briefing: MissionBriefingContent;
@@ -29,12 +27,9 @@ interface MissionBriefingProps {
   objective: string;
   missionId: string;
   payloadRepair?: PayloadRepairTask;
-  codeFill?: CodeFillTask;
   outputSchema?: StructuredOutputSchema;
   repairPassed?: boolean;
   onRepairPassedChange?: (passed: boolean) => void;
-  codeFillPassed?: boolean;
-  onCodeFillPassedChange?: (passed: boolean) => void;
 }
 
 export function MissionBriefing({
@@ -47,12 +42,9 @@ export function MissionBriefing({
   objective,
   missionId,
   payloadRepair,
-  codeFill,
   outputSchema,
   repairPassed = false,
   onRepairPassedChange,
-  codeFillPassed = false,
-  onCodeFillPassedChange,
 }: MissionBriefingProps) {
   const { messages } = useLocale();
   const objectiveText = briefing.objectiveText ?? objective;
@@ -151,15 +143,6 @@ export function MissionBriefing({
           schema={outputSchema}
           passed={repairPassed}
           onPassedChange={onRepairPassedChange}
-        />
-      )}
-
-      {codeFill && onCodeFillPassedChange && (
-        <CodeFillPanel
-          missionId={missionId}
-          task={codeFill}
-          passed={codeFillPassed}
-          onPassedChange={onCodeFillPassedChange}
         />
       )}
 

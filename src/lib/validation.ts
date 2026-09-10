@@ -456,6 +456,74 @@ export function normalizeCodeBlank(raw: string): string {
     .replace(/'/g, '"');
 }
 
+/** Visible placeholder for unfilled slots in the editable starter. */
+export const CODE_FILL_BLANK_MARK = "________";
+
+type CodeFillSourceTask =
+  | {
+      mode: "logic";
+      prefix: string;
+      middle: string;
+      suffix: string;
+    }
+  | {
+      mode: "ai-integration";
+      segments: string[];
+      blanks: unknown[];
+    };
+
+/** Full starter source: scaffolding filled, learning blanks as ________. */
+export function buildCodeFillStarterSource(task: CodeFillSourceTask): string {
+  if (task.mode === "logic") {
+    return `${task.prefix}${CODE_FILL_BLANK_MARK}${task.middle}${CODE_FILL_BLANK_MARK}${task.suffix}`;
+  }
+  let out = task.segments[0] ?? "";
+  for (let i = 0; i < task.blanks.length; i++) {
+    out += CODE_FILL_BLANK_MARK + (task.segments[i + 1] ?? "");
+  }
+  return out;
+}
+
+function cleanExtractedBlank(raw: string): string {
+  const t = raw.trim();
+  if (!t || t === CODE_FILL_BLANK_MARK || /^_+$/.test(t)) return "";
+  return t;
+}
+
+/** Pull key + if-condition from free-edited Mission 05 source. */
+export function extractLogicFillFromSource(source: string): {
+  key: string;
+  condition: string;
+} {
+  const priorityKey = source.match(
+    /priority\s*=\s*result\[\s*["']([^"']*)["']\s*\]/
+  );
+  const anyKey = source.match(/result\[\s*["']([^"']*)["']\s*\]/);
+  const key = cleanExtractedBlank(priorityKey?.[1] ?? anyKey?.[1] ?? "");
+
+  const ifMatch = source.match(/\bif\s+([^\n]+?)\s*:/);
+  const condition = cleanExtractedBlank(ifMatch?.[1] ?? "");
+  return { key, condition };
+}
+
+/** Pull ai.ask args + priority key from free-edited Mission 06 source. */
+export function extractAiIntegrationFillFromSource(source: string): {
+  values: [string, string, string];
+} {
+  const ask = source.match(/ai\.ask\s*\(\s*([^,]+?)\s*,\s*([^)]+?)\s*\)/);
+  const priorityKey = source.match(
+    /priority\s*=\s*result\[\s*["']([^"']*)["']\s*\]/
+  );
+  const anyKey = source.match(/result\[\s*["']([^"']*)["']\s*\]/);
+  return {
+    values: [
+      cleanExtractedBlank(ask?.[1] ?? ""),
+      cleanExtractedBlank(ask?.[2] ?? ""),
+      cleanExtractedBlank(priorityKey?.[1] ?? anyKey?.[1] ?? ""),
+    ],
+  };
+}
+
 /**
  * Accept blanks like: priority == "URGENT" (flexible spaces / quotes / optional parens).
  */
@@ -507,6 +575,34 @@ export function evaluateCodeFillTask(
   return { ok: true };
 }
 
+/** Identifier blank: `instruction`, `message`, optional quotes. */
+export function evaluateIdentifierBlank(
+  blank: string,
+  expected: string,
+  stripQuotes = false
+): boolean {
+  let n = normalizeCodeBlank(blank);
+  if (stripQuotes) n = n.replace(/"/g, "");
+  return n === expected;
+}
+
+/** Mission 06 wiring blanks — order matches `task.blanks`. */
+export function evaluateAiIntegrationFill(
+  values: string[],
+  blanks: Array<{ id: string; expected: string; stripQuotes?: boolean }>
+): { ok: true } | { ok: false; blankId: string } {
+  for (let i = 0; i < blanks.length; i++) {
+    const blank = blanks[i];
+    const value = values[i] ?? "";
+    if (
+      !evaluateIdentifierBlank(value, blank.expected, blank.stripQuotes === true)
+    ) {
+      return { ok: false, blankId: blank.id };
+    }
+  }
+  return { ok: true };
+}
+
 /** Route from a verified priority==value condition (no Python runtime). */
 export function evaluateLogicRoute(
   priority: string,
@@ -515,6 +611,79 @@ export function evaluateLogicRoute(
   falseRoute: string
 ): string {
   return priority === compareValue ? trueRoute : falseRoute;
+}
+
+/**
+ * Mission 06 RUN: model returns JSON → read priority → route.
+ * Passes when the derived route matches `test.expected`.
+ */
+export function evaluateAiIntegrationRun(
+  raw: string,
+  test: ClassificationTest,
+  opts: {
+    compareValue: string;
+    trueRoute: string;
+    falseRoute: string;
+    priorityKey?: string;
+  }
+): ClassificationResult {
+  const priorityKey = opts.priorityKey ?? "priority";
+  const trimmed = raw.trim();
+  let priority: string | null = null;
+  let jsonOk = false;
+
+  try {
+    const start = trimmed.indexOf("{");
+    const end = trimmed.lastIndexOf("}");
+    const slice =
+      start >= 0 && end > start ? trimmed.slice(start, end + 1) : trimmed;
+    const parsed = JSON.parse(slice) as unknown;
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      jsonOk = true;
+      const value = (parsed as Record<string, unknown>)[priorityKey];
+      if (typeof value === "string") priority = value.trim().toUpperCase();
+    }
+  } catch {
+    jsonOk = false;
+  }
+
+  if (!jsonOk || !priority) {
+    return {
+      raw,
+      normalized: null,
+      isValidCategory: false,
+      matchesExpected: false,
+      expected: test.expected,
+      message: test.message,
+      testId: test.id,
+      failHint: test.failHints?.format ?? test.failHint,
+      jsonOk: false,
+      errorKind: "format",
+    };
+  }
+
+  const route = evaluateLogicRoute(
+    priority,
+    opts.compareValue,
+    opts.trueRoute,
+    opts.falseRoute
+  );
+  const matches = route === test.expected;
+
+  return {
+    raw,
+    normalized: route,
+    isValidCategory: true,
+    matchesExpected: matches,
+    expected: test.expected,
+    message: test.message,
+    testId: test.id,
+    failHint: matches
+      ? undefined
+      : (test.failHints?.fields?.priority ?? test.failHint),
+    jsonOk: true,
+    parsedFields: { [priorityKey]: priority, route },
+  };
 }
 
 export function evaluateJsonStructuredTest(

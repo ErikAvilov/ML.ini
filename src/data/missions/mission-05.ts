@@ -23,6 +23,7 @@ else:
 
   if (locale === "en") {
     return {
+      mode: "logic",
       title: "Decision code",
       description:
         "Two blanks. First read the priority from the JSON. Then compare it to choose the route.",
@@ -42,6 +43,7 @@ else:
   }
 
   return {
+    mode: "logic",
     title: "Code de décision",
     description:
       "Deux trous. D’abord récupère priority depuis le JSON. Puis compare-la pour choisir la route.",

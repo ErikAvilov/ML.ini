@@ -29,6 +29,10 @@ export const MILDRED_CAPABILITY_CATALOG: Record<
     label: { en: "Decision Logic", fr: "Decision Logic" },
     status: "ONLINE",
   },
+  "ai-integration": {
+    label: { en: "AI Integration", fr: "AI Integration" },
+    status: "ONLINE",
+  },
 };
 
 export function resolveCapabilities(

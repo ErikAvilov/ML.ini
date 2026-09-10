@@ -25,16 +25,32 @@ import {
   loadMissionDraft,
   saveMissionDraft,
 } from "@/lib/persistence/mission-drafts";
-import { evaluateMissionTest, evaluateLogicRoute, summarizeSuite } from "@/lib/validation";
+import {
+  evaluateMissionTest,
+  evaluateLogicRoute,
+  evaluateAiIntegrationRun,
+  summarizeSuite,
+} from "@/lib/validation";
 import { useLocale } from "@/i18n/locale-context";
 import { getMissionBySlug, getMissions } from "@/data/missions";
 import { createKingdomConstruireAvecIA } from "@/data/kingdoms/construire-avec-ia";
-import type { ClassificationResult, MissionDefinition } from "@/lib/types";
+import type {
+  ClassificationResult,
+  CodeFillMode,
+  MissionDefinition,
+} from "@/lib/types";
 import type { Locale } from "@/i18n/config";
 import type { CommonMessages } from "@/i18n/messages/common";
 
 type Stage = "idle" | "input" | "instruction" | "model" | "output";
 type MobileTab = "brief" | "workspace";
+
+function resolveCodeFillMode(
+  mission: MissionDefinition
+): CodeFillMode | null {
+  if (!mission.codeFill) return null;
+  return mission.codeFill.mode;
+}
 
 interface MissionWorkspaceProps {
   missionSlug: string;
@@ -167,9 +183,12 @@ function MissionSession({
     ? missions.find((m) => m.id === nextMissionId) ?? null
     : null;
 
-  const [instruction, setInstruction] = useState(() =>
-    typeof window !== "undefined" ? loadMissionDraft(mission.id) : ""
-  );
+  const [instruction, setInstruction] = useState(() => {
+    if (typeof window === "undefined") return "";
+    const fill = mission.codeFill;
+    if (fill?.mode === "ai-integration") return fill.providedInstruction;
+    return loadMissionDraft(mission.id);
+  });
   const [repairPassed, setRepairPassed] = useState(
     () => !mission.payloadRepair
   );
@@ -223,15 +242,24 @@ function MissionSession({
   }, [mission.id, markMissionPlayed]);
 
   useEffect(() => {
+    if (mission.codeFill?.mode === "ai-integration") return;
     saveMissionDraft(mission.id, instruction);
-  }, [mission.id, instruction]);
+  }, [mission.id, mission.codeFill, instruction]);
+
+  const fillMode = resolveCodeFillMode(mission);
+  const isLogic = fillMode === "logic";
+  const isAiIntegration = fillMode === "ai-integration";
 
   async function runClassify(message: string) {
+    const instructionForCall =
+      isAiIntegration && mission.codeFill?.mode === "ai-integration"
+        ? mission.codeFill.providedInstruction
+        : instructionRef.current;
     const res = await fetch("/api/ai/classify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        instruction: instructionRef.current,
+        instruction: instructionForCall,
         message,
         locale,
       }),
@@ -313,7 +341,7 @@ function MissionSession({
     if (mission.codeFill && !codeFillPassedRef.current) {
       setFeedback(messages.codeFillRequired);
       setFeedbackSpeaker("mira");
-      setMobileTab("brief");
+      setMobileTab("workspace");
       return;
     }
     grantMissionSuccess();
@@ -338,7 +366,10 @@ function MissionSession({
   function evaluateLogicTest(
     test: (typeof tests)[number]
   ): ClassificationResult {
-    const fill = mission.codeFill!;
+    const fill = mission.codeFill;
+    if (!fill || fill.mode !== "logic") {
+      throw new Error("logic fill required");
+    }
     const priority = priorityFromLogicFixture(test.message);
     const route = evaluateLogicRoute(
       priority,
@@ -359,14 +390,31 @@ function MissionSession({
     };
   }
 
+  function evaluateAiIntegrationTest(
+    raw: string,
+    test: (typeof tests)[number]
+  ): ClassificationResult {
+    const fill = mission.codeFill;
+    if (!fill || fill.mode !== "ai-integration") {
+      throw new Error("ai-integration fill required");
+    }
+    return evaluateAiIntegrationRun(raw, test, {
+      compareValue: fill.compareValue,
+      trueRoute: fill.trueRoute,
+      falseRoute: fill.falseRoute,
+    });
+  }
+
   async function handleRun() {
-    const isLogic = Boolean(mission.codeFill);
     if (runningRef.current || tests.length === 0) return;
-    if (!isLogic && !instructionRef.current.trim()) return;
-    if (isLogic && !codeFillPassedRef.current) {
-      setFeedback(messages.codeFillRequired);
-      setFeedbackSpeaker("mira");
-      setMobileTab("brief");
+    if (isLogic || isAiIntegration) {
+      if (!codeFillPassedRef.current) {
+        setFeedback(messages.codeFillRequired);
+        setFeedbackSpeaker("mira");
+        setMobileTab("workspace");
+        return;
+      }
+    } else if (!instructionRef.current.trim()) {
       return;
     }
 
@@ -381,6 +429,7 @@ function MissionSession({
     setSuccessToast(null);
 
     const collected: ClassificationResult[] = [];
+    const fast = isLogic;
 
     try {
       for (let i = 0; i < tests.length; i++) {
@@ -388,15 +437,19 @@ function MissionSession({
         setCurrentIndex(i);
         setActiveMessage(test.message);
         setStage("input");
-        await wait(isLogic ? 180 : 280);
+        await wait(fast ? 180 : 280);
         setStage("instruction");
-        await wait(isLogic ? 160 : 320);
+        await wait(fast ? 160 : 320);
         setStage("model");
 
         let evaluated: ClassificationResult;
         if (isLogic) {
           await wait(120);
           evaluated = evaluateLogicTest(test);
+        } else if (isAiIntegration) {
+          const output = await runClassify(test.message);
+          setLiveOutput(output);
+          evaluated = evaluateAiIntegrationTest(output, test);
         } else {
           const output = await runClassify(test.message);
           setLiveOutput(output);
@@ -407,11 +460,11 @@ function MissionSession({
             mission.outputSchema
           );
         }
-        setLiveOutput(evaluated.raw);
+        setLiveOutput(evaluated.normalized ?? evaluated.raw);
         setStage("output");
         collected.push(evaluated);
         setResults([...collected]);
-        await wait(isLogic ? 280 : 450);
+        await wait(fast ? 280 : 450);
       }
 
       const summary = summarizeSuite(collected, locale);
@@ -474,13 +527,15 @@ function MissionSession({
   }, [mission.order, missions, progress, router]);
 
   async function handleRunBatch() {
-    const isLogic = Boolean(mission.codeFill);
     if (running || tests.length === 0) return;
-    if (!isLogic && !instruction.trim()) return;
-    if (isLogic && !codeFillPassedRef.current) {
-      setFeedback(messages.codeFillRequired);
-      setFeedbackSpeaker("mira");
-      setMobileTab("brief");
+    if (isLogic || isAiIntegration) {
+      if (!codeFillPassedRef.current) {
+        setFeedback(messages.codeFillRequired);
+        setFeedbackSpeaker("mira");
+        setMobileTab("workspace");
+        return;
+      }
+    } else if (!instruction.trim()) {
       return;
     }
 
@@ -504,11 +559,15 @@ function MissionSession({
         await wait(280);
         collected = tests.map((test) => evaluateLogicTest(test));
       } else {
+        const instructionForCall =
+          isAiIntegration && mission.codeFill?.mode === "ai-integration"
+            ? mission.codeFill.providedInstruction
+            : instruction;
         const res = await fetch("/api/ai/classify-batch", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            instruction,
+            instruction: instructionForCall,
             locale,
             tests: tests.map((t) => ({ id: t.id, message: t.message })),
           }),
@@ -527,6 +586,9 @@ function MissionSession({
 
         collected = tests.map((test) => {
           const output = byId.get(test.id) ?? "";
+          if (isAiIntegration) {
+            return evaluateAiIntegrationTest(output, test);
+          }
           return evaluateMissionTest(
             output,
             test,
@@ -536,11 +598,9 @@ function MissionSession({
         });
       }
 
-      const lastRaw =
-        collected[collected.length - 1]?.raw ??
-        collected[collected.length - 1]?.normalized ??
-        null;
-      setLiveOutput(lastRaw);
+      const last =
+        collected[collected.length - 1] ?? null;
+      setLiveOutput(last?.normalized ?? last?.raw ?? null);
       setStage("output");
       setResults(collected);
       setCurrentIndex(Math.max(0, tests.length - 1));
@@ -629,7 +689,13 @@ function MissionSession({
         </button>
       </div>
 
-      <div className="grid min-h-0 flex-1 lg:grid-cols-[minmax(0,40fr)_minmax(0,60fr)]">
+      <div
+        className={`grid min-h-0 flex-1 ${
+          fillMode
+            ? "lg:grid-cols-[minmax(0,38fr)_minmax(0,62fr)]"
+            : "lg:grid-cols-[minmax(0,40fr)_minmax(0,60fr)]"
+        }`}
+      >
         <aside
           className={`min-h-0 min-w-0 overflow-y-auto border-r border-ml-border bg-ml-bg-1 px-4 py-3.5 sm:px-5 sm:py-4 ${
             mobileTab === "brief" ? "block" : "hidden lg:block"
@@ -646,12 +712,9 @@ function MissionSession({
               objective={mission.objective}
               missionId={mission.id}
               payloadRepair={mission.payloadRepair}
-              codeFill={mission.codeFill}
               outputSchema={mission.outputSchema}
               repairPassed={repairPassed}
               onRepairPassedChange={onRepairPassedChange}
-              codeFillPassed={codeFillPassed}
-              onCodeFillPassedChange={onCodeFillPassedChange}
             />
           )}
         </aside>
@@ -687,8 +750,22 @@ function MissionSession({
             showSuccess={
               Boolean(successToast) || Boolean(activeCelebration)
             }
-            exerciseMode={mission.codeFill ? "logic" : "prompt"}
-            canRun={mission.codeFill ? codeFillPassed : undefined}
+            exerciseMode={
+              fillMode === "logic"
+                ? "logic"
+                : fillMode === "ai-integration"
+                  ? "ai-integration"
+                  : "prompt"
+            }
+            canRun={
+              fillMode === "logic" || fillMode === "ai-integration"
+                ? codeFillPassed
+                : undefined
+            }
+            missionId={mission.id}
+            codeFill={mission.codeFill}
+            codeFillPassed={codeFillPassed}
+            onCodeFillPassedChange={onCodeFillPassedChange}
           />
         </section>
       </div>

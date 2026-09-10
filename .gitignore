@@ -43,3 +43,6 @@ next-env.d.ts
 
 # graphify
 graphify-out/
+
+strix_runs/
+.source-aware/

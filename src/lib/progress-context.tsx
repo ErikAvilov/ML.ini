@@ -137,6 +137,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       xpReward: number,
       rewards?: { skillId?: string; capabilityId?: string }
     ) => {
+      hydrateFromStorage();
       const next = completeMission(
         memoryProgress,
         missionId,

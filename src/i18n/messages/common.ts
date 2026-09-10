@@ -219,21 +219,37 @@ const common = {
     payloadRepairRequired:
       "Les tests passent, mais il reste à réparer le payload cassé à gauche — la syntaxe JSON se valide là, pas dans ton prompt.",
     codeFillCheck: "Vérifier la condition",
-    codeFillReset: "Effacer",
+    codeFillWiringCheck: "Vérifier le câblage",
+    codeFillReset: "Réinitialiser",
+    codeFillEditableHelp:
+      "Tout le code est modifiable. Les ________ sont les trous à compléter — le reste est déjà en place.",
     codeFillFail:
       "Pas encore. Il faut comparer priority à la chaîne URGENT avec ==.",
     codeFillKeyFail:
       "Le premier trou est le nom de la clé JSON à lire — ici : priority.",
+    codeFillPriorityFail:
+      "La clé à lire dans le JSON est priority.",
+    codeFillInstructionFail:
+      "Premier argument de ai.ask : la variable instruction.",
+    codeFillMessageFail:
+      "Deuxième argument de ai.ask : la variable message.",
+    codeFillWiringFail: "Un des trous du câblage est encore incorrect.",
     codeFillKeyLabel: "Clé JSON",
     codeFillConditionLabel: "Condition if",
     codeFillRequired:
-      "Complète d’abord les deux trous dans le brief, puis lance les scénarios.",
+      "Complète d’abord les trous dans ton code à droite, puis lance les tests.",
     logicFixtureLabel: "Entrée (priority)",
     logicScenarioCount: "{count} scénarios de décision",
     logicDecisionLabel: "Décision du système",
-    logicDecisionHelp: "Complète la condition à gauche, puis teste les routes.",
+    logicDecisionHelp: "Complète les trous, vérifie, puis teste les routes.",
     logicConditionReady: "Trous prêts · lance les scénarios",
-    logicConditionNeeded: "Complète les deux trous dans le brief",
+    logicConditionNeeded: "Complète les deux trous ci-dessus",
+    aiIntegrationPipelineLabel: "Pipeline code → modèle",
+    aiIntegrationPipelineHelp:
+      "L’instruction est déjà fournie. Branche l’appel ci-dessous, puis RUN appelle vraiment le modèle.",
+    aiIntegrationReady: "Câblage prêt · RUN appelle le modèle",
+    aiIntegrationNeeded: "Complète les trous ci-dessus",
+    yourCodeLabel: "Ton code",
     nextMissionUnlockedMap: "Mission suivante débloquée sur la carte.",
     outputContractTitle: "Format attendu",
     humanReadableLabel: "Réponse lisible (humain)",
@@ -499,21 +515,37 @@ const common = {
     payloadRepairRequired:
       "Tests pass, but you still need to repair the broken payload on the left — JSON syntax is checked there, not in your prompt.",
     codeFillCheck: "Check condition",
-    codeFillReset: "Clear",
+    codeFillWiringCheck: "Check wiring",
+    codeFillReset: "Reset",
+    codeFillEditableHelp:
+      "All of this code is editable. ________ marks the blanks to fill — the rest is already wired.",
     codeFillFail:
       "Not yet. Compare priority to the string URGENT with ==.",
     codeFillKeyFail:
       "The first blank is the JSON key to read — here: priority.",
+    codeFillPriorityFail:
+      "The JSON key to read is priority.",
+    codeFillInstructionFail:
+      "First ai.ask argument: the instruction variable.",
+    codeFillMessageFail:
+      "Second ai.ask argument: the message variable.",
+    codeFillWiringFail: "One of the wiring blanks is still wrong.",
     codeFillKeyLabel: "JSON key",
     codeFillConditionLabel: "if condition",
     codeFillRequired:
-      "Complete both blanks in the brief first, then run the scenarios.",
+      "Complete the blanks in your code on the right first, then run the tests.",
     logicFixtureLabel: "Input (priority)",
     logicScenarioCount: "{count} decision scenarios",
     logicDecisionLabel: "System decision",
-    logicDecisionHelp: "Complete the condition on the left, then test the routes.",
+    logicDecisionHelp: "Fill the blanks, verify, then test the routes.",
     logicConditionReady: "Blanks ready · run scenarios",
-    logicConditionNeeded: "Complete both blanks in the brief",
+    logicConditionNeeded: "Complete both blanks above",
+    aiIntegrationPipelineLabel: "Code → model pipeline",
+    aiIntegrationPipelineHelp:
+      "The instruction is already provided. Wire the call below, then RUN hits the real model.",
+    aiIntegrationReady: "Wiring ready · RUN calls the model",
+    aiIntegrationNeeded: "Complete the blanks above",
+    yourCodeLabel: "Your code",
     nextMissionUnlockedMap: "Next mission unlocked on the map.",
     outputContractTitle: "Required format",
     humanReadableLabel: "Human-readable answer",

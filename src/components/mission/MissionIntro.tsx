@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/Button";
+import Link from "next/link";
 import { MissionNavBar } from "@/components/mission/MissionNavBar";
 import { MiraMessage } from "@/components/mission/MiraMessage";
 import { useProgress } from "@/lib/progress-context";
@@ -23,32 +21,28 @@ export function MissionIntro({
   missions,
   nextMissionId,
 }: MissionIntroProps) {
-  const router = useRouter();
   const { completeMissionAndUnlock, markMissionPlayed } = useProgress();
   const { messages } = useLocale();
   const intro = mission.intro;
-  const [finishing, setFinishing] = useState(false);
 
   if (!intro) return null;
 
-  const nextSlug = intro.nextSlug;
+  const nextHref = `/missions/${intro.nextSlug}`;
   const ctaLabel = intro.ctaLabel || messages.introCompleteCta;
   const sections = intro.sections;
 
-  function finish() {
-    if (finishing) return;
-    setFinishing(true);
+  function startMission01() {
     markMissionPlayed(mission.id);
     completeMissionAndUnlock(mission.id, nextMissionId, mission.xpReward, {
-      skillId: mission.completion?.skillUnlocked.skillId,
-      capabilityId: mission.completion?.capabilityUnlocked.id,
+      skillId: mission.completion?.skillUnlocked?.skillId,
+      capabilityId: mission.completion?.capabilityUnlocked?.id,
     });
-    router.push(`/missions/${nextSlug}`);
   }
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden">
       <MissionNavBar mission={mission} missions={missions} />
+
       <div className="min-h-0 flex-1 overflow-y-auto">
         <div className="mx-auto flex max-w-2xl flex-col gap-5 px-5 py-6 sm:px-8 sm:py-8">
           <header>
@@ -83,17 +77,19 @@ export function MissionIntro({
               </li>
             ))}
           </ol>
+        </div>
+      </div>
 
-          <div className="sticky bottom-0 border-t border-ml-border bg-ml-bg-0/90 py-4 backdrop-blur-sm">
-            <Button
-              variant="primary"
-              className="w-full sm:w-auto"
-              onClick={finish}
-              disabled={finishing}
-            >
-              {ctaLabel}
-            </Button>
-          </div>
+      <div className="shrink-0 border-t border-ml-border bg-ml-bg-0">
+        <div className="mx-auto flex max-w-2xl items-center justify-center px-5 py-3 sm:px-8">
+          <Link
+            href={nextHref}
+            onClick={startMission01}
+            className="inline-flex items-center justify-center bg-ml-accent px-4 py-2.5 text-[length:var(--ml-text-sm)] font-medium text-[var(--ml-text-on-primary)] hover:bg-ml-accent-bright"
+            style={{ borderRadius: "var(--ml-frame-radius)" }}
+          >
+            {ctaLabel}
+          </Link>
         </div>
       </div>
     </div>
