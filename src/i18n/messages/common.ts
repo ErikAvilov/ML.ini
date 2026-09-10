@@ -222,14 +222,18 @@ const common = {
     codeFillReset: "Effacer",
     codeFillFail:
       "Pas encore. Il faut comparer priority à la chaîne URGENT avec ==.",
+    codeFillKeyFail:
+      "Le premier trou est le nom de la clé JSON à lire — ici : priority.",
+    codeFillKeyLabel: "Clé JSON",
+    codeFillConditionLabel: "Condition if",
     codeFillRequired:
-      "Complète d’abord la condition dans le brief, puis lance les scénarios.",
+      "Complète d’abord les deux trous dans le brief, puis lance les scénarios.",
     logicFixtureLabel: "Entrée (priority)",
     logicScenarioCount: "{count} scénarios de décision",
     logicDecisionLabel: "Décision du système",
     logicDecisionHelp: "Complète la condition à gauche, puis teste les routes.",
-    logicConditionReady: "Condition prête · lance les scénarios",
-    logicConditionNeeded: "Complète la condition dans le brief",
+    logicConditionReady: "Trous prêts · lance les scénarios",
+    logicConditionNeeded: "Complète les deux trous dans le brief",
     nextMissionUnlockedMap: "Mission suivante débloquée sur la carte.",
     outputContractTitle: "Format attendu",
     humanReadableLabel: "Réponse lisible (humain)",
@@ -498,14 +502,18 @@ const common = {
     codeFillReset: "Clear",
     codeFillFail:
       "Not yet. Compare priority to the string URGENT with ==.",
+    codeFillKeyFail:
+      "The first blank is the JSON key to read — here: priority.",
+    codeFillKeyLabel: "JSON key",
+    codeFillConditionLabel: "if condition",
     codeFillRequired:
-      "Complete the condition in the brief first, then run the scenarios.",
+      "Complete both blanks in the brief first, then run the scenarios.",
     logicFixtureLabel: "Input (priority)",
     logicScenarioCount: "{count} decision scenarios",
     logicDecisionLabel: "System decision",
     logicDecisionHelp: "Complete the condition on the left, then test the routes.",
-    logicConditionReady: "Condition ready · run scenarios",
-    logicConditionNeeded: "Complete the condition in the brief",
+    logicConditionReady: "Blanks ready · run scenarios",
+    logicConditionNeeded: "Complete both blanks in the brief",
     nextMissionUnlockedMap: "Next mission unlocked on the map.",
     outputContractTitle: "Required format",
     humanReadableLabel: "Human-readable answer",

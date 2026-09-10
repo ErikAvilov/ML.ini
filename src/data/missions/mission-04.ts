@@ -197,11 +197,19 @@ export function createMission04(locale: Locale): MissionDefinition {
         },
         newConcept: {
           title: "JSON",
+          summary:
+            "A standard format used to represent structured data that software can read.",
           example: `{
-  "sentiment": "...",
-  "priority": "..."
+  "sentiment": "NEGATIVE",
+  "priority": "URGENT"
 }`,
-          labels: ["key", "value"],
+          labels: [
+            '{ } → object',
+            '"priority" → key',
+            '"URGENT" → value',
+            ": → separates a key from its value",
+            ", → separates properties",
+          ],
         },
         contractLines: [
           { name: "sentiment", values: "POSITIVE / NEUTRAL / NEGATIVE" },
@@ -221,7 +229,7 @@ export function createMission04(locale: Locale): MissionDefinition {
         },
         miraSuccess: mira,
         successInsight:
-          "Software needs a standard machine-readable format — not just predictable words.",
+          "JSON is structured data with named values — another program can read them.",
       },
       outputSchema: OUTPUT_SCHEMA,
       tests: [
@@ -433,11 +441,19 @@ export function createMission04(locale: Locale): MissionDefinition {
       },
       newConcept: {
         title: "JSON",
+        summary:
+          "Un format standard utilisé pour représenter des données structurées.",
         example: `{
-  "sentiment": "...",
-  "priority": "..."
+  "sentiment": "NEGATIVE",
+  "priority": "URGENT"
 }`,
-        labels: ["clé", "valeur"],
+        labels: [
+          "{ } → objet",
+          '"priority" → clé',
+          '"URGENT" → valeur',
+          ": → sépare une clé de sa valeur",
+          ", → sépare les propriétés",
+        ],
       },
       contractLines: [
         { name: "sentiment", values: "POSITIVE / NEUTRAL / NEGATIVE" },
@@ -457,7 +473,7 @@ export function createMission04(locale: Locale): MissionDefinition {
       },
       miraSuccess: mira,
       successInsight:
-        "Un logiciel a besoin d’un format standard machine-readable — pas seulement de mots prévisibles.",
+        "JSON, c’est des données structurées avec des valeurs nommées — un autre programme peut les lire.",
     },
     outputSchema: OUTPUT_SCHEMA,
     tests: [

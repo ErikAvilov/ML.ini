@@ -473,6 +473,40 @@ export function evaluateCodeFill(
   return re.test(n);
 }
 
+/** Accept dict-key blanks like: priority or "priority". */
+export function evaluateDictKeyBlank(
+  blank: string,
+  expectedKey: string
+): boolean {
+  const n = normalizeCodeBlank(blank).replace(/"/g, "");
+  return n === expectedKey;
+}
+
+/** Both Mission 05 blanks must pass. */
+export function evaluateCodeFillTask(
+  keyBlank: string,
+  conditionBlank: string,
+  task: {
+    expectedKey: string;
+    compareVariable: string;
+    compareValue: string;
+  }
+): { ok: true } | { ok: false; which: "key" | "condition" } {
+  if (!evaluateDictKeyBlank(keyBlank, task.expectedKey)) {
+    return { ok: false, which: "key" };
+  }
+  if (
+    !evaluateCodeFill(
+      conditionBlank,
+      task.compareVariable,
+      task.compareValue
+    )
+  ) {
+    return { ok: false, which: "condition" };
+  }
+  return { ok: true };
+}
+
 /** Route from a verified priority==value condition (no Python runtime). */
 export function evaluateLogicRoute(
   priority: string,

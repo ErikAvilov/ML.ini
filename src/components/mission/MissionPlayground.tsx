@@ -117,14 +117,8 @@ export function MissionPlayground({
             className="min-h-0 w-full flex-1 border border-ml-border bg-ml-bg-1 px-3.5 py-3 font-mono text-[length:var(--ml-text-sm)] leading-relaxed text-ml-text-body"
             style={{ borderRadius: "var(--ml-frame-radius)" }}
           >
-            <p>
-              if priority == &quot;URGENT&quot;:
-              <br />
-              &nbsp;&nbsp;route = &quot;HUMAN_REVIEW&quot;
-              <br />
-              else:
-              <br />
-              &nbsp;&nbsp;route = &quot;STANDARD_QUEUE&quot;
+            <p className="whitespace-pre-wrap">
+              {`priority = result["priority"]\n\nif priority == "URGENT":\n  route = "HUMAN_REVIEW"\nelse:\n  route = "STANDARD_QUEUE"`}
             </p>
             <p
               className={`mt-3 font-mono text-[11px] tracking-[0.1em] uppercase ${

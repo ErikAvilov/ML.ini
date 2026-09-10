@@ -115,6 +115,35 @@ export function MissionBriefing({
         )}
       </section>
 
+      {briefing.newConcept && (
+        <section
+          className="border border-ml-border bg-ml-surface-1/40 px-3 py-2.5"
+          style={{ borderRadius: "var(--ml-frame-radius)" }}
+        >
+          <p className="font-mono text-[11px] tracking-[0.14em] text-ml-accent uppercase">
+            {briefing.newConcept.title}
+          </p>
+          {briefing.newConcept.summary && (
+            <p className="mt-1.5 text-[length:var(--ml-text-sm)] leading-snug text-ml-text-body">
+              {briefing.newConcept.summary}
+            </p>
+          )}
+          {briefing.newConcept.example && (
+            <pre className="mt-1.5 overflow-x-auto font-mono text-[12px] leading-snug whitespace-pre-wrap text-ml-text">
+              {briefing.newConcept.example}
+            </pre>
+          )}
+          {briefing.newConcept.labels &&
+            briefing.newConcept.labels.length > 0 && (
+              <ul className="mt-1.5 space-y-0.5 font-mono text-[11px] text-ml-secondary">
+                {briefing.newConcept.labels.map((label) => (
+                  <li key={label}>{label}</li>
+                ))}
+              </ul>
+            )}
+        </section>
+      )}
+
       {payloadRepair && outputSchema && onRepairPassedChange && (
         <PayloadRepairPanel
           missionId={missionId}
@@ -136,30 +165,6 @@ export function MissionBriefing({
 
       {briefing.formatCompare && (
         <FormatCompare compare={briefing.formatCompare} />
-      )}
-
-      {briefing.newConcept && (
-        <section
-          className="border border-ml-border bg-ml-surface-1/40 px-3 py-2.5"
-          style={{ borderRadius: "var(--ml-frame-radius)" }}
-        >
-          <p className="font-mono text-[11px] tracking-[0.14em] text-ml-accent uppercase">
-            {briefing.newConcept.title}
-          </p>
-          {briefing.newConcept.example && (
-            <pre className="mt-1.5 overflow-x-auto font-mono text-[12px] leading-snug whitespace-pre-wrap text-ml-text">
-              {briefing.newConcept.example}
-            </pre>
-          )}
-          {briefing.newConcept.labels &&
-            briefing.newConcept.labels.length > 0 && (
-              <ul className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 font-mono text-[11px] text-ml-secondary">
-                {briefing.newConcept.labels.map((label) => (
-                  <li key={label}>{label}</li>
-                ))}
-              </ul>
-            )}
-        </section>
       )}
 
       {(briefing.expectedFormat ||

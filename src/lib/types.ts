@@ -165,6 +165,8 @@ export interface SentimentPolicyContent {
 /** Compact “new knowledge” block (dominant in the brief) */
 export interface MissionConceptBlock {
   title: string;
+  /** One-line plain-language definition (shown before the example). */
+  summary?: string;
   example?: string;
   labels?: string[];
 }
@@ -265,24 +267,28 @@ export interface PayloadRepairTask {
 
 /**
  * Deterministic code fill-in (Mission 05+).
- * Player completes a blank in a mostly-written snippet — no sandbox.
+ * Player completes blanks in a mostly-written snippet — no sandbox.
  */
 export interface CodeFillTask {
   title: string;
   description: string;
-  /** Code shown before the blank (includes trailing `if `). */
+  /** Code before the dict-key blank (ends with `result["`). */
   prefix: string;
-  /** Code shown after the blank (starts with `:`). */
+  /** Code between the key blank and the condition blank (starts after key, ends with `if `). */
+  middle: string;
+  /** Code after the condition blank (starts with `:`). */
   suffix: string;
-  /** Placeholder shown in the blank input. */
-  blankPlaceholder: string;
+  keyPlaceholder: string;
+  conditionPlaceholder: string;
+  /** Expected dict key (e.g. priority) — quotes optional in the blank. */
+  expectedKey: string;
   checkLabel: string;
   passLabel: string;
   /** Route when the condition is true / false — used by logic scenario tests. */
   trueRoute: string;
   falseRoute: string;
   /**
-   * Variable name compared in the blank (e.g. priority).
+   * Variable name compared in the condition blank (e.g. priority).
    * Accepted blank ≈ `priority == "URGENT"` (quotes/spaces flexible).
    */
   compareVariable: string;

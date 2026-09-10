@@ -4,6 +4,7 @@ import type { CodeFillTask, MissionDefinition } from "@/lib/types";
 const TRUE_ROUTE = "HUMAN_REVIEW";
 const FALSE_ROUTE = "STANDARD_QUEUE";
 const COMPARE_VALUE = "URGENT";
+const EXPECTED_KEY = "priority";
 
 function codeFillTask(locale: Locale): CodeFillTask {
   const prefix = `result = {
@@ -11,7 +12,8 @@ function codeFillTask(locale: Locale): CodeFillTask {
     "priority": "URGENT"
 }
 
-priority = result["priority"]
+priority = result["`;
+  const middle = `"]
 
 if `;
   const suffix = `:
@@ -23,12 +25,15 @@ else:
     return {
       title: "Decision code",
       description:
-        "Complete the condition. The rest of the program is already written.",
+        "Two blanks. First read the priority from the JSON. Then compare it to choose the route.",
       prefix,
+      middle,
       suffix,
-      blankPlaceholder: "priority == …",
-      checkLabel: "Condition incomplete",
-      passLabel: "Condition ready",
+      keyPlaceholder: "key",
+      conditionPlaceholder: 'priority == "…"',
+      expectedKey: EXPECTED_KEY,
+      checkLabel: "Incomplete",
+      passLabel: "Ready",
       trueRoute: TRUE_ROUTE,
       falseRoute: FALSE_ROUTE,
       compareVariable: "priority",
@@ -39,12 +44,15 @@ else:
   return {
     title: "Code de décision",
     description:
-      "Complète la condition. Le reste du programme est déjà écrit.",
+      "Deux trous. D’abord récupère priority depuis le JSON. Puis compare-la pour choisir la route.",
     prefix,
+    middle,
     suffix,
-    blankPlaceholder: "priority == …",
-    checkLabel: "Condition incomplète",
-    passLabel: "Condition prête",
+    keyPlaceholder: "clé",
+    conditionPlaceholder: 'priority == "…"',
+    expectedKey: EXPECTED_KEY,
+    checkLabel: "Incomplet",
+    passLabel: "Prêt",
     trueRoute: TRUE_ROUTE,
     falseRoute: FALSE_ROUTE,
     compareVariable: "priority",
@@ -56,14 +64,14 @@ function miraSuccess(locale: Locale): string[] {
   if (locale === "en") {
     return [
       "Good.",
-      "MILDRED's data finally branches the pipeline.",
-      "That's a decision — not another label.",
+      "You read a value from JSON, then branched on it.",
+      "That's how software uses structured data.",
     ];
   }
   return [
     "Bien.",
-    "Les données de MILDRED font enfin bifurquer le pipeline.",
-    "Ça, c’est une décision — pas une autre étiquette.",
+    "Tu as lu une valeur dans le JSON, puis bifurqué dessus.",
+    "C’est comme ça qu’un programme utilise des données structurées.",
   ];
 }
 
@@ -72,10 +80,7 @@ export function createMission05(locale: Locale): MissionDefinition {
   const tests = [
     {
       id: "urgent-negative",
-      message:
-        locale === "en"
-          ? 'priority = "URGENT"'
-          : 'priority = "URGENT"',
+      message: 'priority = "URGENT"',
       expected: TRUE_ROUTE,
       failHint:
         locale === "en"
@@ -84,10 +89,7 @@ export function createMission05(locale: Locale): MissionDefinition {
     },
     {
       id: "normal-positive",
-      message:
-        locale === "en"
-          ? 'priority = "NORMAL"'
-          : 'priority = "NORMAL"',
+      message: 'priority = "NORMAL"',
       expected: FALSE_ROUTE,
       failHint:
         locale === "en"
@@ -131,55 +133,73 @@ export function createMission05(locale: Locale): MissionDefinition {
       xpReward: 180,
       playable: true,
       brief:
-        "MILDRED can flag urgent requests. Useless if they land in the same queue as everything else. Make the system decide.",
-      objective: `If priority is "URGENT" → ${TRUE_ROUTE}. Otherwise → ${FALSE_ROUTE}.`,
+        "MILDRED now produces clean data. Teach the program how to use it.",
+      objective: `1. Read priority from the JSON.\n2. If it is "URGENT" → ${TRUE_ROUTE}.\n3. Otherwise → ${FALSE_ROUTE}.`,
       context: "Project MILDRED — decision layer.",
       showcaseMessage: 'priority = "URGENT"',
       codeFill,
       tests,
       briefing: {
         shortBrief:
-          "MILDRED can now spot an urgent request. That helps nobody if it still lands in the same queue. Make the system take a decision.",
-        objectiveText: `If priority is "URGENT":\n→ ${TRUE_ROUTE}\n\nOtherwise:\n→ ${FALSE_ROUTE}`,
+          "MILDRED can now produce clean data. What's left is teaching the program how to use it. Start by reading the priority, then use it to pick the right route.",
+        objectiveText: `1. Read the priority value from the data.\n2. If it is "URGENT", send to ${TRUE_ROUTE}.\n3. Otherwise, send to ${FALSE_ROUTE}.`,
         categories: [TRUE_ROUTE, FALSE_ROUTE],
         newConcept: {
-          title: "New tools",
+          title: "From JSON to a decision",
+          summary:
+            "JSON data → read a value → store it → compare it → choose a route.",
+          example: `{ "priority": "URGENT" }
+  →  result["priority"]
+  →  "URGENT"
+  →  priority == "URGENT"
+  →  TRUE  →  ${TRUE_ROUTE}`,
           labels: [
-            'if — runs a block when the condition is true',
-            '== — compares two values',
-            "else — runs when the condition is false",
+            'result["priority"] — reads the value for that key',
+            "priority = … — stores it in a variable",
+            'priority == "URGENT" — asks a yes/no question',
+            "if / else — picks the branch",
           ],
         },
         optionalTheory: {
-          title: "Already online",
+          title: "From Mission 04",
           body: [
-            "MILDRED returns sentiment + priority as JSON",
-            "Valid structured data is available to the next layer",
+            "MILDRED returns a JSON object with named values.",
+            "This mission uses that object to make a program decision.",
           ],
         },
         successInsight:
-          "Software reacts differently depending on data — that is a decision.",
+          "Structured data matters because code can read it and branch on it.",
         miraSuccess: miraSuccess("en"),
       },
       hints: [
         {
           level: 1,
-          title: "Look at the objective",
-          body: "You need to check whether priority equals the string URGENT.",
+          title: "Read the key",
+          body: 'The first blank is the key name inside the brackets — the same word that appears in the JSON: priority.',
         },
         {
           level: 2,
-          title: "Comparison",
-          body: 'In Python, equality uses ==. Strings need quotes: "URGENT".',
+          title: "Then compare",
+          body: 'After priority holds the value, check whether it equals the string URGENT with ==.',
           aiAssisted: true,
         },
         {
           level: 3,
-          title: "Concrete blank",
-          body: 'Fill: priority == "URGENT"',
+          title: "Both blanks",
+          body: 'Key blank: priority · Condition blank: priority == "URGENT"',
         },
       ],
       concepts: [
+        {
+          id: "access",
+          label: 'result["key"]',
+          explanation: "Reads one named value out of a JSON-like object.",
+        },
+        {
+          id: "variable",
+          label: "variable",
+          explanation: "Stores that value so the rest of the code can use it.",
+        },
         {
           id: "if",
           label: "if",
@@ -195,26 +215,22 @@ export function createMission05(locale: Locale): MissionDefinition {
           label: "else",
           explanation: "Runs when the if condition is false.",
         },
-        {
-          id: "boolean",
-          label: "True / False",
-          explanation: "The condition evaluates to true or false — that drives the branch.",
-        },
       ],
       completion: {
         miraLines: miraSuccess("en"),
         systemBefore:
-          "MILDRED could label urgency — but every ticket still followed the same path.",
-        systemAfter: `MILDRED's priority now forks the pipeline: ${TRUE_ROUTE} vs ${FALSE_ROUTE}.`,
+          "MILDRED produced structured JSON — but nothing inspected it to choose a path.",
+        systemAfter: `The program reads priority from JSON and forks: ${TRUE_ROUTE} vs ${FALSE_ROUTE}.`,
         capabilityUnlocked: {
           id: "decision-logic",
           label: "Decision Logic",
           status: "ONLINE",
         },
-        lessonHeadline: "Data only matters if the program can branch on it.",
+        lessonHeadline:
+          "JSON becomes useful when code can read a value and branch on it.",
         lessonBody: [
-          "A variable holds a value. A condition asks a yes/no question about that value.",
-          "if / else is how software chooses a different action from the same kind of input.",
+          "result[\"priority\"] pulls one field out of the structured payload.",
+          "Storing it in a variable, comparing it, then using if / else is how software turns data into a decision.",
         ],
         skillUnlocked: {
           skillId: "logic-1",
@@ -223,13 +239,18 @@ export function createMission05(locale: Locale): MissionDefinition {
           skillCategory: "Program Logic",
           level: 1,
           description:
-            "You can write a simple condition that routes work based on structured data.",
+            "You can read a value from structured data and write a simple condition that routes work.",
         },
         technicalTerms: [
           {
+            id: "key-access",
+            label: "key access",
+            explanation: 'result["priority"] reads the value bound to that key.',
+          },
+          {
             id: "variable",
             label: "variable",
-            explanation: "A named value the program can read — here, priority.",
+            explanation: "A named value the program can reuse — here, priority.",
           },
           {
             id: "condition",
@@ -239,7 +260,7 @@ export function createMission05(locale: Locale): MissionDefinition {
           {
             id: "branch",
             label: "branch",
-            explanation: "A different path the program takes after the condition.",
+            explanation: "A different path after the condition.",
           },
         ],
       },
@@ -256,55 +277,73 @@ export function createMission05(locale: Locale): MissionDefinition {
     xpReward: 180,
     playable: true,
     brief:
-      "MILDRED sait reconnaître une demande urgente. Ça ne sert à rien si elle finit dans la même file. Fais prendre une décision au système.",
-    objective: `Si priority vaut "URGENT" → ${TRUE_ROUTE}. Sinon → ${FALSE_ROUTE}.`,
+      "MILDRED produit maintenant des données propres. Il reste à apprendre au programme à les utiliser.",
+    objective: `1. Récupère priority depuis les données.\n2. Si elle vaut "URGENT" → ${TRUE_ROUTE}.\n3. Sinon → ${FALSE_ROUTE}.`,
     context: "Projet MILDRED — couche de décision.",
     showcaseMessage: 'priority = "URGENT"',
     codeFill,
     tests,
     briefing: {
       shortBrief:
-        "MILDRED sait maintenant reconnaître une demande urgente. Ça ne sert à rien si elle finit dans la même file que les autres. Fais prendre une décision au système.",
-      objectiveText: `Si priority vaut "URGENT" :\n→ ${TRUE_ROUTE}\n\nSinon :\n→ ${FALSE_ROUTE}`,
+        "MILDRED sait maintenant produire des données propres. Il reste à apprendre au programme à les utiliser. Commence par récupérer la priorité, puis utilise-la pour choisir la bonne route.",
+      objectiveText: `1. Récupère la valeur priority depuis les données.\n2. Si elle vaut "URGENT", envoie vers ${TRUE_ROUTE}.\n3. Sinon, envoie vers ${FALSE_ROUTE}.`,
       categories: [TRUE_ROUTE, FALSE_ROUTE],
       newConcept: {
-        title: "Nouveaux outils",
+        title: "Du JSON à une décision",
+        summary:
+          "Données JSON → lire une valeur → la stocker → la comparer → choisir une route.",
+        example: `{ "priority": "URGENT" }
+  →  result["priority"]
+  →  "URGENT"
+  →  priority == "URGENT"
+  →  TRUE  →  ${TRUE_ROUTE}`,
         labels: [
-          "if — exécute un bloc lorsque la condition est vraie",
-          "== — compare deux valeurs",
-          "else — s’exécute lorsque la condition est fausse",
+          'result["priority"] — lit la valeur de cette clé',
+          "priority = … — la stocke dans une variable",
+          'priority == "URGENT" — pose une question oui/non',
+          "if / else — choisit la branche",
         ],
       },
       optionalTheory: {
-        title: "Déjà en ligne",
+        title: "Depuis la Mission 04",
         body: [
-          "MILDRED renvoie sentiment + priority en JSON",
-          "Des données structurées valides sont dispo pour la couche suivante",
+          "MILDRED renvoie un objet JSON avec des valeurs nommées.",
+          "Cette mission utilise cet objet pour prendre une décision programme.",
         ],
       },
       successInsight:
-        "Un programme peut réagir différemment selon les données — c’est une décision.",
+        "Des données structurées servent quand le code peut les lire et bifurquer dessus.",
       miraSuccess: miraSuccess("fr"),
     },
     hints: [
       {
         level: 1,
-        title: "Regarde l’objectif",
-        body: "Tu dois vérifier si priority est égal à la chaîne URGENT.",
+        title: "Lis la clé",
+        body: "Le premier trou est le nom de la clé entre crochets — le même mot que dans le JSON : priority.",
       },
       {
         level: 2,
-        title: "Comparaison",
-        body: 'En Python, l’égalité s’écrit ==. Les chaînes ont des guillemets : "URGENT".',
+        title: "Puis compare",
+        body: 'Une fois priority remplie, vérifie si elle vaut la chaîne URGENT avec ==.',
         aiAssisted: true,
       },
       {
         level: 3,
-        title: "Trou concret",
-        body: 'Complète avec : priority == "URGENT"',
+        title: "Les deux trous",
+        body: 'Trou clé : priority · Trou condition : priority == "URGENT"',
       },
     ],
     concepts: [
+      {
+        id: "access",
+        label: 'result["clé"]',
+        explanation: "Lit une valeur nommée dans un objet de type JSON.",
+      },
+      {
+        id: "variable",
+        label: "variable",
+        explanation: "Stocke cette valeur pour la suite du code.",
+      },
       {
         id: "if",
         label: "if",
@@ -320,28 +359,22 @@ export function createMission05(locale: Locale): MissionDefinition {
         label: "else",
         explanation: "S’exécute lorsque la condition est fausse.",
       },
-      {
-        id: "boolean",
-        label: "True / False",
-        explanation:
-          "La condition vaut vrai ou faux — c’est ce qui choisit la branche.",
-      },
     ],
     completion: {
       miraLines: miraSuccess("fr"),
       systemBefore:
-        "MILDRED pouvait étiqueter l’urgence — mais chaque ticket suivait encore le même chemin.",
-      systemAfter: `La priorité de MILDRED fait bifurquer le pipeline : ${TRUE_ROUTE} vs ${FALSE_ROUTE}.`,
+        "MILDRED produisait du JSON structuré — mais rien ne l’inspectait pour choisir un chemin.",
+      systemAfter: `Le programme lit priority dans le JSON et bifurque : ${TRUE_ROUTE} vs ${FALSE_ROUTE}.`,
       capabilityUnlocked: {
         id: "decision-logic",
         label: "Decision Logic",
         status: "ONLINE",
       },
       lessonHeadline:
-        "Des données ne servent que si le programme peut bifurquer dessus.",
+        "Le JSON devient utile quand le code peut lire une valeur et bifurquer dessus.",
       lessonBody: [
-        "Une variable porte une valeur. Une condition pose une question oui/non sur cette valeur.",
-        "if / else, c’est la façon dont un logiciel choisit une action différente à partir du même type d’entrée.",
+        'result["priority"] extrait un champ du payload structuré.',
+        "Le stocker dans une variable, le comparer, puis utiliser if / else : c’est ainsi qu’un logiciel transforme des données en décision.",
       ],
       skillUnlocked: {
         skillId: "logic-1",
@@ -350,23 +383,29 @@ export function createMission05(locale: Locale): MissionDefinition {
         skillCategory: "Logique programme",
         level: 1,
         description:
-          "Tu peux écrire une condition simple qui aiguille le travail à partir de données structurées.",
+          "Tu peux lire une valeur dans des données structurées et écrire une condition simple qui aiguille le travail.",
       },
       technicalTerms: [
         {
+          id: "key-access",
+          label: "accès par clé",
+          explanation:
+            'result["priority"] lit la valeur associée à cette clé.',
+        },
+        {
           id: "variable",
           label: "variable",
-          explanation: "Une valeur nommée que le programme peut lire — ici, priority.",
+          explanation: "Une valeur nommée réutilisable — ici, priority.",
         },
         {
           id: "condition",
           label: "condition",
-          explanation: "Une expression qui est vraie ou fausse.",
+          explanation: "Une expression vraie ou fausse.",
         },
         {
           id: "branch",
           label: "branche",
-          explanation: "Un chemin différent pris après la condition.",
+          explanation: "Un chemin différent après la condition.",
         },
       ],
     },

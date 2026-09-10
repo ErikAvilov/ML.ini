@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { useLocale } from "@/i18n/locale-context";
-import { evaluateCodeFill } from "@/lib/validation";
+import { evaluateCodeFillTask } from "@/lib/validation";
 import type { CodeFillTask } from "@/lib/types";
 
-const STORAGE_PREFIX = "mlini-code-fill-v1:";
+const STORAGE_PREFIX = "mlini-code-fill-v2:";
 
 interface CodeFillPanelProps {
   missionId: string;
@@ -15,6 +15,9 @@ interface CodeFillPanelProps {
   onPassedChange: (passed: boolean) => void;
 }
 
+const blankInputClass =
+  "min-w-[7rem] flex-1 border border-ml-border-strong bg-ml-bg-1 px-2 py-1 font-mono text-[12px] text-ml-accent outline-none focus:border-ml-accent";
+
 export function CodeFillPanel({
   missionId,
   task,
@@ -22,7 +25,8 @@ export function CodeFillPanel({
   onPassedChange,
 }: CodeFillPanelProps) {
   const { messages } = useLocale();
-  const [blank, setBlank] = useState("");
+  const [keyBlank, setKeyBlank] = useState("");
+  const [conditionBlank, setConditionBlank] = useState("");
   const [feedback, setFeedback] = useState<string | null>(null);
 
   useEffect(() => {
@@ -35,13 +39,14 @@ export function CodeFillPanel({
     }
   }, [missionId, onPassedChange]);
 
+  function dirty() {
+    if (passed) onPassedChange(false);
+    setFeedback(null);
+  }
+
   function check() {
-    const ok = evaluateCodeFill(
-      blank,
-      task.compareVariable,
-      task.compareValue
-    );
-    if (ok) {
+    const result = evaluateCodeFillTask(keyBlank, conditionBlank, task);
+    if (result.ok) {
       setFeedback(null);
       onPassedChange(true);
       try {
@@ -52,7 +57,11 @@ export function CodeFillPanel({
       return;
     }
     onPassedChange(false);
-    setFeedback(messages.codeFillFail);
+    setFeedback(
+      result.which === "key"
+        ? messages.codeFillKeyFail
+        : messages.codeFillFail
+    );
   }
 
   return (
@@ -81,20 +90,36 @@ export function CodeFillPanel({
         style={{ borderRadius: "var(--ml-frame-radius)" }}
       >
         <pre className="whitespace-pre-wrap">{task.prefix}</pre>
+        <div className="my-1 inline-flex min-w-[6rem] max-w-full">
+          <input
+            type="text"
+            value={keyBlank}
+            onChange={(e) => {
+              setKeyBlank(e.target.value);
+              dirty();
+            }}
+            placeholder={task.keyPlaceholder}
+            spellCheck={false}
+            autoComplete="off"
+            aria-label={messages.codeFillKeyLabel}
+            className={blankInputClass}
+            style={{ borderRadius: "var(--ml-frame-radius)" }}
+          />
+        </div>
+        <pre className="whitespace-pre-wrap">{task.middle}</pre>
         <div className="my-1 flex flex-wrap items-center gap-1">
           <input
             type="text"
-            value={blank}
+            value={conditionBlank}
             onChange={(e) => {
-              setBlank(e.target.value);
-              if (passed) onPassedChange(false);
-              setFeedback(null);
+              setConditionBlank(e.target.value);
+              dirty();
             }}
-            placeholder={task.blankPlaceholder}
+            placeholder={task.conditionPlaceholder}
             spellCheck={false}
             autoComplete="off"
-            aria-label={task.title}
-            className="min-w-[12rem] flex-1 border border-ml-border-strong bg-ml-bg-1 px-2 py-1 font-mono text-[12px] text-ml-accent outline-none focus:border-ml-accent"
+            aria-label={messages.codeFillConditionLabel}
+            className={blankInputClass}
             style={{ borderRadius: "var(--ml-frame-radius)" }}
           />
         </div>
@@ -105,12 +130,13 @@ export function CodeFillPanel({
         <Button variant="secondary" size="sm" onClick={check}>
           {messages.codeFillCheck}
         </Button>
-        {!passed && blank && (
+        {!passed && (keyBlank || conditionBlank) && (
           <button
             type="button"
             className="text-[length:var(--ml-text-xs)] text-ml-text-muted underline-offset-2 hover:text-ml-text-secondary hover:underline"
             onClick={() => {
-              setBlank("");
+              setKeyBlank("");
+              setConditionBlank("");
               setFeedback(null);
               onPassedChange(false);
             }}
