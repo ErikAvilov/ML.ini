@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -25,8 +26,12 @@ const TOAST_DURATION_MS = 7000;
 const SLIDE_S = 0.4;
 
 export function SuccessToast({ data, onDismiss }: SuccessToastProps) {
-  return (
-    <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+
+  return createPortal(
+    <div className="pointer-events-none fixed inset-0 z-[80] overflow-hidden">
       <AnimatePresence>
         {data ? (
           <SuccessToastCard
@@ -36,7 +41,8 @@ export function SuccessToast({ data, onDismiss }: SuccessToastProps) {
           />
         ) : null}
       </AnimatePresence>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -62,7 +68,6 @@ function SuccessToastCard({
     onDismissRef.current();
   }
 
-  // Progress bar: write transform on the DOM node (no React setState → hover-safe).
   useEffect(() => {
     const el = barRef.current;
     if (!el) return;

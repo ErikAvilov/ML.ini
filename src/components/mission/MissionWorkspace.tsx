@@ -189,12 +189,26 @@ function MissionSession({
     if (fill?.mode === "ai-integration") return fill.providedInstruction;
     return loadMissionDraft(mission.id);
   });
-  const [repairPassed, setRepairPassed] = useState(
-    () => !mission.payloadRepair
-  );
-  const [codeFillPassed, setCodeFillPassed] = useState(
-    () => !mission.codeFill
-  );
+  const [repairPassed, setRepairPassed] = useState(() => {
+    if (!mission.payloadRepair) return true;
+    if (typeof window === "undefined") return false;
+    try {
+      return (
+        sessionStorage.getItem(`mlini-payload-repair-v1:${mission.id}`) === "1"
+      );
+    } catch {
+      return false;
+    }
+  });
+  const [codeFillPassed, setCodeFillPassed] = useState(() => {
+    if (!mission.codeFill) return true;
+    if (typeof window === "undefined") return false;
+    try {
+      return sessionStorage.getItem(`mlini-code-fill-v2:${mission.id}`) === "1";
+    } catch {
+      return false;
+    }
+  });
   const [activeMessage, setActiveMessage] = useState(showcase);
   const [liveOutput, setLiveOutput] = useState<string | null>(null);
   const [results, setResults] = useState<ClassificationResult[]>([]);
@@ -222,6 +236,7 @@ function MissionSession({
   const instructionRef = useRef(instruction);
   const repairPassedRef = useRef(repairPassed);
   const codeFillPassedRef = useRef(codeFillPassed);
+  const resultsRef = useRef(results);
   const handleRunRef = useRef<() => Promise<void>>(async () => {});
 
   useEffect(() => {
@@ -236,6 +251,10 @@ function MissionSession({
   useEffect(() => {
     codeFillPassedRef.current = codeFillPassed;
   }, [codeFillPassed]);
+
+  useEffect(() => {
+    resultsRef.current = results;
+  }, [results]);
 
   useEffect(() => {
     markMissionPlayed(mission.id);
@@ -284,21 +303,20 @@ function MissionSession({
   function grantMissionSuccess() {
     const before = progress;
     const wasCleared = alreadyCleared;
-    let xpGained = 0;
-    let after = before;
-
+    // Always run completeMission so the next mission is unlocked even if a
+    // legacy save marked this mission completed without unlocking the next.
+    const skill = mission.completion?.skillUnlocked;
+    const after = completeMissionAndUnlock(
+      mission.id,
+      nextMissionId,
+      mission.xpReward,
+      {
+        skillId: skill?.skillId,
+        capabilityId: mission.completion?.capabilityUnlocked?.id,
+      }
+    );
+    const xpGained = wasCleared ? 0 : mission.xpReward;
     if (!wasCleared) {
-      const skill = mission.completion?.skillUnlocked;
-      after = completeMissionAndUnlock(
-        mission.id,
-        nextMissionId,
-        mission.xpReward,
-        {
-          skillId: skill?.skillId,
-          capabilityId: mission.completion?.capabilityUnlocked.id,
-        }
-      );
-      xpGained = mission.xpReward;
       setJustUnlocked(Boolean(nextMissionId));
     }
 
@@ -317,9 +335,7 @@ function MissionSession({
     });
     setCelebrationQueue(celebrations);
 
-    const leveledUp = after.level > before.level;
-    // Mission clear = toast bas-droite only (all missions). Centered popup
-    // only for level-up / milestone / kingdom.
+    const leveledUp = !wasCleared && after.level > before.level;
     setSuccessToast({
       missionTitle: mission.title,
       xpGained,
@@ -631,13 +647,12 @@ function MissionSession({
   function onRepairPassedChange(passed: boolean) {
     setRepairPassed(passed);
     repairPassedRef.current = passed;
+    if (!passed || !mission.payloadRepair) return;
+    const latest = resultsRef.current;
     if (
-      !passed ||
-      alreadyCleared ||
-      !mission.payloadRepair ||
-      results.length !== tests.length ||
+      latest.length !== tests.length ||
       tests.length === 0 ||
-      !results.every((r) => r.matchesExpected)
+      !latest.every((r) => r.matchesExpected)
     ) {
       return;
     }
@@ -647,13 +662,12 @@ function MissionSession({
   function onCodeFillPassedChange(passed: boolean) {
     setCodeFillPassed(passed);
     codeFillPassedRef.current = passed;
+    if (!passed || !mission.codeFill) return;
+    const latest = resultsRef.current;
     if (
-      !passed ||
-      alreadyCleared ||
-      !mission.codeFill ||
-      results.length !== tests.length ||
+      latest.length !== tests.length ||
       tests.length === 0 ||
-      !results.every((r) => r.matchesExpected)
+      !latest.every((r) => r.matchesExpected)
     ) {
       return;
     }

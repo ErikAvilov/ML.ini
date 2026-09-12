@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Award, CalendarDays, Map, ShieldCheck } from "lucide-react";
 import { AchievementBadge } from "@/components/profile/AchievementBadge";
 import { ActivityHeatmap } from "@/components/profile/ActivityHeatmap";
@@ -13,6 +14,8 @@ import { getMissions } from "@/data/missions";
 import { useLocale } from "@/i18n/locale-context";
 import { useProgress } from "@/lib/progress-context";
 import { xpProgressInLevel } from "@/lib/validation";
+import type { AuthIdentity } from "@/lib/auth/types";
+import { playerDisplayName } from "@/lib/auth/username";
 
 const panel =
   "border border-ml-border bg-[color-mix(in_srgb,var(--ml-surface-1)_92%,transparent)]";
@@ -23,7 +26,11 @@ const frameClasses = {
   reward: "border-ml-reward",
 } as const;
 
-export function ProfileView() {
+interface ProfileViewProps {
+  identity?: AuthIdentity | null;
+}
+
+export function ProfileView({ identity = null }: ProfileViewProps) {
   const { locale, messages, t } = useLocale();
   const { progress, equipTitle, equipFrame, resetProgress } = useProgress();
   const view = progress;
@@ -53,6 +60,13 @@ export function ProfileView() {
     [messages.profileStatsBestStreak, `${view.bestStreak} ${messages.days}`],
   ];
 
+  const displayName = playerDisplayName(
+    identity?.profile ?? null,
+    messages.profileDefaultName
+  );
+  const avatarUrl = identity?.profile?.avatar_url;
+  const cloudXp = identity?.progress?.total_xp;
+
   return (
     <div className="mx-auto w-full max-w-[86rem] space-y-6 px-4 py-6 sm:px-6 sm:py-8">
       <section
@@ -63,10 +77,21 @@ export function ProfileView() {
           <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:text-left">
             <div className="relative pb-3">
               <div
-                className={`flex h-28 w-28 items-center justify-center border-2 bg-ml-bg-0 ${frameClasses[equippedFrame.tone]}`}
+                className={`flex h-28 w-28 items-center justify-center overflow-hidden border-2 bg-ml-bg-0 ${frameClasses[equippedFrame.tone]}`}
                 style={{ borderRadius: "var(--ml-frame-radius-lg)" }}
               >
-                <MliniEmblem size={62} title={messages.profileDefaultName} />
+                {avatarUrl ? (
+                  <Image
+                    src={avatarUrl}
+                    alt=""
+                    width={112}
+                    height={112}
+                    className="h-full w-full object-cover"
+                    unoptimized
+                  />
+                ) : (
+                  <MliniEmblem size={62} title={displayName} />
+                )}
               </div>
               <span className="absolute inset-x-2 bottom-0 border border-ml-border bg-ml-surface-2 px-2 py-0.5 text-center font-mono text-[length:var(--ml-text-xs)] text-ml-reward">
                 {t(messages.level, { level: xp.level })}
@@ -75,14 +100,21 @@ export function ProfileView() {
 
             <div>
               <p className="text-[length:var(--ml-text-sm)] text-ml-text-muted">
-                {messages.profileMemberSince}
+                {identity
+                  ? messages.profileMemberCloud
+                  : messages.profileMemberSince}
               </p>
               <h1 className="mt-1 font-display text-3xl font-semibold text-ml-text sm:text-4xl">
-                {messages.profileDefaultName}
+                {displayName}
               </h1>
               {equippedTitle && (
                 <p className="mt-1 text-ml-reward">
                   {equippedTitle.label[locale]}
+                </p>
+              )}
+              {cloudXp != null && (
+                <p className="mt-2 font-mono text-[length:var(--ml-text-xs)] text-ml-text-muted">
+                  {t(messages.profileCloudXp, { xp: cloudXp })}
                 </p>
               )}
 
@@ -102,6 +134,9 @@ export function ProfileView() {
                     style={{ width: `${Math.round(xp.ratio * 100)}%` }}
                   />
                 </div>
+                <p className="mt-1.5 text-[length:var(--ml-text-xs)] text-ml-text-muted">
+                  {messages.profileLocalProgressNote}
+                </p>
               </div>
             </div>
           </div>

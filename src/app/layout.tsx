@@ -8,6 +8,7 @@ import { ProgressProvider } from "@/lib/progress-context";
 import { LocaleProvider } from "@/i18n/locale-context";
 import { SiteAtmosphere } from "@/components/ui/SiteAtmosphere";
 import { SiteHeader } from "@/components/ui/SiteHeader";
+import { getAuthIdentity } from "@/lib/auth/get-identity";
 import "./globals.css";
 
 const body = Plus_Jakarta_Sans({
@@ -34,11 +35,13 @@ export const metadata: Metadata = {
     "Plateforme interactive pour apprendre l'IA par la pratique. Progresse à travers des Royaumes, résous des missions et construis de vrais systèmes.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const identity = await getAuthIdentity();
+
   return (
     <html
       lang="fr"
@@ -50,7 +53,7 @@ export default function RootLayout({
         <div className="relative z-10 flex min-h-0 flex-1 flex-col">
           <LocaleProvider>
             <ProgressProvider>
-              <SiteHeader />
+              <SiteHeader identity={identity} />
               <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
             </ProgressProvider>
           </LocaleProvider>

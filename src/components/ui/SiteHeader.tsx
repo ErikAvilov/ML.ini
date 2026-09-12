@@ -2,15 +2,20 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { AuthUserMenu } from "@/components/auth/AuthUserMenu";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
-import { MliniEmblem } from "@/components/ui/MliniEmblem";
 import { useProgress } from "@/lib/progress-context";
 import { xpProgressInLevel } from "@/lib/validation";
 import { useLocale } from "@/i18n/locale-context";
 import { getMissionById } from "@/data/missions";
+import type { AuthIdentity } from "@/lib/auth/types";
 
-export function SiteHeader() {
+interface SiteHeaderProps {
+  identity?: AuthIdentity | null;
+}
+
+export function SiteHeader({ identity = null }: SiteHeaderProps) {
   const pathname = usePathname();
   const { progress } = useProgress();
   const { locale, messages, t } = useLocale();
@@ -86,13 +91,18 @@ export function SiteHeader() {
               </span>
             </div>
           </div>
-          <Link
-            href="/profil"
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-ml-border bg-ml-surface-2 transition hover:border-ml-accent"
-            aria-label={messages.navProfile}
-          >
-            <MliniEmblem size={14} title="" />
-          </Link>
+
+          {identity ? (
+            <AuthUserMenu identity={identity} />
+          ) : (
+            <Link
+              href={`/auth?next=${encodeURIComponent(pathname || "/")}`}
+              className="inline-flex items-center border border-ml-border-strong bg-ml-surface-1 px-2.5 py-1.5 font-mono text-[11px] tracking-[0.08em] text-ml-text uppercase transition hover:border-ml-accent hover:text-ml-accent"
+              style={{ borderRadius: "var(--ml-frame-radius)" }}
+            >
+              {messages.authSignIn}
+            </Link>
+          )}
         </div>
       </div>
     </header>

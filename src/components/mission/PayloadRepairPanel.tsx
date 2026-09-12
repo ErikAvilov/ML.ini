@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { useLocale } from "@/i18n/locale-context";
 import {
@@ -60,30 +60,38 @@ export function PayloadRepairPanel({
   const { messages } = useLocale();
   const [value, setValue] = useState(task.brokenPayload);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const onPassedChangeRef = useRef(onPassedChange);
+  onPassedChangeRef.current = onPassedChange;
 
   useEffect(() => {
     try {
       if (sessionStorage.getItem(STORAGE_PREFIX + missionId) === "1") {
-        onPassedChange(true);
+        onPassedChangeRef.current(true);
       }
     } catch {
       /* ignore */
     }
-  }, [missionId, onPassedChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- missionId only
+  }, [missionId]);
+
+  function setPassed(next: boolean) {
+    onPassedChange(next);
+    try {
+      if (next) sessionStorage.setItem(STORAGE_PREFIX + missionId, "1");
+      else sessionStorage.removeItem(STORAGE_PREFIX + missionId);
+    } catch {
+      /* ignore */
+    }
+  }
 
   function check() {
     const result = evaluatePayloadRepair(value, task.expectedFields, schema);
     if (result.ok) {
       setFeedback(null);
-      onPassedChange(true);
-      try {
-        sessionStorage.setItem(STORAGE_PREFIX + missionId, "1");
-      } catch {
-        /* ignore */
-      }
+      setPassed(true);
       return;
     }
-    onPassedChange(false);
+    setPassed(false);
     setFeedback(messageForRepairFailure(messages, result));
   }
 
@@ -111,7 +119,7 @@ export function PayloadRepairPanel({
         value={value}
         onChange={(e) => {
           setValue(e.target.value);
-          if (passed) onPassedChange(false);
+          if (passed) setPassed(false);
           setFeedback(null);
         }}
         spellCheck={false}
@@ -131,7 +139,7 @@ export function PayloadRepairPanel({
             onClick={() => {
               setValue(task.brokenPayload);
               setFeedback(null);
-              onPassedChange(false);
+              setPassed(false);
             }}
           >
             {messages.payloadRepairReset}

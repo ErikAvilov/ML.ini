@@ -78,8 +78,20 @@ Self-check code-fill : `npx tsx scripts/check-code-fill.ts`
 
 ## Stack
 
-Next.js (App Router) · React 19 · TypeScript · Tailwind CSS · Gemini (serveur, OpenAI en fallback)
+Next.js (App Router) · React 19 · TypeScript · Tailwind CSS · Gemini (serveur, OpenAI en fallback) · Supabase Auth (Google / GitHub OAuth, SSR cookies)
+
+## Auth (Supabase)
+
+Variables : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (jamais de service role côté app).
+
+Routes : `/auth`, `/auth/callback`, `/auth/signout`, `/onboarding/username` (pseudo obligatoire après 1er login).  
+Session rafraîchie via `src/proxy.ts` (convention Next.js 16).
+
+Le Royaume I reste jouable **sans** compte. Le choix de pseudo ne concerne que les comptes OAuth.
+
+La progression locale (`localStorage`) n’est **pas** écrasée ni fusionnée automatiquement avec `user_progress`.
 
 ## Hors scope sans demande explicite
 
-Login, DB, Stripe, Supabase, leaderboard, admin, marketplace.
+Stripe, leaderboard, admin, marketplace, n8n, persistence cloud des completions de mission.
+
