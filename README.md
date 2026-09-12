@@ -91,7 +91,9 @@ Le Royaume I reste jouable **sans** compte. Le choix de pseudo ne concerne que l
 
 La progression locale (`localStorage`) n’est **pas** écrasée ni fusionnée automatiquement avec `user_progress`.
 
+Les completions **authentifiées** nouvelles passent par `POST /api/missions/complete` (validation serveur + `mission_completions`). Variable serveur : `SUPABASE_SERVICE_ROLE_KEY` (jamais `NEXT_PUBLIC_*`).
+
 ## Hors scope sans demande explicite
 
-Stripe, leaderboard, admin, marketplace, n8n, persistence cloud des completions de mission.
+Stripe, leaderboard, admin, marketplace, n8n, import automatique progression anonyme → cloud.
 

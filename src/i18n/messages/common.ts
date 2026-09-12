@@ -56,9 +56,19 @@ const common = {
     profileDefaultName: "Voyageur",
     profileMemberSince: "Progression locale",
     profileMemberCloud: "Compte connecté",
-    profileCloudXp: "XP cloud (lecture) · {xp}",
+    profileCloudXp: "XP cloud · {xp}",
     profileLocalProgressNote:
-      "La barre ci-dessus reste la progression locale du navigateur — pas encore synchronisée.",
+      "La barre ci-dessus suit encore la progression locale de ce navigateur.",
+    profileCloudProgressNote:
+      "La barre ci-dessus suit ton XP cloud (missions réussies en étant connecté).",
+    profileLocalResidueNote:
+      "Une progression locale existe encore sur ce navigateur.",
+    cloudSaveFailed:
+      "Mission réussie, mais la sauvegarde cloud a échoué. Tu peux réessayer.",
+    cloudConfirmFailed:
+      "Mission réussie ici, mais la confirmation serveur a échoué. Réessaie la sauvegarde cloud.",
+    cloudRetrySave: "Réessayer la sauvegarde",
+    cloudSaving: "Sauvegarde…",
     profileShareSoon: "Partage bientôt",
     profileStatsMissions: "Missions réussies",
     profileStatsKingdoms: "Royaumes",
@@ -394,9 +404,19 @@ const common = {
     profileDefaultName: "Traveler",
     profileMemberSince: "Local progress",
     profileMemberCloud: "Connected account",
-    profileCloudXp: "Cloud XP (read-only) · {xp}",
+    profileCloudXp: "Cloud XP · {xp}",
     profileLocalProgressNote:
-      "The bar above is still this browser’s local progress — not synced yet.",
+      "The bar above still follows this browser’s local progress.",
+    profileCloudProgressNote:
+      "The bar above follows your cloud XP (missions cleared while signed in).",
+    profileLocalResidueNote:
+      "Local progress still exists on this browser.",
+    cloudSaveFailed:
+      "Mission cleared, but cloud save failed. You can retry.",
+    cloudConfirmFailed:
+      "Mission cleared here, but server confirmation failed. Retry cloud save.",
+    cloudRetrySave: "Retry cloud save",
+    cloudSaving: "Saving…",
     profileShareSoon: "Share soon",
     profileStatsMissions: "Missions cleared",
     profileStatsKingdoms: "Kingdoms",

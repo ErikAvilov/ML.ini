@@ -19,7 +19,10 @@ export function SiteHeader({ identity = null }: SiteHeaderProps) {
   const pathname = usePathname();
   const { progress } = useProgress();
   const { locale, messages, t } = useLocale();
-  const xp = xpProgressInLevel(progress.xp);
+  const cloudXp = identity?.progress?.total_xp;
+  const useCloudXp = Boolean(identity) && cloudXp != null;
+  const displayXp = useCloudXp ? cloudXp : progress.xp;
+  const xp = xpProgressInLevel(displayXp);
 
   if (pathname.startsWith("/missions/")) {
     return null;
@@ -87,7 +90,7 @@ export function SiteHeader({ identity = null }: SiteHeaderProps) {
                 />
               </div>
               <span className="font-mono text-[11px] text-ml-text-muted">
-                {t(messages.xpShort, { xp: progress.xp })}
+                {t(messages.xpShort, { xp: displayXp })}
               </span>
             </div>
           </div>

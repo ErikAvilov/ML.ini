@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { MissionNavBar } from "@/components/mission/MissionNavBar";
 import { MiraMessage } from "@/components/mission/MiraMessage";
 import { useProgress } from "@/lib/progress-context";
+import { requestCloudCompletion } from "@/lib/missions/cloud-completion-client";
 import { useLocale } from "@/i18n/locale-context";
 import type { MissionDefinition } from "@/lib/types";
 
@@ -11,6 +14,7 @@ interface MissionIntroProps {
   mission: MissionDefinition;
   missions: MissionDefinition[];
   nextMissionId: string | null;
+  isAuthenticated?: boolean;
 }
 
 /**
@@ -20,10 +24,13 @@ export function MissionIntro({
   mission,
   missions,
   nextMissionId,
+  isAuthenticated = false,
 }: MissionIntroProps) {
+  const router = useRouter();
   const { completeMissionAndUnlock, markMissionPlayed } = useProgress();
-  const { messages } = useLocale();
+  const { locale, messages } = useLocale();
   const intro = mission.intro;
+  const [saving, setSaving] = useState(false);
 
   if (!intro) return null;
 
@@ -31,12 +38,24 @@ export function MissionIntro({
   const ctaLabel = intro.ctaLabel || messages.introCompleteCta;
   const sections = intro.sections;
 
-  function startMission01() {
+  async function startMission01() {
+    if (saving) return;
+    setSaving(true);
     markMissionPlayed(mission.id);
+
+    if (isAuthenticated) {
+      await requestCloudCompletion({
+        missionId: mission.id,
+        locale,
+      });
+      router.refresh();
+    }
+
     completeMissionAndUnlock(mission.id, nextMissionId, mission.xpReward, {
       skillId: mission.completion?.skillUnlocked?.skillId,
       capabilityId: mission.completion?.capabilityUnlocked?.id,
     });
+    setSaving(false);
   }
 
   return (
@@ -84,7 +103,8 @@ export function MissionIntro({
         <div className="mx-auto flex max-w-2xl items-center justify-center px-5 py-3 sm:px-8">
           <Link
             href={nextHref}
-            onClick={startMission01}
+            onClick={() => void startMission01()}
+            aria-disabled={saving}
             className="inline-flex items-center justify-center bg-ml-accent px-4 py-2.5 text-[length:var(--ml-text-sm)] font-medium text-[var(--ml-text-on-primary)] hover:bg-ml-accent-bright"
             style={{ borderRadius: "var(--ml-frame-radius)" }}
           >

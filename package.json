@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test:unit": "npx tsx scripts/check-safe-next.ts && npx tsx scripts/check-username.ts && npx tsx scripts/check-cloud-progression.ts",
     "eval:batch": "tsx --env-file=.env scripts/run-batch-eval.ts"
   },
   "dependencies": {
@@ -18,11 +19,12 @@
     "next": "16.3.4",
     "openai": "^7.10.0",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^20.19.43",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

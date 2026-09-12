@@ -31,6 +31,10 @@ import {
   evaluateAiIntegrationRun,
   summarizeSuite,
 } from "@/lib/validation";
+import {
+  readSessionSolution,
+  requestCloudCompletion,
+} from "@/lib/missions/cloud-completion-client";
 import { useLocale } from "@/i18n/locale-context";
 import { getMissionBySlug, getMissions } from "@/data/missions";
 import { createKingdomConstruireAvecIA } from "@/data/kingdoms/construire-avec-ia";
@@ -54,9 +58,13 @@ function resolveCodeFillMode(
 
 interface MissionWorkspaceProps {
   missionSlug: string;
+  isAuthenticated?: boolean;
 }
 
-export function MissionWorkspace({ missionSlug }: MissionWorkspaceProps) {
+export function MissionWorkspace({
+  missionSlug,
+  isAuthenticated = false,
+}: MissionWorkspaceProps) {
   const { progress, ready } = useProgress();
   const { locale, messages } = useLocale();
 
@@ -132,6 +140,7 @@ export function MissionWorkspace({ missionSlug }: MissionWorkspaceProps) {
         mission={mission}
         missions={missions}
         nextMissionId={nextMissionId}
+        isAuthenticated={isAuthenticated}
       />
     );
   }
@@ -144,6 +153,7 @@ export function MissionWorkspace({ missionSlug }: MissionWorkspaceProps) {
       nextMissionId={nextMissionId}
       locale={locale}
       messages={messages}
+      isAuthenticated={isAuthenticated}
     />
   );
 }
@@ -154,6 +164,7 @@ interface MissionSessionProps {
   nextMissionId: string | null;
   locale: Locale;
   messages: CommonMessages;
+  isAuthenticated: boolean;
 }
 
 function MissionSession({
@@ -162,6 +173,7 @@ function MissionSession({
   nextMissionId,
   locale,
   messages,
+  isAuthenticated,
 }: MissionSessionProps) {
   const router = useRouter();
   const {
@@ -177,6 +189,9 @@ function MissionSession({
     [locale]
   );
   const tests = mission.tests ?? [];
+  const [cloudSaving, setCloudSaving] = useState(false);
+  const [cloudSaveError, setCloudSaveError] = useState<string | null>(null);
+  const cloudSavingRef = useRef(false);
   const showcase =
     mission.showcaseMessage ?? tests[0]?.message ?? "";
   const nextMission = nextMissionId
@@ -347,7 +362,53 @@ function MissionSession({
     });
   }
 
-  function tryGrantMissionSuccess() {
+  async function persistCloudAfterPass(): Promise<boolean> {
+    if (!isAuthenticated) return true;
+    if (cloudSavingRef.current) return false;
+
+    cloudSavingRef.current = true;
+    setCloudSaving(true);
+    setCloudSaveError(null);
+
+    const sessionBits = readSessionSolution(mission.id);
+    const instructionForCall =
+      mission.codeFill?.mode === "ai-integration"
+        ? undefined
+        : instructionRef.current;
+
+    try {
+      const result = await requestCloudCompletion({
+        missionId: mission.id,
+        locale,
+        instruction: instructionForCall,
+        codeSource: sessionBits.codeSource,
+        payloadRepairText: sessionBits.payloadRepairText,
+      });
+
+      if (result.ok) {
+        router.refresh();
+        return true;
+      }
+
+      if (result.kind === "anonymous") {
+        return true;
+      }
+
+      // Validation already passed in the playground — treat server mismatch /
+      // persist errors as infrastructure, not player failure.
+      setCloudSaveError(
+        result.kind === "validation"
+          ? messages.cloudConfirmFailed
+          : messages.cloudSaveFailed
+      );
+      return true;
+    } finally {
+      cloudSavingRef.current = false;
+      setCloudSaving(false);
+    }
+  }
+
+  async function tryGrantMissionSuccess() {
     if (mission.payloadRepair && !repairPassedRef.current) {
       setFeedback(messages.payloadRepairRequired);
       setFeedbackSpeaker("mira");
@@ -360,7 +421,42 @@ function MissionSession({
       setMobileTab("workspace");
       return;
     }
+    await persistCloudAfterPass();
     grantMissionSuccess();
+  }
+
+  async function retryCloudSave() {
+    if (!isAuthenticated || cloudSavingRef.current) return;
+    cloudSavingRef.current = true;
+    setCloudSaving(true);
+    setCloudSaveError(null);
+    const sessionBits = readSessionSolution(mission.id);
+    const instructionForCall =
+      mission.codeFill?.mode === "ai-integration"
+        ? undefined
+        : instructionRef.current;
+    try {
+      const result = await requestCloudCompletion({
+        missionId: mission.id,
+        locale,
+        instruction: instructionForCall,
+        codeSource: sessionBits.codeSource,
+        payloadRepairText: sessionBits.payloadRepairText,
+      });
+      if (result.ok || result.kind === "anonymous") {
+        setCloudSaveError(null);
+        router.refresh();
+        return;
+      }
+      setCloudSaveError(
+        result.kind === "validation"
+          ? messages.cloudConfirmFailed
+          : messages.cloudSaveFailed
+      );
+    } finally {
+      cloudSavingRef.current = false;
+      setCloudSaving(false);
+    }
   }
 
   function handleDevComplete() {
@@ -488,7 +584,7 @@ function MissionSession({
       setFeedbackSpeaker(summary.feedbackSpeaker);
 
       if (summary.allPassed) {
-        tryGrantMissionSuccess();
+        void tryGrantMissionSuccess();
       }
     } catch (err) {
       setSystemError(
@@ -626,7 +722,7 @@ function MissionSession({
       setFeedbackSpeaker(summary.feedbackSpeaker);
 
       if (summary.allPassed) {
-        tryGrantMissionSuccess();
+        void tryGrantMissionSuccess();
       }
     } catch (err) {
       setSystemError(
@@ -656,7 +752,7 @@ function MissionSession({
     ) {
       return;
     }
-    queueMicrotask(() => tryGrantMissionSuccess());
+    queueMicrotask(() => void tryGrantMissionSuccess());
   }
 
   function onCodeFillPassedChange(passed: boolean) {
@@ -671,7 +767,7 @@ function MissionSession({
     ) {
       return;
     }
-    queueMicrotask(() => tryGrantMissionSuccess());
+    queueMicrotask(() => void tryGrantMissionSuccess());
   }
 
   return (
@@ -797,6 +893,24 @@ function MissionSession({
                 : null
           }
         />
+      )}
+
+      {cloudSaveError && (
+        <div className="pointer-events-auto fixed bottom-4 left-1/2 z-50 w-[min(28rem,calc(100%-1.5rem))] -translate-x-1/2 border border-ml-danger/50 bg-ml-surface-1 px-4 py-3 shadow-lg"
+          style={{ borderRadius: "var(--ml-frame-radius)" }}
+        >
+          <p className="text-[length:var(--ml-text-sm)] text-ml-danger">
+            {cloudSaveError}
+          </p>
+          <button
+            type="button"
+            disabled={cloudSaving}
+            onClick={() => void retryCloudSave()}
+            className="mt-2 font-mono text-[11px] tracking-[0.08em] text-ml-accent uppercase hover:text-ml-accent-bright disabled:opacity-50"
+          >
+            {cloudSaving ? messages.cloudSaving : messages.cloudRetrySave}
+          </button>
+        </div>
       )}
 
       <SuccessToast

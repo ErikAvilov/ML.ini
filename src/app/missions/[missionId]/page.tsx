@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { MissionWorkspace } from "@/components/mission/MissionWorkspace";
+import { getAuthIdentity } from "@/lib/auth/get-identity";
 import { getMissionBySlug, getMissionSlugs } from "@/data/missions";
 
 interface PageProps {
@@ -15,5 +16,12 @@ export default async function MissionPage({ params }: PageProps) {
   const mission = getMissionBySlug(missionId);
   if (!mission) notFound();
 
-  return <MissionWorkspace missionSlug={mission.slug} />;
+  const identity = await getAuthIdentity();
+
+  return (
+    <MissionWorkspace
+      missionSlug={mission.slug}
+      isAuthenticated={Boolean(identity)}
+    />
+  );
 }

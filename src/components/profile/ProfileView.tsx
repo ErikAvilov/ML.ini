@@ -36,7 +36,14 @@ export function ProfileView({ identity = null }: ProfileViewProps) {
   const view = progress;
   const missions = getMissions(locale);
   const kingdoms = getKingdoms(locale);
-  const xp = xpProgressInLevel(view.xp);
+  const cloudXp = identity?.progress?.total_xp ?? null;
+  const useCloudXp = Boolean(identity) && cloudXp != null;
+  const displayXp = useCloudXp ? cloudXp : view.xp;
+  const xp = xpProgressInLevel(displayXp);
+  const hasLocalResidue =
+    Boolean(identity) &&
+    (view.xp > 0 ||
+      view.completedMissions.some((id) => id !== "mission-00"));
   const equippedTitle = PROFILE_TITLES.find(
     (title) => title.id === view.equippedTitleId
   );
@@ -65,7 +72,6 @@ export function ProfileView({ identity = null }: ProfileViewProps) {
     messages.profileDefaultName
   );
   const avatarUrl = identity?.profile?.avatar_url;
-  const cloudXp = identity?.progress?.total_xp;
 
   return (
     <div className="mx-auto w-full max-w-[86rem] space-y-6 px-4 py-6 sm:px-6 sm:py-8">
@@ -112,7 +118,7 @@ export function ProfileView({ identity = null }: ProfileViewProps) {
                   {equippedTitle.label[locale]}
                 </p>
               )}
-              {cloudXp != null && (
+              {useCloudXp && (
                 <p className="mt-2 font-mono text-[length:var(--ml-text-xs)] text-ml-text-muted">
                   {t(messages.profileCloudXp, { xp: cloudXp })}
                 </p>
@@ -120,7 +126,7 @@ export function ProfileView({ identity = null }: ProfileViewProps) {
 
               <div className="mt-5 w-full max-w-sm">
                 <div className="mb-2 flex justify-between gap-4 font-mono text-[length:var(--ml-text-xs)] text-ml-text-muted">
-                  <span>{t(messages.xpShort, { xp: view.xp })}</span>
+                  <span>{t(messages.xpShort, { xp: displayXp })}</span>
                   <span>
                     {t(messages.profileXpToNext, {
                       xp: xp.needed - xp.current,
@@ -135,8 +141,15 @@ export function ProfileView({ identity = null }: ProfileViewProps) {
                   />
                 </div>
                 <p className="mt-1.5 text-[length:var(--ml-text-xs)] text-ml-text-muted">
-                  {messages.profileLocalProgressNote}
+                  {useCloudXp
+                    ? messages.profileCloudProgressNote
+                    : messages.profileLocalProgressNote}
                 </p>
+                {hasLocalResidue && (
+                  <p className="mt-1 text-[length:var(--ml-text-xs)] text-ml-text-muted">
+                    {messages.profileLocalResidueNote}
+                  </p>
+                )}
               </div>
             </div>
           </div>

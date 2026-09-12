@@ -11,6 +11,7 @@ import type { PayloadRepairTask, StructuredOutputSchema } from "@/lib/types";
 import type { CommonMessages } from "@/i18n/messages/common";
 
 const STORAGE_PREFIX = "mlini-payload-repair-v1:";
+const TEXT_PREFIX = "mlini-payload-repair-text-v1:";
 
 interface PayloadRepairPanelProps {
   missionId: string;
@@ -61,7 +62,10 @@ export function PayloadRepairPanel({
   const [value, setValue] = useState(task.brokenPayload);
   const [feedback, setFeedback] = useState<string | null>(null);
   const onPassedChangeRef = useRef(onPassedChange);
-  onPassedChangeRef.current = onPassedChange;
+
+  useEffect(() => {
+    onPassedChangeRef.current = onPassedChange;
+  }, [onPassedChange]);
 
   useEffect(() => {
     try {
@@ -71,14 +75,18 @@ export function PayloadRepairPanel({
     } catch {
       /* ignore */
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- missionId only
   }, [missionId]);
 
   function setPassed(next: boolean) {
     onPassedChange(next);
     try {
-      if (next) sessionStorage.setItem(STORAGE_PREFIX + missionId, "1");
-      else sessionStorage.removeItem(STORAGE_PREFIX + missionId);
+      if (next) {
+        sessionStorage.setItem(STORAGE_PREFIX + missionId, "1");
+        sessionStorage.setItem(TEXT_PREFIX + missionId, value);
+      } else {
+        sessionStorage.removeItem(STORAGE_PREFIX + missionId);
+        sessionStorage.removeItem(TEXT_PREFIX + missionId);
+      }
     } catch {
       /* ignore */
     }
@@ -88,6 +96,11 @@ export function PayloadRepairPanel({
     const result = evaluatePayloadRepair(value, task.expectedFields, schema);
     if (result.ok) {
       setFeedback(null);
+      try {
+        sessionStorage.setItem(TEXT_PREFIX + missionId, value);
+      } catch {
+        /* ignore */
+      }
       setPassed(true);
       return;
     }
