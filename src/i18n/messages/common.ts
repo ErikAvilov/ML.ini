@@ -56,6 +56,9 @@ const common = {
     profileDefaultName: "Voyageur",
     profileMemberSince: "Progression locale",
     profileMemberCloud: "Compte connecté",
+    profileUsernameEditHint: "Cliquer pour changer le pseudo",
+    profileUsernameSave: "Enregistrer",
+    profileUsernameCancel: "Annuler",
     profileCloudXp: "XP cloud · {xp}",
     profileLocalProgressNote:
       "La barre ci-dessus suit encore la progression locale de ce navigateur.",
@@ -92,6 +95,23 @@ const common = {
     profileResetAction: "Reset niveaux & missions",
     profileResetConfirm:
       "Réinitialiser toute ta progression locale (XP, niveaux, missions) ? Cette action est définitive.",
+    legalPrivacy: "Confidentialité",
+    legalTerms: "Conditions",
+    legalNavLabel: "Informations légales",
+    accountDeleteTitle: "Supprimer mon compte",
+    accountDeleteHelp:
+      "Cette action supprimera définitivement votre compte MLINI et les données associées stockées par MLINI.",
+    accountDeleteLocalNote:
+      "La progression locale éventuellement présente dans ce navigateur n’est pas effacée automatiquement.",
+    accountDeleteAction: "Supprimer mon compte",
+    accountDeleteIrreversible:
+      "Cette action est irréversible. Votre session sera terminée.",
+    accountDeleteTypeConfirm: "Tapez {phrase} pour confirmer.",
+    accountDeleteConfirm: "Confirmer la suppression",
+    accountDeleteCancel: "Annuler",
+    accountDeletePending: "Suppression…",
+    accountDeleteError:
+      "La suppression a échoué. Réessaie ou contacte le support.",
     launchMission: "Lancer la mission",
     missionObjectives: "Objectif",
     missionReward: "Récompense",
@@ -112,8 +132,14 @@ const common = {
     authContinueGithub: "Continuer avec GitHub",
     authRedirecting: "Redirection…",
     authOauthStartError: "Impossible de démarrer la connexion. Réessaie.",
+    authOauthNotConfigured:
+      "Ce fournisseur n’est pas configuré sur cet environnement.",
     authCallbackError:
       "La connexion a échoué. Réessaie avec Google ou GitHub.",
+    authEmailNotFound:
+      "GitHub n’a pas fourni d’e-mail utilisable. Autorise l’accès e-mail (user:email) ou rends un e-mail public, puis réessaie.",
+    authAccountNotLinked:
+      "Ce compte OAuth n’est pas lié à ton profil Mlini existant. Utilise le même fournisseur qu’à l’inscription, ou contacte le support.",
     authAlreadyConnected: "Connecté",
     authSignedInTitle: "Compte",
     authAlreadyConnectedHelp: "Tu es déjà connecté à Mlini.",
@@ -404,6 +430,9 @@ const common = {
     profileDefaultName: "Traveler",
     profileMemberSince: "Local progress",
     profileMemberCloud: "Connected account",
+    profileUsernameEditHint: "Click to change username",
+    profileUsernameSave: "Save",
+    profileUsernameCancel: "Cancel",
     profileCloudXp: "Cloud XP · {xp}",
     profileLocalProgressNote:
       "The bar above still follows this browser’s local progress.",
@@ -440,6 +469,22 @@ const common = {
     profileResetAction: "Reset levels & missions",
     profileResetConfirm:
       "Reset all local progress (XP, levels, missions)? This cannot be undone.",
+    legalPrivacy: "Privacy",
+    legalTerms: "Terms",
+    legalNavLabel: "Legal",
+    accountDeleteTitle: "Delete my account",
+    accountDeleteHelp:
+      "This will permanently delete your MLINI account and associated data stored by MLINI.",
+    accountDeleteLocalNote:
+      "Any local progress still on this browser is not cleared automatically.",
+    accountDeleteAction: "Delete my account",
+    accountDeleteIrreversible:
+      "This action cannot be undone. Your session will end.",
+    accountDeleteTypeConfirm: "Type {phrase} to confirm.",
+    accountDeleteConfirm: "Confirm deletion",
+    accountDeleteCancel: "Cancel",
+    accountDeletePending: "Deleting…",
+    accountDeleteError: "Deletion failed. Try again or contact support.",
     launchMission: "Launch mission",
     missionObjectives: "Objective",
     missionReward: "Reward",
@@ -460,7 +505,13 @@ const common = {
     authContinueGithub: "Continue with GitHub",
     authRedirecting: "Redirecting…",
     authOauthStartError: "Could not start sign-in. Try again.",
+    authOauthNotConfigured:
+      "This provider is not configured in this environment.",
     authCallbackError: "Sign-in failed. Try again with Google or GitHub.",
+    authEmailNotFound:
+      "GitHub did not provide a usable email. Grant email access (user:email) or set a public email, then try again.",
+    authAccountNotLinked:
+      "This OAuth account is not linked to your existing Mlini profile. Use the same provider you signed up with, or contact support.",
     authAlreadyConnected: "Signed in",
     authSignedInTitle: "Account",
     authAlreadyConnectedHelp: "You are already signed in to Mlini.",

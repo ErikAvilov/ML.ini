@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/auth/current-user";
 import { validateMissionAttempt } from "@/lib/missions/validate-attempt";
 import { recordMissionCompletion } from "@/lib/missions/record-completion";
 import { DEFAULT_LOCALE } from "@/i18n/config";
@@ -39,20 +39,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "mission_required" }, { status: 400 });
   }
 
-  const locale =
-    asString(body.locale) === "en" ? "en" : DEFAULT_LOCALE;
+  const locale = asString(body.locale) === "en" ? "en" : DEFAULT_LOCALE;
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !key) {
-    return NextResponse.json({ error: "auth_unavailable" }, { status: 503 });
-  }
-
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json(
       { persisted: false, reason: "anonymous" },
@@ -70,8 +59,7 @@ export async function POST(request: Request) {
       payloadRepairText: asString(body.payloadRepairText),
     });
   } catch (err) {
-    const missingKey =
-      err instanceof Error && err.message === "MISSING_KEY";
+    const missingKey = err instanceof Error && err.message === "MISSING_KEY";
     return NextResponse.json(
       {
         ok: false,
@@ -99,6 +87,7 @@ export async function POST(request: Request) {
   }
 
   try {
+    // Session user only — ignore any client-supplied userId.
     const result = await recordMissionCompletion({
       userId: user.id,
       missionId: validation.missionId,

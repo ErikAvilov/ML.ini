@@ -25,7 +25,7 @@ Avant de modifier l’UI, le produit ou une mission, lire :
 ## Rappels non négociables (V0)
 
 - Pas d’exposition de `GEMINI_API_KEY` / `OPENAI_API_KEY` côté client
-- Pas de DB / auth / Stripe / Supabase sans demande explicite
+- Pas de Stripe / auth alternative / nouvelle DB sans demande explicite (runtime = Better Auth + Neon)
 - Missions desktop = viewport shell, pas page SaaS scrollable centrée
 - Théorie après pratique
 - Contenu pédagogique dans `src/data/missions/`, pas enfoui dans le JSX

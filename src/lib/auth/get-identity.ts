@@ -1,39 +1,48 @@
-import { createClient } from "@/lib/supabase/server";
-import type { AuthIdentity, ProfileRow, UserProgressRow } from "@/lib/auth/types";
+import "server-only";
 
+import { getCurrentUser } from "@/lib/auth/current-user";
+import { ensureNeonUsername, getNeonProfile } from "@/lib/data/profiles";
+import { getNeonProgress } from "@/lib/data/progress";
+import { buildDefaultUsername } from "@/lib/auth/username";
+import type { AuthIdentity, ProfileRow } from "@/lib/auth/types";
+
+/**
+ * Full MLINI identity for SSR shell (navbar, profile, gates).
+ * Better Auth session + Neon public tables only.
+ */
 export async function getAuthIdentity(): Promise<AuthIdentity | null> {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !key) return null;
-
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
+    const user = await getCurrentUser();
     if (!user) return null;
 
-    const [{ data: profile }, { data: progress }] = await Promise.all([
-      supabase
-        .from("profiles")
-        .select("id, username, display_name, avatar_url, created_at, updated_at")
-        .eq("id", user.id)
-        .maybeSingle(),
-      supabase
-        .from("user_progress")
-        .select(
-          "user_id, total_xp, current_kingdom_slug, current_mission_slug"
-        )
-        .eq("user_id", user.id)
-        .maybeSingle(),
-    ]);
+    let profile = await getNeonProfile(user.id);
+    const progress = await getNeonProgress(user.id);
+
+    if (!profile) {
+      profile = await getNeonProfile(user.id);
+    }
+
+    if (profile) {
+      profile = await ensureNeonUsername({
+        ...profile,
+        display_name: profile.display_name ?? user.name,
+      });
+    } else {
+      profile = {
+        id: user.id,
+        username: buildDefaultUsername(user.name, user.id),
+        display_name: user.name,
+        avatar_url: user.image,
+        created_at: new Date(0).toISOString(),
+        updated_at: new Date(0).toISOString(),
+      } satisfies ProfileRow;
+    }
 
     return {
       userId: user.id,
-      email: user.email ?? null,
-      profile: (profile as ProfileRow | null) ?? null,
-      progress: (progress as UserProgressRow | null) ?? null,
+      email: user.email,
+      profile,
+      progress,
     };
   } catch {
     return null;

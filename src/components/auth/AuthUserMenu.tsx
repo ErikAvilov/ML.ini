@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { betterAuthClient } from "@/lib/better-auth/client";
 import { playerDisplayName } from "@/lib/auth/username";
 import { useLocale } from "@/i18n/locale-context";
 import type { AuthIdentity } from "@/lib/auth/types";
@@ -43,8 +43,7 @@ export function AuthUserMenu({ identity }: AuthUserMenuProps) {
     setSigningOut(true);
     setOpen(false);
     try {
-      const supabase = createClient();
-      await supabase.auth.signOut();
+      await betterAuthClient.signOut();
     } catch {
       // Still navigate home so the shell can re-render logged-out.
     }

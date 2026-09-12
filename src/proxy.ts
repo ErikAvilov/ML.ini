@@ -1,15 +1,16 @@
-import { type NextRequest } from "next/server";
-import { updateSession } from "@/lib/supabase/middleware";
+import { NextResponse } from "next/server";
 
-export async function proxy(request: NextRequest) {
-  return updateSession(request);
+/**
+ * Request proxy — passthrough.
+ * Better Auth manages its own cookies via /api/auth/*.
+ * Keep this thin unless MLINI needs more later.
+ */
+export function proxy() {
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all paths except static assets and images.
-     */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

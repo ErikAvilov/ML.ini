@@ -16,6 +16,8 @@ import { useProgress } from "@/lib/progress-context";
 import { xpProgressInLevel } from "@/lib/validation";
 import type { AuthIdentity } from "@/lib/auth/types";
 import { playerDisplayName } from "@/lib/auth/username";
+import { AccountDeletionPanel } from "@/components/profile/AccountDeletionPanel";
+import { EditableUsername } from "@/components/profile/EditableUsername";
 
 const panel =
   "border border-ml-border bg-[color-mix(in_srgb,var(--ml-surface-1)_92%,transparent)]";
@@ -110,9 +112,16 @@ export function ProfileView({ identity = null }: ProfileViewProps) {
                   ? messages.profileMemberCloud
                   : messages.profileMemberSince}
               </p>
-              <h1 className="mt-1 font-display text-3xl font-semibold text-ml-text sm:text-4xl">
-                {displayName}
-              </h1>
+              {identity ? (
+                <EditableUsername
+                  key={displayName}
+                  initialUsername={displayName}
+                />
+              ) : (
+                <h1 className="mt-1 font-display text-3xl font-semibold text-ml-text sm:text-4xl">
+                  {displayName}
+                </h1>
+              )}
               {equippedTitle && (
                 <p className="mt-1 text-ml-reward">
                   {equippedTitle.label[locale]}
@@ -372,6 +381,8 @@ export function ProfileView({ identity = null }: ProfileViewProps) {
           {messages.profileResetAction}
         </Button>
       </section>
+
+      {identity ? <AccountDeletionPanel /> : null}
     </div>
   );
 }

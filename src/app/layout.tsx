@@ -8,7 +8,9 @@ import { ProgressProvider } from "@/lib/progress-context";
 import { LocaleProvider } from "@/i18n/locale-context";
 import { SiteAtmosphere } from "@/components/ui/SiteAtmosphere";
 import { SiteHeader } from "@/components/ui/SiteHeader";
+import { SiteFooter } from "@/components/ui/SiteFooter";
 import { getAuthIdentity } from "@/lib/auth/get-identity";
+import { LEGAL_SITE_URL } from "@/data/legal/constants";
 import "./globals.css";
 
 const body = Plus_Jakarta_Sans({
@@ -30,6 +32,7 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(LEGAL_SITE_URL),
   title: "Mlini — Apprends l'IA en la construisant",
   description:
     "Plateforme interactive pour apprendre l'IA par la pratique. Progresse à travers des Royaumes, résous des missions et construis de vrais systèmes.",
@@ -55,6 +58,7 @@ export default async function RootLayout({
             <ProgressProvider>
               <SiteHeader identity={identity} />
               <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
+              <SiteFooter />
             </ProgressProvider>
           </LocaleProvider>
         </div>

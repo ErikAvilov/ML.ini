@@ -2,11 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import { safeInternalPath } from "@/lib/auth/safe-next";
 import {
-  isCheckViolation,
-  isUniqueViolation,
   normalizeUsernameInput,
   validateUsernameFormat,
   type UsernameFormatError,
@@ -60,18 +57,29 @@ export function UsernameOnboardingForm({
       void (async () => {
         setRemote({ forValue: trimmed, status: "checking" });
         try {
-          const supabase = createClient();
-          const { data, error } = await supabase.rpc("is_username_available", {
-            p_username: trimmed,
+          const res = await fetch("/api/username/available", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: trimmed }),
           });
           if (id !== reqId.current) return;
-          if (error) {
+          if (res.status === 401) {
+            router.replace(
+              `/auth?next=${encodeURIComponent(`/onboarding/username?next=${nextPath}`)}`
+            );
+            return;
+          }
+          const data = (await res.json().catch(() => ({}))) as {
+            available?: boolean;
+            error?: string;
+          };
+          if (!res.ok || typeof data.available !== "boolean") {
             setRemote({ forValue: trimmed, status: "error" });
             return;
           }
           setRemote({
             forValue: trimmed,
-            status: data === true ? "available" : "taken",
+            status: data.available ? "available" : "taken",
           });
         } catch {
           if (id !== reqId.current) return;
@@ -84,7 +92,7 @@ export function UsernameOnboardingForm({
       window.clearTimeout(timer);
       reqId.current += 1;
     };
-  }, [trimmed, formatError]);
+  }, [trimmed, formatError, nextPath, router]);
 
   const remoteForValue =
     remote && remote.forValue === trimmed ? remote.status : null;
@@ -125,40 +133,44 @@ export function UsernameOnboardingForm({
     setSubmitError(null);
 
     try {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const res = await fetch("/api/username", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: trimmed }),
+      });
+      const data = (await res.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+      };
 
-      if (!user) {
+      if (res.status === 401) {
         router.replace(
           `/auth?next=${encodeURIComponent(`/onboarding/username?next=${nextPath}`)}`
         );
         return;
       }
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .update({ username: trimmed })
-        .eq("id", user.id)
-        .select("id")
-        .maybeSingle();
-
-      if (error) {
-        if (isUniqueViolation(error)) {
-          setRemote({ forValue: trimmed, status: "taken" });
-          setSubmitError(messages.usernameErrTakenRace);
-        } else if (isCheckViolation(error)) {
-          setSubmitError(messages.usernameErrInvalidChars);
-        } else {
-          setSubmitError(messages.usernameErrSaveFailed);
-        }
+      if (res.status === 409 || data.error === "taken") {
+        setRemote({ forValue: trimmed, status: "taken" });
+        setSubmitError(messages.usernameErrTakenRace);
         setSaving(false);
         return;
       }
 
-      if (!data) {
+      if (data.error === "invalid") {
+        setSubmitError(messages.usernameErrInvalidChars);
+        setSaving(false);
+        return;
+      }
+
+      if (data.error === "missing") {
         setSubmitError(messages.usernameErrProfileMissing);
+        setSaving(false);
+        return;
+      }
+
+      if (!res.ok || !data.ok) {
+        setSubmitError(messages.usernameErrSaveFailed);
         setSaving(false);
         return;
       }

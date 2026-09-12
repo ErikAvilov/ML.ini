@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { betterAuthClient } from "@/lib/better-auth/client";
 import { safeInternalPath } from "@/lib/auth/safe-next";
 import { useLocale } from "@/i18n/locale-context";
 
@@ -9,9 +9,13 @@ type Provider = "google" | "github";
 
 interface AuthProvidersProps {
   nextPath?: string;
+  socialConfigured?: { google: boolean; github: boolean };
 }
 
-export function AuthProviders({ nextPath = "/" }: AuthProvidersProps) {
+export function AuthProviders({
+  nextPath = "/",
+  socialConfigured = { google: true, github: true },
+}: AuthProvidersProps) {
   const { messages } = useLocale();
   const [pending, setPending] = useState<Provider | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -20,13 +24,17 @@ export function AuthProviders({ nextPath = "/" }: AuthProvidersProps) {
     setPending(provider);
     setError(null);
     try {
-      const supabase = createClient();
-      const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(
-        safeInternalPath(nextPath, "/")
-      )}`;
-      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+      if (!socialConfigured[provider]) {
+        setError(messages.authOauthNotConfigured);
+        setPending(null);
+        return;
+      }
+
+      const safeNext = safeInternalPath(nextPath, "/");
+      const { error: oauthError } = await betterAuthClient.signIn.social({
         provider,
-        options: { redirectTo },
+        callbackURL: `/auth/continue?next=${encodeURIComponent(safeNext)}`,
+        errorCallbackURL: "/auth",
       });
       if (oauthError) {
         setError(messages.authOauthStartError);

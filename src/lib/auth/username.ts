@@ -25,6 +25,33 @@ export function isUsernameConfigured(
   return typeof username === "string" && username.length > 0;
 }
 
+/**
+ * Default username at account creation: first name token + short UUID hex.
+ * Fits profiles_username_format_check (3–20, [A-Za-z0-9_]).
+ * Unique per user because the UUID fragment is unique.
+ */
+export function buildDefaultUsername(
+  displayName: string | null | undefined,
+  userId: string
+): string {
+  const idHex = userId.replace(/-/g, "").toLowerCase();
+  const suffix = idHex.slice(0, 8) || "00000000";
+
+  const firstToken = (displayName ?? "").trim().split(/\s+/)[0] ?? "";
+  let prefix = firstToken
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^A-Za-z0-9_]/g, "");
+
+  if (!prefix) prefix = "Player";
+
+  const maxPrefix = Math.max(1, 20 - 1 - suffix.length);
+  prefix = prefix.slice(0, maxPrefix);
+  if (!prefix) prefix = "P";
+
+  return `${prefix}_${suffix}`;
+}
+
 /** Prefer MLINI username; display_name only before onboarding completes. Never email/UUID. */
 export function playerDisplayName(
   profile: {

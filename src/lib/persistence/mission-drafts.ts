@@ -1,6 +1,5 @@
 /**
- * Local persistence layer for mission instruction drafts.
- * Swap implementation later for Supabase without rewriting UI.
+ * Local persistence layer for mission instruction drafts (browser only).
  */
 
 const DRAFTS_KEY = "mlini-mission-drafts-v1";
