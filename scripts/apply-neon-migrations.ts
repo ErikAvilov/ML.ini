@@ -5,7 +5,8 @@
  *   npx tsx --env-file=.env --env-file=.env.local scripts/apply-neon-migrations.ts
  *   npx tsx ... scripts/apply-neon-migrations.ts --only 001
  *   npx tsx ... scripts/apply-neon-migrations.ts --only 002
- *   npx tsx ... scripts/apply-neon-migrations.ts --only 000
+ *   npx tsx ... scripts/apply-neon-migrations.ts --only 003
+ *   npx tsx ... scripts/apply-neon-migrations.ts --only 004
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -18,6 +19,7 @@ const FILES: Record<string, string> = {
   "001": "001_neon_mlini_public.sql",
   "002": "002_neon_runtime_triggers.sql",
   "003": "003_auto_username_on_signup.sql",
+  "004": "004_integration_events_delivery.sql",
 };
 
 async function main() {

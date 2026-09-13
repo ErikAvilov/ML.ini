@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
 import { getNeonAuthPool } from "@/lib/db/neon";
+import { onBetterAuthUserCreated } from "@/lib/integrations/user-created";
 
 /**
  * Better Auth → Neon (sole auth runtime).
@@ -41,6 +42,24 @@ export const auth = betterAuth({
     accountLinking: {
       enabled: true,
       disableImplicitLinking: true,
+    },
+  },
+  /**
+   * user.create.after runs after the DB transaction commits
+   * (queueAfterTransactionHook) — so the Neon trigger's
+   * integration_events.user.created row is already durable.
+   * Webhook failures must never fail signup.
+   */
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          await onBetterAuthUserCreated({
+            id: user.id,
+            name: user.name ?? null,
+          });
+        },
+      },
     },
   },
   socialProviders: {

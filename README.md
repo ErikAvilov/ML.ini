@@ -105,7 +105,8 @@ Les completions **authentifiées** passent par `POST /api/missions/complete` (va
 
 Pages publiques : [`/privacy`](https://mlini.dev/privacy), [`/terms`](https://mlini.dev/terms). Suppression de compte : profil connecté → `POST /api/account/delete`.
 
-Historique migration Supabase → Neon : [`docs/migrations/`](docs/migrations/).
+Historique migration Supabase → Neon : [`docs/migrations/`](docs/migrations/).  
+n8n (Phase 6B) : `user.created` → `MLINI_N8N_WEBHOOK_URL` (header `X-MLINI-WEBHOOK-SECRET`). `mission.completed` pas encore dispatché.
 
 ## Hors scope sans demande explicite
 
