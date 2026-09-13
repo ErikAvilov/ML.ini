@@ -97,6 +97,9 @@ function createRuntimePool(schema: string): Pool {
  * Neon connection for Better Auth (runtime / serverless).
  * Session search_path=better_auth so runtime ignores public MLINI tables.
  *
+ * Reuse one Pool per isolate (dev + production). Creating a Pool per call
+ * forces fresh Neon TCP/TLS handshakes and dominates authenticated RSC latency.
+ *
  * Server-only by convention — do not import from Client Components.
  */
 export function getNeonAuthPool(): Pool {
@@ -105,17 +108,15 @@ export function getNeonAuthPool(): Pool {
   }
 
   const pool = createRuntimePool(BETTER_AUTH_SCHEMA);
-
-  if (process.env.NODE_ENV !== "production") {
-    globalForNeon.__mliniNeonAuthPool = pool;
-  }
-
+  globalForNeon.__mliniNeonAuthPool = pool;
   return pool;
 }
 
 /**
  * Neon connection for MLINI application tables (public).
  * Do NOT reuse the Better Auth pool (different search_path).
+ *
+ * Reuse one Pool per isolate (dev + production).
  *
  * Server-only by convention — do not import from Client Components.
  */
@@ -125,11 +126,7 @@ export function getNeonAppPool(): Pool {
   }
 
   const pool = createRuntimePool(APP_SCHEMA);
-
-  if (process.env.NODE_ENV !== "production") {
-    globalForNeon.__mliniNeonAppPool = pool;
-  }
-
+  globalForNeon.__mliniNeonAppPool = pool;
   return pool;
 }
 

@@ -1,22 +1,51 @@
 /** Server-only by convention — imported by Better Auth config; do not import from Client Components. */
 
-/** Bounded webhook timeout — keep auth path responsive. */
+/** Bounded webhook timeout — keep auth / mission paths responsive. */
 export const N8N_WEBHOOK_TIMEOUT_MS = 4_000;
 
 export const N8N_WEBHOOK_SECRET_HEADER = "X-MLINI-WEBHOOK-SECRET";
 
-export type N8nEventName = "user.created";
+export const SUPPORTED_N8N_EVENTS = [
+  "user.created",
+  "mission.completed",
+] as const;
 
-export type N8nWebhookEnvelopeV1 = {
-  version: 1;
-  event: N8nEventName;
-  eventId: string;
-  occurredAt: string;
-  data: {
-    userId: string;
-    name: string | null;
-  };
+export type N8nEventName = (typeof SUPPORTED_N8N_EVENTS)[number];
+
+export function isSupportedN8nEvent(value: string): value is N8nEventName {
+  return (SUPPORTED_N8N_EVENTS as readonly string[]).includes(value);
+}
+
+export type UserCreatedData = {
+  userId: string;
+  name: string | null;
 };
+
+export type MissionCompletedData = {
+  userId: string;
+  username: string | null;
+  kingdom: string;
+  mission: string;
+  missionTitle: string | null;
+  xpAwarded: number;
+  totalXp: number;
+};
+
+export type N8nWebhookEnvelopeV1 =
+  | {
+      version: 1;
+      event: "user.created";
+      eventId: string;
+      occurredAt: string;
+      data: UserCreatedData;
+    }
+  | {
+      version: 1;
+      event: "mission.completed";
+      eventId: string;
+      occurredAt: string;
+      data: MissionCompletedData;
+    };
 
 export type DeliveryStatus = "pending" | "delivered" | "failed" | "skipped";
 
@@ -37,17 +66,18 @@ export function getN8nConfig(): { url: string; secret: string } | null {
   return { url, secret };
 }
 
+function toIso(value: Date | string): string {
+  return value instanceof Date
+    ? value.toISOString()
+    : new Date(value).toISOString();
+}
+
 export function buildUserCreatedEnvelope(opts: {
   eventId: string | number;
   occurredAt: Date | string;
   userId: string;
   name: string | null | undefined;
 }): N8nWebhookEnvelopeV1 {
-  const occurredAt =
-    opts.occurredAt instanceof Date
-      ? opts.occurredAt.toISOString()
-      : new Date(opts.occurredAt).toISOString();
-
   const name =
     typeof opts.name === "string" && opts.name.trim()
       ? opts.name.trim()
@@ -57,10 +87,47 @@ export function buildUserCreatedEnvelope(opts: {
     version: 1,
     event: "user.created",
     eventId: String(opts.eventId),
-    occurredAt,
+    occurredAt: toIso(opts.occurredAt),
     data: {
       userId: opts.userId,
       name,
+    },
+  };
+}
+
+export function buildMissionCompletedEnvelope(opts: {
+  eventId: string | number;
+  occurredAt: Date | string;
+  userId: string;
+  username: string | null | undefined;
+  kingdom: string;
+  mission: string;
+  missionTitle?: string | null;
+  xpAwarded: number;
+  totalXp: number;
+}): N8nWebhookEnvelopeV1 {
+  const username =
+    typeof opts.username === "string" && opts.username.trim()
+      ? opts.username.trim()
+      : null;
+  const missionTitle =
+    typeof opts.missionTitle === "string" && opts.missionTitle.trim()
+      ? opts.missionTitle.trim()
+      : null;
+
+  return {
+    version: 1,
+    event: "mission.completed",
+    eventId: String(opts.eventId),
+    occurredAt: toIso(opts.occurredAt),
+    data: {
+      userId: opts.userId,
+      username,
+      kingdom: opts.kingdom,
+      mission: opts.mission,
+      missionTitle,
+      xpAwarded: opts.xpAwarded,
+      totalXp: opts.totalXp,
     },
   };
 }
