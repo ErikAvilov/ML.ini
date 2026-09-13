@@ -23,7 +23,7 @@ export function BrandLogo({
 
   if (!href) return inner;
   return (
-    <Link href={href} className="group outline-none focus-visible:ring-2 focus-visible:ring-ml-accent/40">
+    <Link href={href} className="group cursor-pointer outline-none transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ml-accent/40">
       {inner}
     </Link>
   );

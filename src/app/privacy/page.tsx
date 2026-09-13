@@ -102,9 +102,10 @@ export default function PrivacyPage() {
           liées aux requêtes (par exemple journaux d’infrastructure du
           prestataire d’hébergement) peuvent être traitées pour faire
           fonctionner et sécuriser le service.{" "}
-          {LEGAL_OPERATOR.productName} n’utilise pas, à ce jour, d’outils
-          d’analytics marketing ou de cookies publicitaires identifiés dans
-          l’application.
+          {LEGAL_OPERATOR.productName} utilise aussi les outils Vercel Web
+          Analytics et Vercel Speed Insights pour mesurer l’audience et les
+          performances techniques de l’application. Il ne s’agit pas
+          d’outils publicitaires ni de cookies marketing.
         </p>
       </LegalSection>
 
@@ -214,6 +215,11 @@ export default function PrivacyPage() {
           pour maintenir la connexion (Better Auth, côté application).
         </p>
         <p>
+          Mesure technique : Vercel Web Analytics et Speed Insights collectent
+          des métriques d’usage et de performance liées à l’hébergement ; elles
+          ne sont pas présentées comme des cookies publicitaires.
+        </p>
+        <p>
           Progression anonyme : {LEGAL_OPERATOR.productName} peut utiliser le
           stockage local du navigateur (localStorage) pour conserver la
           progression sur l’appareil actuel, ainsi que d’autres données
@@ -223,15 +229,16 @@ export default function PrivacyPage() {
         <p>
           Ces mécanismes ne sont pas présentés comme des cookies publicitaires.
           Aucune bannière de consentement marketing n’est affichée, faute de
-          traçage non essentiel identifié dans l’application.
+          traçage publicitaire identifié dans l’application.
         </p>
       </LegalSection>
 
       <LegalSection id="processors" title="10. Prestataires techniques">
         <ul className="list-disc space-y-2 pl-5">
           <li>
-            <strong className="text-ml-text">Vercel</strong> — hébergement et
-            diffusion de l’application.
+            <strong className="text-ml-text">Vercel</strong> — hébergement,
+            diffusion de l’application, Web Analytics et Speed Insights
+            (mesure d’audience et de performance).
           </li>
           <li>
             <strong className="text-ml-text">Neon</strong> — base de données

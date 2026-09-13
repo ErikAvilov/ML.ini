@@ -1,22 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { ProgressNode } from "@/components/ui/ProgressNode";
-import { MliniEmblem } from "@/components/ui/MliniEmblem";
+import { AuthUserMenu } from "@/components/auth/AuthUserMenu";
 import { getMissionStatus } from "@/lib/progression";
 import { useProgress } from "@/lib/progress-context";
 import { useLocale } from "@/i18n/locale-context";
 import type { MissionDefinition, MissionStatus } from "@/lib/types";
+import type { AuthIdentity } from "@/lib/auth/types";
 
 interface MissionNavBarProps {
   mission: MissionDefinition;
   missions: MissionDefinition[];
+  identity?: AuthIdentity | null;
 }
 
-export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
+export function MissionNavBar({
+  mission,
+  missions,
+  identity = null,
+}: MissionNavBarProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const { progress, ready } = useProgress();
   const { messages, t } = useLocale();
   const sorted = [...missions].sort((a, b) => a.order - b.order);
@@ -154,13 +161,17 @@ export function MissionNavBar({ mission, missions }: MissionNavBarProps) {
         </div>
 
         <div className="flex items-center justify-end">
-          <Link
-            href="/profil"
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-ml-border bg-ml-surface-2 transition hover:border-ml-accent"
-            aria-label={messages.navProfile}
-          >
-            <MliniEmblem size={14} title="" />
-          </Link>
+          {identity ? (
+            <AuthUserMenu identity={identity} />
+          ) : (
+            <Link
+              href={`/auth?next=${encodeURIComponent(pathname || "/")}`}
+              className="inline-flex cursor-pointer items-center border border-ml-border-strong bg-ml-surface-1 px-2.5 py-1.5 font-mono text-[11px] tracking-[0.08em] text-ml-text uppercase transition hover:border-ml-accent hover:bg-ml-surface-hover hover:text-ml-accent"
+              style={{ borderRadius: "var(--ml-frame-radius)" }}
+            >
+              {messages.authSignIn}
+            </Link>
+          )}
         </div>
       </div>
     </div>

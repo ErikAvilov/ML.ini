@@ -9,12 +9,14 @@ import { useProgress } from "@/lib/progress-context";
 import { requestCloudCompletion } from "@/lib/missions/cloud-completion-client";
 import { useLocale } from "@/i18n/locale-context";
 import type { MissionDefinition } from "@/lib/types";
+import type { AuthIdentity } from "@/lib/auth/types";
 
 interface MissionIntroProps {
   mission: MissionDefinition;
   missions: MissionDefinition[];
   nextMissionId: string | null;
   isAuthenticated?: boolean;
+  identity?: AuthIdentity | null;
 }
 
 /**
@@ -25,6 +27,7 @@ export function MissionIntro({
   missions,
   nextMissionId,
   isAuthenticated = false,
+  identity = null,
 }: MissionIntroProps) {
   const router = useRouter();
   const { completeMissionAndUnlock, markMissionPlayed } = useProgress();
@@ -60,7 +63,11 @@ export function MissionIntro({
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden">
-      <MissionNavBar mission={mission} missions={missions} />
+      <MissionNavBar
+        mission={mission}
+        missions={missions}
+        identity={identity}
+      />
 
       <div className="min-h-0 flex-1 overflow-y-auto">
         <div className="mx-auto flex max-w-2xl flex-col gap-5 px-5 py-6 sm:px-8 sm:py-8">

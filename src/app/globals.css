@@ -192,6 +192,25 @@ body {
   min-height: 100vh;
 }
 
+/* Interactive affordances — missing cursor is a product bug, not a style preference */
+a[href],
+button:not(:disabled),
+summary,
+[role="button"]:not([aria-disabled="true"]),
+[role="menuitem"]:not([aria-disabled="true"]),
+[role="tab"]:not([aria-disabled="true"]),
+[role="option"]:not([aria-disabled="true"]),
+label[for] {
+  cursor: pointer;
+}
+
+button:disabled,
+[aria-disabled="true"],
+[role="button"][aria-disabled="true"],
+[role="menuitem"][aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
 /* --- Site atmosphere (global) — mineral slate under Arcane Academy night ---
    Target: ~15–25% felt texture, ~75–85% --ml-bg-0 influence.
    Atmosphere only — never competes with panels, text, or accents. */
@@ -260,6 +279,17 @@ html[data-home="true"] .ml-atmosphere__veil {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes ml-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 

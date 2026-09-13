@@ -176,14 +176,14 @@ export function EditableUsername({ initialUsername }: EditableUsernameProps) {
       <button
         type="button"
         onClick={startEdit}
-        className="mt-1 group text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ml-accent"
+        className="mt-1 group cursor-pointer text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ml-accent"
         title={messages.profileUsernameEditHint}
         aria-label={messages.profileUsernameEditHint}
       >
-        <h1 className="font-display text-3xl font-semibold text-ml-text underline-offset-4 transition group-hover:underline sm:text-4xl">
+        <h1 className="font-display text-3xl font-semibold text-ml-text underline-offset-4 transition group-hover:text-ml-accent group-hover:underline sm:text-4xl">
           {initialUsername}
         </h1>
-        <span className="mt-1 block font-mono text-[length:var(--ml-text-xs)] text-ml-text-muted opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100">
+        <span className="mt-1 block font-mono text-[length:var(--ml-text-xs)] text-ml-text-muted opacity-70 transition group-hover:text-ml-accent group-hover:opacity-100 group-focus-visible:opacity-100">
           {messages.profileUsernameEditHint}
         </span>
       </button>
@@ -239,7 +239,7 @@ export function EditableUsername({ initialUsername }: EditableUsernameProps) {
           type="button"
           disabled={!canSave}
           onClick={() => void save()}
-          className="border border-ml-accent bg-ml-accent px-3 py-1.5 text-[length:var(--ml-text-xs)] font-medium text-[var(--ml-text-on-primary)] transition hover:bg-ml-accent-bright disabled:cursor-not-allowed disabled:opacity-50"
+          className="border border-ml-accent bg-ml-accent px-3 py-1.5 text-[length:var(--ml-text-xs)] font-medium text-[var(--ml-text-on-primary)] transition hover:bg-ml-accent-bright disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
           style={{ borderRadius: "var(--ml-frame-radius)" }}
         >
           {saving ? messages.usernameSaving : messages.profileUsernameSave}
@@ -248,7 +248,7 @@ export function EditableUsername({ initialUsername }: EditableUsernameProps) {
           type="button"
           disabled={saving}
           onClick={cancel}
-          className="border border-ml-border px-3 py-1.5 text-[length:var(--ml-text-xs)] text-ml-text-secondary transition hover:border-ml-border-strong hover:text-ml-text disabled:opacity-50"
+          className="cursor-pointer border border-ml-border px-3 py-1.5 text-[length:var(--ml-text-xs)] text-ml-text-secondary transition hover:border-ml-border-strong hover:bg-ml-surface-hover hover:text-ml-text disabled:cursor-not-allowed disabled:opacity-50"
           style={{ borderRadius: "var(--ml-frame-radius)" }}
         >
           {messages.profileUsernameCancel}

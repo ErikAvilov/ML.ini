@@ -45,6 +45,7 @@ import type {
 } from "@/lib/types";
 import type { Locale } from "@/i18n/config";
 import type { CommonMessages } from "@/i18n/messages/common";
+import type { AuthIdentity } from "@/lib/auth/types";
 
 type Stage = "idle" | "input" | "instruction" | "model" | "output";
 type MobileTab = "brief" | "workspace";
@@ -59,11 +60,13 @@ function resolveCodeFillMode(
 interface MissionWorkspaceProps {
   missionSlug: string;
   isAuthenticated?: boolean;
+  identity?: AuthIdentity | null;
 }
 
 export function MissionWorkspace({
   missionSlug,
   isAuthenticated = false,
+  identity = null,
 }: MissionWorkspaceProps) {
   const { progress, ready } = useProgress();
   const { locale, messages } = useLocale();
@@ -104,7 +107,11 @@ export function MissionWorkspace({
 
     return (
       <div className="flex h-full min-h-0 flex-col overflow-hidden">
-        <MissionNavBar mission={mission} missions={missions} />
+        <MissionNavBar
+          mission={mission}
+          missions={missions}
+          identity={identity}
+        />
         <div className="flex flex-1 items-center justify-center px-4">
           <div className="max-w-md text-center">
             {status === "locked" && (
@@ -141,6 +148,7 @@ export function MissionWorkspace({
         missions={missions}
         nextMissionId={nextMissionId}
         isAuthenticated={isAuthenticated}
+        identity={identity}
       />
     );
   }
@@ -154,6 +162,7 @@ export function MissionWorkspace({
       locale={locale}
       messages={messages}
       isAuthenticated={isAuthenticated}
+      identity={identity}
     />
   );
 }
@@ -165,6 +174,7 @@ interface MissionSessionProps {
   locale: Locale;
   messages: CommonMessages;
   isAuthenticated: boolean;
+  identity?: AuthIdentity | null;
 }
 
 function MissionSession({
@@ -174,6 +184,7 @@ function MissionSession({
   locale,
   messages,
   isAuthenticated,
+  identity = null,
 }: MissionSessionProps) {
   const router = useRouter();
   const {
@@ -772,16 +783,20 @@ function MissionSession({
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden">
-      <MissionNavBar mission={mission} missions={missions} />
+      <MissionNavBar
+        mission={mission}
+        missions={missions}
+        identity={identity}
+      />
 
       <div className="flex shrink-0 border-b border-ml-border lg:hidden">
         <button
           type="button"
           onClick={() => setMobileTab("brief")}
-          className={`flex-1 py-2.5 text-[length:var(--ml-text-sm)] font-medium transition ${
+          className={`flex-1 cursor-pointer py-2.5 text-[length:var(--ml-text-sm)] font-medium transition ${
             mobileTab === "brief"
               ? "border-b-2 border-ml-accent text-ml-text"
-              : "text-ml-text-muted"
+              : "text-ml-text-muted hover:bg-ml-surface-hover hover:text-ml-text"
           }`}
         >
           {messages.briefTab}
@@ -789,10 +804,10 @@ function MissionSession({
         <button
           type="button"
           onClick={() => setMobileTab("workspace")}
-          className={`flex-1 py-2.5 text-[length:var(--ml-text-sm)] font-medium transition ${
+          className={`flex-1 cursor-pointer py-2.5 text-[length:var(--ml-text-sm)] font-medium transition ${
             mobileTab === "workspace"
               ? "border-b-2 border-ml-accent text-ml-text"
-              : "text-ml-text-muted"
+              : "text-ml-text-muted hover:bg-ml-surface-hover hover:text-ml-text"
           }`}
         >
           {messages.workspaceTab}

@@ -59,7 +59,7 @@ function nodeClasses(
   selected: boolean
 ) {
   const base =
-    "absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center border px-3 py-2 text-center outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--ml-accent)_45%,transparent)] before:absolute before:-top-1 before:left-1/2 before:h-1.5 before:w-1.5 before:-translate-x-1/2 before:rotate-45 before:border before:content-['']";
+    "absolute flex -translate-x-1/2 -translate-y-1/2 cursor-pointer flex-col items-center justify-center border px-3 py-2 text-center outline-none transition duration-150 hover:brightness-110 focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--ml-accent)_45%,transparent)] before:absolute before:-top-1 before:left-1/2 before:h-1.5 before:w-1.5 before:-translate-x-1/2 before:rotate-45 before:border before:content-['']";
   const size =
     type === "major" || type === "keystone"
       ? "min-w-[11.5rem] min-h-[3.6rem]"

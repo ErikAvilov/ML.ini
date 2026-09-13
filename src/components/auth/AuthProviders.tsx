@@ -47,7 +47,7 @@ export function AuthProviders({
   }
 
   const btnClass =
-    "inline-flex w-full items-center justify-center border border-ml-border-strong bg-ml-surface-1 px-4 py-3 text-[length:var(--ml-text-sm)] font-medium text-ml-text transition hover:border-ml-accent hover:bg-ml-surface-hover disabled:cursor-not-allowed disabled:opacity-50";
+    "inline-flex w-full cursor-pointer items-center justify-center border border-ml-border-strong bg-ml-surface-1 px-4 py-3 text-[length:var(--ml-text-sm)] font-medium text-ml-text transition hover:border-ml-accent hover:bg-ml-surface-hover disabled:cursor-not-allowed disabled:opacity-50";
 
   return (
     <div className="space-y-3">

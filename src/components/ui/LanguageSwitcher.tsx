@@ -21,10 +21,10 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
       <button
         type="button"
         onClick={() => select("fr")}
-        className={`px-2 py-1 text-[length:var(--ml-text-xs)] font-medium transition ${
+        className={`cursor-pointer px-2 py-1 text-[length:var(--ml-text-xs)] font-medium transition ${
           locale === "fr"
             ? "bg-ml-surface-2 text-ml-text"
-            : "text-ml-text-muted hover:text-ml-text"
+            : "text-ml-text-muted hover:bg-ml-surface-hover hover:text-ml-text"
         }`}
         style={{ borderRadius: "calc(var(--ml-frame-radius) - 1px)" }}
         aria-pressed={locale === "fr"}
@@ -34,10 +34,10 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
       <button
         type="button"
         onClick={() => select("en")}
-        className={`px-2 py-1 text-[length:var(--ml-text-xs)] font-medium transition ${
+        className={`cursor-pointer px-2 py-1 text-[length:var(--ml-text-xs)] font-medium transition ${
           locale === "en"
             ? "bg-ml-surface-2 text-ml-text"
-            : "text-ml-text-muted hover:text-ml-text"
+            : "text-ml-text-muted hover:bg-ml-surface-hover hover:text-ml-text"
         }`}
         style={{ borderRadius: "calc(var(--ml-frame-radius) - 1px)" }}
         aria-pressed={locale === "en"}

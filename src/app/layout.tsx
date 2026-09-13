@@ -11,6 +11,8 @@ import { SiteHeader } from "@/components/ui/SiteHeader";
 import { SiteFooter } from "@/components/ui/SiteFooter";
 import { getAuthIdentity } from "@/lib/auth/get-identity";
 import { LEGAL_SITE_URL } from "@/data/legal/constants";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 const body = Plus_Jakarta_Sans({
@@ -62,6 +64,8 @@ export default async function RootLayout({
             </ProgressProvider>
           </LocaleProvider>
         </div>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

@@ -22,6 +22,7 @@ export default async function MissionPage({ params }: PageProps) {
     <MissionWorkspace
       missionSlug={mission.slug}
       isAuthenticated={Boolean(identity)}
+      identity={identity}
     />
   );
 }
