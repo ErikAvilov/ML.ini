@@ -1,4 +1,31 @@
 /** Dev/perf flag — set MLINI_PERF_LOG=1 to emit server timing lines. */
+
+type Store = {
+  getSession: number;
+  profileProgress: number;
+};
+
+function store(): Store {
+  const g = globalThis as unknown as { __mliniPerf?: Store };
+  if (!g.__mliniPerf) {
+    g.__mliniPerf = { getSession: 0, profileProgress: 0 };
+  }
+  return g.__mliniPerf;
+}
+
+/** Reset counters at the start of a diagnostic request (optional). */
+export function perfReset(): void {
+  const s = store();
+  s.getSession = 0;
+  s.profileProgress = 0;
+}
+
+export function perfCount(kind: keyof Store): number {
+  const s = store();
+  s[kind] += 1;
+  return s[kind];
+}
+
 export function perfLog(label: string, ms: number): void {
   if (process.env.MLINI_PERF_LOG !== "1") return;
   console.info(`[perf] ${label} ${ms.toFixed(1)}ms`);

@@ -3,7 +3,7 @@ import "server-only";
 import { cache } from "react";
 import { headers } from "next/headers";
 import { auth } from "@/lib/better-auth/auth";
-import { timed } from "@/lib/perf";
+import { perfCount, timed } from "@/lib/perf";
 
 export type CurrentUser = {
   id: string;
@@ -19,7 +19,8 @@ export type CurrentUser = {
  */
 export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   try {
-    const session = await timed("getSession", async () =>
+    const n = perfCount("getSession");
+    const session = await timed(`getSession#${n}`, async () =>
       auth.api.getSession({
         headers: await headers(),
       })

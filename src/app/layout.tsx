@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import {
   Playfair_Display,
   Plus_Jakarta_Sans,
@@ -9,7 +10,10 @@ import { LocaleProvider } from "@/i18n/locale-context";
 import { SiteAtmosphere } from "@/components/ui/SiteAtmosphere";
 import { SiteHeader } from "@/components/ui/SiteHeader";
 import { SiteFooter } from "@/components/ui/SiteFooter";
-import { getAuthIdentity } from "@/lib/auth/get-identity";
+import {
+  HeaderAuth,
+  HeaderAuthFallback,
+} from "@/components/ui/HeaderAuth";
 import { LEGAL_SITE_URL } from "@/data/legal/constants";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -40,13 +44,19 @@ export const metadata: Metadata = {
     "Plateforme interactive pour apprendre l'IA par la pratique. Progresse à travers des Royaumes, résous des missions et construis de vrais systèmes.",
 };
 
-export default async function RootLayout({
+/** Run serverless functions near Neon (eu-central-1), not us-east by default. */
+export const preferredRegion = "fra1";
+
+/**
+ * Root layout must NOT await getAuthIdentity().
+ * Auth chrome streams via Suspense so /skills and other pages are not blocked
+ * by Better Auth + Neon profile/progress (~1.5s+ when sequential on cold path).
+ */
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const identity = await getAuthIdentity();
-
   return (
     <html
       lang="fr"
@@ -58,7 +68,13 @@ export default async function RootLayout({
         <div className="relative z-10 flex min-h-0 flex-1 flex-col">
           <LocaleProvider>
             <ProgressProvider>
-              <SiteHeader identity={identity} />
+              <SiteHeader
+                authSlot={
+                  <Suspense fallback={<HeaderAuthFallback />}>
+                    <HeaderAuth />
+                  </Suspense>
+                }
+              />
               <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
               <SiteFooter />
             </ProgressProvider>

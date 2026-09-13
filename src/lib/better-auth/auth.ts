@@ -29,8 +29,13 @@ export const auth = betterAuth({
     },
   },
   // OAuth-only accounts: allow delete without password when session is present.
+  // cookieCache: avoid a Neon round-trip on every RSC navigation (signed cookie).
   session: {
     freshAge: 0,
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60,
+    },
   },
   user: {
     deleteUser: {

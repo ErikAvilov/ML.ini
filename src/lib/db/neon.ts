@@ -34,10 +34,19 @@ function resolveRuntimeConnectionString(): string {
 
 /**
  * Neon pooled endpoints reject startup `options=search_path`.
- * Patch Pool.connect so every checkout SETs search_path before use.
+ * SET search_path once per physical connection (not on every checkout).
  */
 function withSearchPath(pool: Pool, schema: string): Pool {
+  const prepared = new WeakSet<object>();
   const originalConnect = pool.connect.bind(pool);
+
+  async function prepare(client: PoolClient): Promise<PoolClient> {
+    if (!prepared.has(client)) {
+      await client.query(`SET search_path TO ${schema}`);
+      prepared.add(client);
+    }
+    return client;
+  }
 
   function connect(): Promise<PoolClient>;
   function connect(
@@ -61,7 +70,7 @@ function withSearchPath(pool: Pool, schema: string): Pool {
           return;
         }
         try {
-          await client.query(`SET search_path TO ${schema}`);
+          await prepare(client);
           callback(undefined, client, done);
         } catch (setErr) {
           done();
@@ -71,10 +80,7 @@ function withSearchPath(pool: Pool, schema: string): Pool {
       return;
     }
 
-    return originalConnect().then(async (client) => {
-      await client.query(`SET search_path TO ${schema}`);
-      return client;
-    });
+    return originalConnect().then((client) => prepare(client));
   }
 
   pool.connect = connect as Pool["connect"];
