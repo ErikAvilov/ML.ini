@@ -13,13 +13,6 @@ function store(): Store {
   return g.__mliniPerf;
 }
 
-/** Reset counters at the start of a diagnostic request (optional). */
-export function perfReset(): void {
-  const s = store();
-  s.getSession = 0;
-  s.profileProgress = 0;
-}
-
 export function perfCount(kind: keyof Store): number {
   const s = store();
   s[kind] += 1;

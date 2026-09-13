@@ -1,3 +1,8 @@
+/**
+ * HISTORICAL / ADMIN — INTENTIONALLY RETAINED
+ * One-off schema inspector for Supabase → Neon migration audits.
+ * Not wired into package.json; not part of runtime or CI.
+ */
 import dns from "node:dns";
 dns.setDefaultResultOrder("ipv4first");
 

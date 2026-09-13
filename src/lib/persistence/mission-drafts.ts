@@ -36,10 +36,3 @@ export function saveMissionDraft(missionId: string, instruction: string): void {
   }
   writeAll(map);
 }
-
-export function clearMissionDraft(missionId: string): void {
-  const map = readAll();
-  if (!(missionId in map)) return;
-  delete map[missionId];
-  writeAll(map);
-}

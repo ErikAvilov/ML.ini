@@ -4,7 +4,6 @@ export const LEGAL_SITE_URL = "https://mlini.dev";
 
 /** Fixed revision date — update intentionally when policies change. */
 export const LEGAL_LAST_UPDATED_LABEL = "13 septembre 2026";
-export const LEGAL_LAST_UPDATED_ISO = "2026-09-13";
 
 export const LEGAL_OPERATOR = {
   productName: "MLINI",

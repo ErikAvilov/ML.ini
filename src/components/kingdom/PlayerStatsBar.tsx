@@ -17,7 +17,6 @@ export function PlayerStatsBar() {
         current={ready ? xp.current : 0}
         needed={xp.needed}
         level={ready ? xp.level : 1}
-        animateKey={progress.xp}
       />
       <div className="flex items-center gap-1.5 text-sm">
         <Sparkles className="h-4 w-4 text-ml-accent" />

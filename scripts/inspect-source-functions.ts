@@ -1,3 +1,8 @@
+/**
+ * HISTORICAL / ADMIN — INTENTIONALLY RETAINED
+ * One-off inspector for Supabase source function definitions during migration.
+ * Not wired into package.json; not part of runtime or CI.
+ */
 import { createSupabaseSourcePool } from "./lib/pg-migration";
 
 async function main() {

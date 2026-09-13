@@ -33,16 +33,6 @@ export function getMissions(locale: Locale = DEFAULT_LOCALE): MissionDefinition[
   return factories.map((create) => create(locale));
 }
 
-/** Core Kingdom challenges (excludes intro). */
-export function getCoreMissions(
-  locale: Locale = DEFAULT_LOCALE
-): MissionDefinition[] {
-  return getMissions(locale).filter((m) => m.kind !== "intro");
-}
-
-/** @deprecated Prefer getMissions(locale) — kept for static params (slugs are locale-invariant). */
-export const missions = getMissions(DEFAULT_LOCALE);
-
 export function getMissionBySlug(
   slug: string,
   locale: Locale = DEFAULT_LOCALE

@@ -7,17 +7,20 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:unit": "npx tsx scripts/check-safe-next.ts && npx tsx scripts/check-username.ts && npx tsx scripts/check-cloud-progression.ts && npx tsx scripts/check-account-delete.ts && npx tsx scripts/check-migration-transform.ts && npx tsx scripts/check-github-auth.ts && npx tsx scripts/check-n8n-user-created.ts",
+    "test:unit": "npx tsx scripts/check-safe-next.ts && npx tsx scripts/check-username.ts && npx tsx scripts/check-cloud-progression.ts && npx tsx scripts/check-account-delete.ts && npx tsx scripts/check-migration-transform.ts && npx tsx scripts/check-github-auth.ts && npx tsx scripts/check-n8n-user-created.ts && npx tsx scripts/check-code-fill.ts && npx tsx scripts/check-mission-04-json.ts && npx tsx scripts/check-progression-celebrations.ts",
+    "db:check:neon": "npx tsx --env-file=.env --env-file=.env.local scripts/check-neon-phase2.ts",
     "db:migrate:neon:delivery": "npx tsx --env-file=.env --env-file=.env.local scripts/apply-neon-migrations.ts --only=004",
     "db:ensure-better-auth-schema": "npx tsx --env-file=.env --env-file=.env.local scripts/ensure-better-auth-schema.ts",
     "db:migrate:neon": "npx tsx --env-file=.env --env-file=.env.local scripts/apply-neon-migrations.ts --only=001",
     "db:migrate:neon:triggers": "npx tsx --env-file=.env --env-file=.env.local scripts/apply-neon-migrations.ts --only=002",
+    "db:migrate:neon:username": "npx tsx --env-file=.env --env-file=.env.local scripts/apply-neon-migrations.ts --only=003",
     "migrate:supabase-to-neon:dry": "npx tsx --env-file=.env --env-file=.env.local scripts/migrate-supabase-to-neon.ts --dry-run",
     "migrate:supabase-to-neon": "npx tsx --env-file=.env --env-file=.env.local scripts/migrate-supabase-to-neon.ts --apply --install-triggers",
     "auth:generate": "BETTER_AUTH_USE_DIRECT=1 npx auth@latest generate --config src/lib/better-auth/auth.ts --output db/better-auth-schema.sql -y",
     "auth:migrate": "BETTER_AUTH_USE_DIRECT=1 npx auth@latest migrate --config src/lib/better-auth/auth.ts --yes",
     "auth:verify": "npx tsx --env-file=.env --env-file=.env.local scripts/verify-better-auth-neon.ts",
-    "eval:batch": "tsx --env-file=.env scripts/run-batch-eval.ts"
+    "eval:batch": "npx tsx --env-file=.env scripts/run-batch-eval.ts",
+    "perf:neon-pool": "MLINI_PERF_LOG=1 npx tsx --env-file=.env --env-file=.env.local scripts/check-profil-perf.ts"
   },
   "dependencies": {
     "@google/genai": "^2.21.0",
@@ -42,6 +45,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
     "tailwindcss": "^4",
+    "tsx": "^4.20.5",
     "typescript": "^5"
   }
 }

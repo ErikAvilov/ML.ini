@@ -3,7 +3,6 @@
  * Used by completion UI to show progression over time.
  */
 import type { Locale } from "@/i18n/config";
-import type { MildredCapabilityUnlock } from "@/lib/types";
 
 export const MILDRED_CAPABILITY_CATALOG: Record<
   string,
@@ -34,20 +33,3 @@ export const MILDRED_CAPABILITY_CATALOG: Record<
     status: "ONLINE",
   },
 };
-
-export function resolveCapabilities(
-  ids: string[],
-  locale: Locale
-): MildredCapabilityUnlock[] {
-  return ids
-    .map((id) => {
-      const entry = MILDRED_CAPABILITY_CATALOG[id];
-      if (!entry) return null;
-      return {
-        id,
-        label: entry.label[locale],
-        status: entry.status,
-      };
-    })
-    .filter((c): c is MildredCapabilityUnlock => Boolean(c));
-}

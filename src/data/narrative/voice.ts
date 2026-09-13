@@ -1,36 +1,4 @@
 import type { Locale } from "@/i18n/config";
-import {
-  COMPANY_LEGAL,
-  COMPANY_SHORT,
-  DIVISION,
-  FROM_LABEL,
-  INCOMING_ASSIGNMENT,
-  LEAD,
-  PROJECT_LABEL,
-  TEAM_AUTOMATION,
-} from "@/data/narrative/canon";
-
-export interface NarrativeHeaderContent {
-  company: string;
-  division: string;
-  project: string;
-  assignmentLabel: string;
-  fromLabel: string;
-  fromName: string;
-  fromTitle: string;
-}
-
-export function getNarrativeHeader(locale: Locale): NarrativeHeaderContent {
-  return {
-    company: COMPANY_LEGAL,
-    division: DIVISION[locale],
-    project: PROJECT_LABEL,
-    assignmentLabel: INCOMING_ASSIGNMENT[locale],
-    fromLabel: FROM_LABEL[locale],
-    fromName: LEAD.fullName,
-    fromTitle: LEAD.title[locale],
-  };
-}
 
 /** Répliques Mira — Mission 01 (format invalide uniquement) */
 export function getMiraFormatFailLines(locale: Locale): string[] {
@@ -77,5 +45,3 @@ export function getMiraSuccessLinesMission02(locale: Locale): string[] {
     "Tu as rendu les règles plus claires.",
   ];
 }
-
-export { COMPANY_SHORT, TEAM_AUTOMATION, LEAD };

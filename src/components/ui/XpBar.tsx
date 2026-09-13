@@ -6,7 +6,6 @@ interface XpBarProps {
   current: number;
   needed: number;
   level: number;
-  animateKey?: string | number;
 }
 
 export function XpBar({ current, needed, level }: XpBarProps) {
