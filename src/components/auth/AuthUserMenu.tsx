@@ -99,6 +99,8 @@ export function AuthUserMenu({ identity }: AuthUserMenuProps) {
     router.refresh();
   }
 
+  const inApp = pathname.startsWith("/app");
+
   const items: MenuItem[] = [
     {
       kind: "link",
@@ -111,17 +113,17 @@ export function AuthUserMenu({ identity }: AuthUserMenuProps) {
     {
       kind: "link",
       id: "kingdom",
-      href: "/royaume",
-      label: messages.navKingdoms,
-      match: "/royaume",
+      href: inApp ? "/app" : "/royaume",
+      label: inApp ? messages.navWorld : messages.navKingdoms,
+      match: inApp ? "/app" : "/royaume",
       icon: <Map className="h-4 w-4 shrink-0 opacity-80" aria-hidden />,
     },
     {
       kind: "link",
       id: "skills",
-      href: "/skills",
-      label: messages.navTree,
-      match: "/skills",
+      href: inApp ? "/app/tree" : "/skills",
+      label: inApp ? messages.navSkillTree : messages.navTree,
+      match: inApp ? "/app/tree" : "/skills",
       icon: <GitFork className="h-4 w-4 shrink-0 opacity-80" aria-hidden />,
     },
     {
@@ -279,7 +281,10 @@ export function AuthUserMenu({ identity }: AuthUserMenuProps) {
           <div className="px-1.5 py-0.5">
             {items.map((item, index) => {
               if (item.kind === "link") {
-                const active = pathname.startsWith(item.match);
+                const active =
+                  item.match === "/app"
+                    ? pathname === "/app" || pathname === "/app/"
+                    : pathname.startsWith(item.match);
                 return (
                   <Link
                     key={item.id}

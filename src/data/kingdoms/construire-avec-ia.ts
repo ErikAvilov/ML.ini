@@ -56,6 +56,18 @@ export function getKingdoms(locale: Locale) {
   return [createKingdomConstruireAvecIA(locale)];
 }
 
+/** Lookup by canonical id or slug. */
+export function getKingdomById(
+  kingdomId: string,
+  locale: Locale
+): KingdomDefinition | null {
+  return (
+    getKingdoms(locale).find(
+      (k) => k.id === kingdomId || k.slug === kingdomId
+    ) ?? null
+  );
+}
+
 /** Default FR export for convenience */
 export const kingdomConstruireAvecIA = createKingdomConstruireAvecIA("fr");
 export const kingdoms = [kingdomConstruireAvecIA];

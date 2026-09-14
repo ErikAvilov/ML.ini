@@ -175,9 +175,24 @@
   --color-ml-node-completed: var(--ml-node-completed);
   --color-ml-node-boss: var(--ml-node-boss);
 
+  /* Editorial Cartographic semantics (resolved under [data-theme="editorial-cartographic"]) */
+  --color-ml-canvas: var(--ml-canvas, var(--ml-bg-0));
+  --color-ml-surface-raised: var(--ml-surface-raised, var(--ml-surface-1));
+  --color-ml-surface-inset: var(--ml-surface-inset, var(--ml-bg-0));
+  --color-ml-surface-elevated: var(--ml-surface-elevated, var(--ml-surface-2));
+  --color-ml-text-primary: var(--ml-text-primary, var(--ml-text));
+  --color-ml-text-secondary-sem: var(--ml-text-secondary-sem, var(--ml-text-muted));
+  --color-ml-state-active: var(--ml-state-active, var(--ml-accent));
+  --color-ml-state-active-hover: var(--ml-state-active-hover, var(--ml-accent-muted));
+  --color-ml-state-completed: var(--ml-state-completed, var(--ml-success));
+  --color-ml-state-conceptual: var(--ml-state-conceptual, var(--ml-secondary));
+  --color-ml-state-error: var(--ml-state-error, var(--ml-danger));
+  --color-ml-text-inverse: var(--ml-text-inverse);
+
   --font-sans: var(--font-body);
   --font-display: var(--font-display);
   --font-mono: var(--font-mono);
+  --font-inter: var(--font-inter);
 
   --radius-ml: var(--ml-frame-radius);
   --radius-ml-lg: var(--ml-frame-radius-lg);
@@ -255,6 +270,263 @@ button:disabled,
 @media (prefers-reduced-motion: reduce) {
   .ml-atmosphere__stone {
     filter: saturate(0.4) brightness(0.52) contrast(1.04);
+  }
+}
+
+/* ============================================================
+   Editorial Cartographic — scoped to /app shell
+   Does NOT change :root / adventure-tech (marketing landing).
+   ============================================================ */
+[data-theme="editorial-cartographic"] {
+  --ml-canvas: #0d1117;
+  --ml-surface-raised: #161b22;
+  --ml-surface-inset: #090d12;
+  --ml-surface-elevated: #21262d;
+  --ml-text-primary: #e6edf3;
+  --ml-text-secondary-sem: #8b949e;
+  --ml-state-active: #f59e0b;
+  --ml-state-active-hover: #d97706;
+  --ml-state-completed: #10b981;
+  --ml-state-conceptual: #6366f1;
+  --ml-state-error: #f85149;
+
+  /* Remap legacy --ml-* utilities used inside the app shell */
+  --ml-bg-0: var(--ml-canvas);
+  --ml-bg-1: var(--ml-surface-inset);
+  --ml-surface-1: var(--ml-surface-raised);
+  --ml-surface-2: var(--ml-surface-elevated);
+  --ml-surface-hover: color-mix(in srgb, var(--ml-surface-elevated) 80%, white 6%);
+  --ml-surface-warm: var(--ml-surface-raised);
+  --ml-text: var(--ml-text-primary);
+  --ml-text-body: var(--ml-text-secondary-sem);
+  --ml-text-secondary: var(--ml-text-secondary-sem);
+  --ml-text-muted: var(--ml-text-secondary-sem);
+  --ml-text-inverse: #0d1117;
+  --ml-text-on-primary: #0d1117;
+  --ml-border: #30363d;
+  --ml-border-strong: color-mix(in srgb, var(--ml-border) 70%, white 30%);
+  --ml-accent: var(--ml-state-active);
+  --ml-accent-muted: var(--ml-state-active-hover);
+  --ml-accent-soft: color-mix(in srgb, var(--ml-state-active) 14%, transparent);
+  --ml-accent-bright: color-mix(in srgb, var(--ml-state-active) 70%, white 30%);
+  --ml-secondary: var(--ml-state-conceptual);
+  --ml-secondary-muted: color-mix(in srgb, var(--ml-state-conceptual) 70%, black 30%);
+  --ml-secondary-soft: color-mix(in srgb, var(--ml-state-conceptual) 14%, transparent);
+  --ml-success: var(--ml-state-completed);
+  --ml-success-soft: color-mix(in srgb, var(--ml-state-completed) 14%, transparent);
+  --ml-danger: var(--ml-state-error);
+  --ml-danger-soft: color-mix(in srgb, var(--ml-state-error) 14%, transparent);
+  --ml-warning: var(--ml-state-active);
+  --ml-node-active: var(--ml-state-active);
+  --ml-node-completed: var(--ml-state-completed);
+  --ml-node-locked: color-mix(in srgb, var(--ml-border) 80%, transparent);
+  --ml-connection-completed: color-mix(in srgb, var(--ml-state-completed) 42%, transparent);
+  --ml-border-accent: color-mix(in srgb, var(--ml-state-active) 45%, transparent);
+  --ml-frame-focus: var(--ml-border-accent);
+  --ml-frame-radius: 4px;
+  --ml-frame-radius-lg: 8px;
+  --ml-text-base: 0.875rem; /* 14px body */
+  --ml-leading-body: 1.571; /* ~22/14 */
+
+  --background: var(--ml-canvas);
+  --foreground: var(--ml-text-primary);
+  --ink: var(--ml-canvas);
+  --panel: var(--ml-surface-raised);
+  --panel-elevated: var(--ml-surface-elevated);
+  --line: var(--ml-border);
+  --fog: var(--ml-text-primary);
+  --mist: var(--ml-text-secondary-sem);
+  --signal: var(--ml-state-active);
+  --danger: var(--ml-state-error);
+}
+
+/* App shell surface: Inter body, Jakarta headings via .font-display → --font-body */
+.ml-app {
+  background-color: var(--ml-canvas);
+  color: var(--ml-text-body);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: var(--ml-text-base);
+  line-height: var(--ml-leading-body);
+  /* Opaque fill — never let marketing atmosphere show through */
+  isolation: isolate;
+}
+
+.ml-app .font-display {
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+.ml-app :focus-visible {
+  outline: 2px solid var(--ml-state-active);
+  outline-offset: 2px;
+}
+
+/* Restrained cartographic motif for the active Kingdom surface */
+.ml-world-active-surface {
+  position: relative;
+  overflow: hidden;
+  background-color: color-mix(
+    in srgb,
+    var(--ml-state-active) 6%,
+    var(--ml-surface-raised)
+  );
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--ml-border) 35%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--ml-border) 35%, transparent) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      ellipse 80% 60% at 12% 0%,
+      color-mix(in srgb, var(--ml-state-active) 10%, transparent),
+      transparent 55%
+    );
+  background-size:
+    24px 24px,
+    24px 24px,
+    100% 100%;
+  background-position: 0 0, 0 0, 0 0;
+}
+
+.ml-world-active-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: repeating-linear-gradient(
+    -18deg,
+    transparent 0 11px,
+    color-mix(in srgb, var(--ml-border) 22%, transparent) 11px 12px
+  );
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.55), transparent 70%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-world-active-surface {
+    background-image:
+      linear-gradient(
+        color-mix(in srgb, var(--ml-border) 28%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--ml-border) 28%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 24px 24px, 24px 24px;
+  }
+
+  .ml-world-active-surface::before {
+    opacity: 0.2;
+  }
+}
+
+/* Kingdom pathway — restrained cartographic surface */
+.ml-kingdom-path-surface {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--ml-surface-1);
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--ml-border) 28%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--ml-border) 28%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 28px 28px, 28px 28px;
+}
+
+.ml-kingdom-path-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.28;
+  background-image: repeating-linear-gradient(
+    -16deg,
+    transparent 0 13px,
+    color-mix(in srgb, var(--ml-border) 18%, transparent) 13px 14px
+  );
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent 75%);
+}
+
+.ml-kingdom-current-surface {
+  position: relative;
+  overflow: hidden;
+  background-color: color-mix(
+    in srgb,
+    var(--ml-state-active) 7%,
+    var(--ml-surface-raised)
+  );
+  background-image: radial-gradient(
+    ellipse 70% 55% at 8% 0%,
+    color-mix(in srgb, var(--ml-state-active) 12%, transparent),
+    transparent 58%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-kingdom-path-surface::before {
+    opacity: 0.15;
+  }
+
+  .ml-kingdom-current-surface {
+    background-image: none;
+  }
+}
+
+/* Mission — restrained technical surfaces (less cartography than World/Kingdom) */
+.ml-mission-learn {
+  background-color: var(--ml-surface-raised, var(--ml-bg-1));
+}
+
+.ml-mission-workspace {
+  background-color: var(--ml-canvas, var(--ml-bg-0));
+}
+
+.ml-mission-workspace-grid {
+  background-color: var(--ml-canvas, var(--ml-bg-0));
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--ml-border) 22%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--ml-border) 22%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 20px 20px, 20px 20px;
+}
+
+.ml-mission-section-label {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ml-text-muted);
+}
+
+.ml-mission-callout-objective {
+  border-left: 2px solid var(--ml-state-active);
+  background: color-mix(in srgb, var(--ml-state-active) 6%, transparent);
+}
+
+.ml-mission-callout-inset {
+  border-top: 1px solid color-mix(in srgb, var(--ml-border) 80%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--ml-border) 80%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-mission-workspace-grid {
+    background-image: none;
   }
 }
 

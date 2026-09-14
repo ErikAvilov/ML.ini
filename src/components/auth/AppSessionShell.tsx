@@ -38,7 +38,9 @@ export async function AppSessionShell({ children }: { children: ReactNode }) {
         <SiteHeader
           authSlot={<HeaderAuthFromSession session={session} />}
         />
-        <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
+        <main className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+          {children}
+        </main>
         <SiteFooter />
       </ProgressProvider>
     </AuthProgressProvider>

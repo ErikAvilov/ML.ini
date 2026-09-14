@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { MissionNavBar } from "@/components/mission/MissionNavBar";
+import { MissionChromeBar } from "@/components/mission/MissionChromeBar";
+import { useMissionRoutes } from "@/components/mission/MissionRouteProvider";
 import { MiraMessage } from "@/components/mission/MiraMessage";
 import { useEffectiveProgress } from "@/lib/use-effective-progress";
 import { requestCloudCompletion } from "@/lib/missions/cloud-completion-client";
@@ -30,6 +31,7 @@ export function MissionIntro({
   identity = null,
 }: MissionIntroProps) {
   const router = useRouter();
+  const routes = useMissionRoutes();
   const { completeMissionAndUnlock, markMissionPlayed } = useEffectiveProgress();
   const { locale, messages } = useLocale();
   const intro = mission.intro;
@@ -37,7 +39,7 @@ export function MissionIntro({
 
   if (!intro) return null;
 
-  const nextHref = `/missions/${intro.nextSlug}`;
+  const nextHref = routes.missionHref(intro.nextSlug);
   const ctaLabel = intro.ctaLabel || messages.introCompleteCta;
   const sections = intro.sections;
 
@@ -63,19 +65,19 @@ export function MissionIntro({
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden">
-      <MissionNavBar
+      <MissionChromeBar
         mission={mission}
         missions={missions}
         identity={identity}
       />
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <div className="min-h-0 flex-1 overflow-y-auto bg-ml-canvas">
         <div className="mx-auto flex max-w-2xl flex-col gap-5 px-5 py-6 sm:px-8 sm:py-8">
           <header>
-            <p className="font-mono text-[11px] tracking-[0.14em] text-ml-reward uppercase">
+            <p className="ml-mission-section-label text-ml-state-active">
               {messages.introLabel}
             </p>
-            <h1 className="mt-1 font-display text-[1.875rem] leading-tight text-ml-text sm:text-[2rem]">
+            <h1 className="mt-1 font-display text-[1.875rem] font-semibold leading-tight tracking-tight text-ml-text-primary sm:text-[2rem]">
               {mission.title}
             </h1>
             {mission.brief && (
@@ -85,17 +87,16 @@ export function MissionIntro({
             )}
           </header>
 
-          <ol className="space-y-4">
+          <ol className="space-y-0">
             {sections.map((section, index) => (
               <li
                 key={section.title}
-                className="border border-ml-border bg-ml-surface-1/50 px-3.5 py-3"
-                style={{ borderRadius: "var(--ml-frame-radius)" }}
+                className="border-t border-ml-border/80 py-4"
               >
-                <p className="font-mono text-[11px] tracking-[0.12em] text-ml-accent uppercase">
+                <p className="ml-mission-section-label text-ml-state-active">
                   {String(index + 1).padStart(2, "0")} · {section.title}
                 </p>
-                <div className="mt-2 space-y-1.5 text-[length:var(--ml-text-sm)] leading-snug text-ml-text-body">
+                <div className="mt-2 space-y-1.5 text-[length:var(--ml-text-sm)] leading-relaxed text-ml-text-body">
                   {section.body.map((line) => (
                     <p key={line}>{line}</p>
                   ))}
@@ -106,13 +107,13 @@ export function MissionIntro({
         </div>
       </div>
 
-      <div className="shrink-0 border-t border-ml-border bg-ml-bg-0">
+      <div className="shrink-0 border-t border-ml-border bg-ml-surface-1">
         <div className="mx-auto flex max-w-2xl items-center justify-center px-5 py-3 sm:px-8">
           <Link
             href={nextHref}
             onClick={() => void startMission01()}
             aria-disabled={saving}
-            className="inline-flex items-center justify-center bg-ml-accent px-4 py-2.5 text-[length:var(--ml-text-sm)] font-medium text-[var(--ml-text-on-primary)] hover:bg-ml-accent-bright"
+            className="inline-flex items-center justify-center border border-ml-state-active bg-ml-state-active px-4 py-2.5 text-[length:var(--ml-text-sm)] font-semibold text-ml-text-inverse hover:bg-ml-state-active-hover"
             style={{ borderRadius: "var(--ml-frame-radius)" }}
           >
             {ctaLabel}

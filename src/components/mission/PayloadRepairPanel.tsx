@@ -109,23 +109,20 @@ export function PayloadRepairPanel({
   }
 
   return (
-    <section
-      className="border border-[color-mix(in_srgb,var(--ml-accent)_35%,var(--ml-border))] bg-[color-mix(in_srgb,var(--ml-accent)_6%,transparent)] px-3 py-2.5"
-      style={{ borderRadius: "var(--ml-frame-radius)" }}
-    >
+    <section className="ml-mission-callout-objective px-3 py-3">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <p className="font-mono text-[11px] tracking-[0.14em] text-ml-accent uppercase">
+        <p className="ml-mission-section-label text-ml-state-active">
           {task.title}
         </p>
         <p
-          className={`font-mono text-[11px] tracking-[0.08em] uppercase ${
-            passed ? "text-ml-accent" : "text-ml-text-muted"
+          className={`font-mono text-[11px] tracking-[0.06em] uppercase ${
+            passed ? "text-ml-state-completed" : "text-ml-text-muted"
           }`}
         >
           {passed ? `✓ ${task.passLabel}` : task.checkLabel}
         </p>
       </div>
-      <p className="mt-1.5 text-[length:var(--ml-text-sm)] leading-snug text-ml-text-body">
+      <p className="mt-1.5 text-[length:var(--ml-text-sm)] leading-relaxed text-ml-text-body">
         {task.description}
       </p>
       <textarea
@@ -137,7 +134,7 @@ export function PayloadRepairPanel({
         }}
         spellCheck={false}
         rows={6}
-        className="mt-2 w-full resize-y border border-ml-border bg-ml-bg-0/70 px-2.5 py-2 font-mono text-[12px] leading-snug text-ml-text outline-none focus:border-ml-accent"
+        className="mt-2 w-full resize-y border border-ml-border bg-ml-surface-inset px-2.5 py-2 font-mono text-[12px] leading-snug text-ml-text-primary outline-none focus:border-ml-state-active"
         style={{ borderRadius: "var(--ml-frame-radius)" }}
         aria-label={task.title}
       />
@@ -160,7 +157,7 @@ export function PayloadRepairPanel({
         )}
       </div>
       {feedback && (
-        <p className="mt-2 border-l-2 border-ml-danger pl-2.5 text-[length:var(--ml-text-sm)] text-ml-danger">
+        <p className="mt-2 border-l-2 border-ml-state-error pl-2.5 text-[length:var(--ml-text-sm)] text-ml-state-error">
           {feedback}
         </p>
       )}

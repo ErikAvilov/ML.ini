@@ -9,7 +9,7 @@ export function SiteFooter() {
   const pathname = usePathname();
   const { messages } = useLocale();
 
-  if (pathname.startsWith("/missions/")) {
+  if (pathname.startsWith("/missions/") || pathname.startsWith("/app")) {
     return null;
   }
 

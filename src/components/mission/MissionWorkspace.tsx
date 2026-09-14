@@ -8,8 +8,9 @@ import { Lock } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { MissionIntro } from "@/components/mission/MissionIntro";
 import { MissionBriefing } from "@/components/mission/MissionBriefing";
-import { MissionNavBar } from "@/components/mission/MissionNavBar";
-import { MissionPlayground } from "@/components/mission/MissionPlayground";
+import { MissionChromeBar } from "@/components/mission/MissionChromeBar";
+import { MissionRouteProvider, useMissionRoutes } from "@/components/mission/MissionRouteProvider";
+import { WorkspaceHost } from "@/components/mission/workspace/WorkspaceHost";
 import type { SuccessToastData } from "@/components/mission/SuccessToast";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { useEffectiveProgress } from "@/lib/use-effective-progress";
@@ -33,12 +34,16 @@ import {
   readSessionSolution,
   requestCloudCompletion,
 } from "@/lib/missions/cloud-completion-client";
+import {
+  resolveMissionRoutes,
+  type MissionRouteInput,
+} from "@/lib/missions/mission-routes";
+import { resolveWorkspaceKind } from "@/lib/missions/resolve-workspace-kind";
 import { useLocale } from "@/i18n/locale-context";
 import { getMissionBySlug, getMissions } from "@/data/missions";
 import { createKingdomConstruireAvecIA } from "@/data/kingdoms/construire-avec-ia";
 import type {
   ClassificationResult,
-  CodeFillMode,
   MissionDefinition,
 } from "@/lib/types";
 import type { Locale } from "@/i18n/config";
@@ -62,27 +67,47 @@ const ProgressionPopup = dynamic(
 type Stage = "idle" | "input" | "instruction" | "model" | "output";
 type MobileTab = "brief" | "workspace";
 
-function resolveCodeFillMode(
-  mission: MissionDefinition
-): CodeFillMode | null {
-  if (!mission.codeFill) return null;
-  return mission.codeFill.mode;
-}
-
 interface MissionWorkspaceProps {
   missionSlug: string;
   isAuthenticated?: boolean;
   identity?: AuthIdentity | null;
+  /** Serializable routing — defaults to legacy `/missions` + `/royaume`. */
+  routes?: MissionRouteInput;
 }
 
 export function MissionWorkspace({
   missionSlug,
   isAuthenticated = false,
   identity = null,
+  routes: routesInput,
 }: MissionWorkspaceProps) {
+  const routes = useMemo(
+    () => resolveMissionRoutes(routesInput),
+    // routesInput is a small serializable plain object from the server page
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- chrome + kingdomId are the identity
+    [routesInput?.chrome, routesInput?.kingdomId]
+  );
+
+  return (
+    <MissionRouteProvider value={routes}>
+      <MissionWorkspaceInner
+        missionSlug={missionSlug}
+        isAuthenticated={isAuthenticated}
+        identity={identity}
+      />
+    </MissionRouteProvider>
+  );
+}
+
+function MissionWorkspaceInner({
+  missionSlug,
+  isAuthenticated = false,
+  identity = null,
+}: Omit<MissionWorkspaceProps, "routes">) {
   const { progress, ready, authStatus, identity: liveIdentity } =
     useEffectiveProgress();
   const { locale, messages } = useLocale();
+  const routes = useMissionRoutes();
   const resolvedAuth =
     authStatus === "authenticated"
       ? true
@@ -132,7 +157,7 @@ export function MissionWorkspace({
 
     return (
       <div className="flex h-full min-h-0 flex-col overflow-hidden">
-        <MissionNavBar
+        <MissionChromeBar
           mission={mission}
           missions={missions}
           identity={resolvedIdentity}
@@ -151,11 +176,11 @@ export function MissionWorkspace({
             <p className="mt-3 text-sm text-mist">{lockedCopy}</p>
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
               {prior && (
-                <Link href={`/missions/${prior.slug}`}>
+                <Link href={routes.missionHref(prior.slug)}>
                   <Button variant="secondary">{messages.prevMission}</Button>
                 </Link>
               )}
-              <Link href="/royaume">
+              <Link href={routes.kingdomHref}>
                 <Button variant="primary">{messages.backToKingdom}</Button>
               </Link>
             </div>
@@ -176,6 +201,16 @@ export function MissionWorkspace({
         identity={resolvedIdentity}
       />
     );
+  }
+
+  const workspaceKind = resolveWorkspaceKind(mission).kind;
+  if (workspaceKind === "unsupported") {
+    if (process.env.NODE_ENV === "development") {
+      console.error(
+        "[MissionWorkspace] unsupported workspace kind",
+        mission.id
+      );
+    }
   }
 
   return (
@@ -212,6 +247,7 @@ function MissionSession({
   identity = null,
 }: MissionSessionProps) {
   const router = useRouter();
+  const routes = useMissionRoutes();
   const {
     progress,
     completeMissionAndUnlock,
@@ -316,7 +352,9 @@ function MissionSession({
     saveMissionDraft(mission.id, instruction);
   }, [mission.id, mission.codeFill, instruction]);
 
-  const fillMode = resolveCodeFillMode(mission);
+  const workspace = resolveWorkspaceKind(mission);
+  const fillMode =
+    workspace.kind === "code-fill" ? workspace.codeFillMode ?? null : null;
   const isLogic = fillMode === "logic";
   const isAiIntegration = fillMode === "ai-integration";
 
@@ -393,7 +431,9 @@ function MissionSession({
       leveledUp,
       newLevel: leveledUp ? after.level : null,
       replay: wasCleared,
-      nextMissionHref: nextMission ? `/missions/${nextMission.slug}` : null,
+      nextMissionHref: nextMission
+        ? routes.missionHref(nextMission.slug)
+        : null,
       nextMissionTitle: nextMission?.shortTitle ?? nextMission?.title ?? null,
     });
   }
@@ -655,7 +695,7 @@ function MissionSession({
         const st = getMissionStatus(prev.id, progress, prev.order);
         if (st === "locked") return;
         e.preventDefault();
-        router.push(`/missions/${prev.slug}`);
+        router.push(routes.missionHref(prev.slug));
         return;
       }
 
@@ -666,13 +706,13 @@ function MissionSession({
         const st = getMissionStatus(next.id, progress, next.order);
         if (st === "locked") return;
         e.preventDefault();
-        router.push(`/missions/${next.slug}`);
+        router.push(routes.missionHref(next.slug));
       }
     }
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [mission.order, missions, progress, router]);
+  }, [mission.order, missions, progress, router, routes]);
 
   async function handleRunBatch() {
     if (running || tests.length === 0) return;
@@ -809,20 +849,20 @@ function MissionSession({
   return (
     <MotionProvider>
     <div className="flex h-full min-h-0 flex-col overflow-hidden">
-      <MissionNavBar
+      <MissionChromeBar
         mission={mission}
         missions={missions}
         identity={identity}
       />
 
-      <div className="flex shrink-0 border-b border-ml-border lg:hidden">
+      <div className="flex shrink-0 border-b border-ml-border bg-ml-surface-1 lg:hidden">
         <button
           type="button"
           onClick={() => setMobileTab("brief")}
           className={`flex-1 cursor-pointer py-2.5 text-[length:var(--ml-text-sm)] font-medium transition ${
             mobileTab === "brief"
-              ? "border-b-2 border-ml-accent text-ml-text"
-              : "text-ml-text-muted hover:bg-ml-surface-hover hover:text-ml-text"
+              ? "border-b-2 border-ml-state-active text-ml-text-primary"
+              : "text-ml-text-muted hover:bg-ml-surface-hover hover:text-ml-text-primary"
           }`}
         >
           {messages.briefTab}
@@ -832,8 +872,8 @@ function MissionSession({
           onClick={() => setMobileTab("workspace")}
           className={`flex-1 cursor-pointer py-2.5 text-[length:var(--ml-text-sm)] font-medium transition ${
             mobileTab === "workspace"
-              ? "border-b-2 border-ml-accent text-ml-text"
-              : "text-ml-text-muted hover:bg-ml-surface-hover hover:text-ml-text"
+              ? "border-b-2 border-ml-state-active text-ml-text-primary"
+              : "text-ml-text-muted hover:bg-ml-surface-hover hover:text-ml-text-primary"
           }`}
         >
           {messages.workspaceTab}
@@ -844,11 +884,11 @@ function MissionSession({
         className={`grid min-h-0 flex-1 ${
           fillMode
             ? "lg:grid-cols-[minmax(0,38fr)_minmax(0,62fr)]"
-            : "lg:grid-cols-[minmax(0,40fr)_minmax(0,60fr)]"
+            : "lg:grid-cols-[minmax(0,42fr)_minmax(0,58fr)]"
         }`}
       >
         <aside
-          className={`min-h-0 min-w-0 overflow-y-auto border-r border-ml-border bg-ml-bg-1 px-4 py-3.5 sm:px-5 sm:py-4 ${
+          className={`ml-mission-learn min-h-0 min-w-0 overflow-y-auto border-r border-ml-border px-4 py-4 sm:px-5 sm:py-5 ${
             mobileTab === "brief" ? "block" : "hidden lg:block"
           }`}
         >
@@ -875,7 +915,8 @@ function MissionSession({
             mobileTab === "workspace" ? "block" : "hidden lg:block"
           } ${mobileTab === "workspace" ? "overflow-y-auto lg:overflow-hidden" : "overflow-hidden"}`}
         >
-          <MissionPlayground
+          <WorkspaceHost
+            mission={mission}
             showcaseMessage={showcase}
             activeMessage={activeMessage}
             instruction={instruction}
@@ -901,20 +942,6 @@ function MissionSession({
             showSuccess={
               Boolean(successToast) || Boolean(activeCelebration)
             }
-            exerciseMode={
-              fillMode === "logic"
-                ? "logic"
-                : fillMode === "ai-integration"
-                  ? "ai-integration"
-                  : "prompt"
-            }
-            canRun={
-              fillMode === "logic" || fillMode === "ai-integration"
-                ? codeFillPassed
-                : undefined
-            }
-            missionId={mission.id}
-            codeFill={mission.codeFill}
             codeFillPassed={codeFillPassed}
             onCodeFillPassedChange={onCodeFillPassedChange}
           />

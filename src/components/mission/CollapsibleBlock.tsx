@@ -6,7 +6,7 @@ interface CollapsibleBlockProps {
   title: string;
   children: ReactNode;
   defaultOpen?: boolean;
-  /** Visual weight: secondary = blue-grey muted */
+  /** Visual weight: secondary = muted prior knowledge */
   tone?: "secondary" | "default";
 }
 
@@ -19,21 +19,20 @@ export function CollapsibleBlock({
 }: CollapsibleBlockProps) {
   return (
     <details
-      className={`group border border-ml-border bg-ml-bg-1/30 ${
+      className={`group border-t border-ml-border/80 ${
         tone === "secondary" ? "text-ml-text-muted" : "text-ml-text-body"
       }`}
-      style={{ borderRadius: "var(--ml-frame-radius)" }}
       {...(defaultOpen ? { open: true } : {})}
     >
-      <summary className="cursor-pointer list-none px-3 py-2 font-mono text-[11px] tracking-[0.1em] text-ml-secondary uppercase marker:content-none [&::-webkit-details-marker]:hidden">
+      <summary className="cursor-pointer list-none py-2.5 font-mono text-[11px] tracking-[0.06em] text-ml-text-muted uppercase marker:content-none [&::-webkit-details-marker]:hidden">
         <span className="inline-flex items-center gap-1.5">
-          <span className="text-ml-secondary transition group-open:rotate-90">
+          <span className="text-ml-text-muted transition group-open:rotate-90">
             ▸
           </span>
           {title}
         </span>
       </summary>
-      <div className="border-t border-ml-border px-3 py-2.5 text-[length:var(--ml-text-sm)] leading-snug text-ml-text-body">
+      <div className="pb-3 text-[length:var(--ml-text-sm)] leading-relaxed text-ml-text-body">
         {children}
       </div>
     </details>

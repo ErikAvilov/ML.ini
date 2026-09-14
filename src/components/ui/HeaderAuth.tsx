@@ -9,8 +9,11 @@ import { xpProgressInLevel } from "@/lib/validation";
 /** Header auth from an already-resolved AppSessionState (no extra getSession). */
 export async function HeaderAuthFromSession({
   session,
+  /** When false, omit XP chip (e.g. AppHeader already shows effective progress). */
+  showProgress = true,
 }: {
   session: AppSessionState;
+  showProgress?: boolean;
 }) {
   const messages = getCommonMessages(await getRequestLocale());
 
@@ -26,26 +29,28 @@ export async function HeaderAuthFromSession({
 
   return (
     <>
-      <div
-        className="hidden items-center gap-2.5 border border-ml-border bg-ml-surface-1 px-2.5 py-1.5 sm:flex"
-        style={{ borderRadius: "var(--ml-frame-radius)" }}
-      >
-        <span className="font-mono text-[length:var(--ml-text-xs)] font-semibold text-ml-secondary">
-          {levelLabel}
-        </span>
-        <span className="text-ml-border-strong">·</span>
-        <div className="flex items-center gap-2">
-          <div className="h-1 w-14 overflow-hidden rounded-full bg-ml-border">
-            <div
-              className="h-full rounded-full bg-ml-accent transition-all"
-              style={{ width: `${pct}%` }}
-            />
-          </div>
-          <span className="font-mono text-[11px] text-ml-text-muted">
-            {xpLabel}
+      {showProgress ? (
+        <div
+          className="hidden items-center gap-2.5 border border-ml-border bg-ml-surface-1 px-2.5 py-1.5 sm:flex"
+          style={{ borderRadius: "var(--ml-frame-radius)" }}
+        >
+          <span className="font-mono text-[length:var(--ml-text-xs)] font-semibold text-ml-secondary">
+            {levelLabel}
           </span>
+          <span className="text-ml-border-strong">·</span>
+          <div className="flex items-center gap-2">
+            <div className="h-1 w-14 overflow-hidden rounded-full bg-ml-border">
+              <div
+                className="h-full rounded-full bg-ml-accent transition-all"
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+            <span className="font-mono text-[11px] text-ml-text-muted">
+              {xpLabel}
+            </span>
+          </div>
         </div>
-      </div>
+      ) : null}
       <AuthUserMenu identity={session.identity} />
     </>
   );

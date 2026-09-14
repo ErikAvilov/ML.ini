@@ -63,41 +63,44 @@ export function MissionBriefing({
   const previous = briefing.previousRules;
 
   return (
-    <div className="space-y-3.5 text-[length:var(--ml-text-sm)] leading-snug">
-      <header>
+    <div className="space-y-5 text-[length:var(--ml-text-sm)] leading-relaxed text-ml-text-body">
+      <header className="space-y-1">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <p className="font-mono text-[11px] tracking-[0.14em] text-ml-text-muted uppercase">
+          <p className="ml-mission-section-label">
             Mission {String(missionOrder).padStart(2, "0")}
           </p>
-          <p className="font-mono text-[11px] tracking-[0.08em] text-ml-accent uppercase">
+          <p
+            className={`font-mono text-[11px] tracking-[0.06em] uppercase ${
+              alreadyCleared
+                ? "text-ml-state-completed"
+                : "text-ml-state-active"
+            }`}
+          >
             {alreadyCleared
               ? messages.statusClearedReplay
               : messages.statusInProgress}
           </p>
         </div>
-        <h1 className="mt-1 font-display text-[1.75rem] leading-tight text-ml-text sm:text-[1.875rem]">
+        <h1 className="font-display text-[1.625rem] font-semibold leading-tight tracking-tight text-ml-text-primary sm:text-[1.75rem]">
           {missionTitle}
         </h1>
       </header>
 
       {shortBrief ? <MiraMessage message={shortBrief} /> : null}
 
-      <section
-        className="border border-[color-mix(in_srgb,var(--ml-accent)_35%,var(--ml-border))] bg-[color-mix(in_srgb,var(--ml-accent)_8%,transparent)] px-3 py-2.5"
-        style={{ borderRadius: "var(--ml-frame-radius)" }}
-      >
-        <p className="font-mono text-[11px] tracking-[0.14em] text-ml-accent uppercase">
+      <section className="ml-mission-callout-objective px-3 py-3">
+        <p className="ml-mission-section-label text-ml-state-active">
           {messages.objectiveLabel}
         </p>
-        <p className="mt-1 text-[length:var(--ml-text-md)] font-medium leading-snug whitespace-pre-line text-ml-text">
+        <p className="mt-1.5 text-[length:var(--ml-text-base)] font-medium leading-snug whitespace-pre-line text-ml-text-primary">
           {objectiveText}
         </p>
         {briefing.categories && briefing.categories.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1.5">
+          <div className="mt-2.5 flex flex-wrap gap-1.5">
             {briefing.categories.map((category) => (
               <span
                 key={category}
-                className="border border-ml-border-strong bg-ml-bg-1 px-2 py-0.5 font-mono text-[11px] text-ml-text"
+                className="border border-ml-border px-2 py-0.5 font-mono text-[11px] text-ml-text-secondary"
                 style={{ borderRadius: "var(--ml-frame-radius)" }}
               >
                 {category}
@@ -108,26 +111,21 @@ export function MissionBriefing({
       </section>
 
       {briefing.newConcept && (
-        <section
-          className="border border-ml-border bg-ml-surface-1/40 px-3 py-2.5"
-          style={{ borderRadius: "var(--ml-frame-radius)" }}
-        >
-          <p className="font-mono text-[11px] tracking-[0.14em] text-ml-accent uppercase">
-            {briefing.newConcept.title}
-          </p>
+        <section className="ml-mission-callout-inset py-3">
+          <p className="ml-mission-section-label">{briefing.newConcept.title}</p>
           {briefing.newConcept.summary && (
-            <p className="mt-1.5 text-[length:var(--ml-text-sm)] leading-snug text-ml-text-body">
+            <p className="mt-1.5 leading-relaxed text-ml-text-body">
               {briefing.newConcept.summary}
             </p>
           )}
           {briefing.newConcept.example && (
-            <pre className="mt-1.5 overflow-x-auto font-mono text-[12px] leading-snug whitespace-pre-wrap text-ml-text">
+            <pre className="mt-2 overflow-x-auto font-mono text-[12px] leading-snug whitespace-pre-wrap text-ml-text-primary">
               {briefing.newConcept.example}
             </pre>
           )}
           {briefing.newConcept.labels &&
             briefing.newConcept.labels.length > 0 && (
-              <ul className="mt-1.5 space-y-0.5 font-mono text-[11px] text-ml-secondary">
+              <ul className="mt-2 space-y-1 font-mono text-[11px] text-ml-text-muted">
                 {briefing.newConcept.labels.map((label) => (
                   <li key={label}>{label}</li>
                 ))}
@@ -152,23 +150,20 @@ export function MissionBriefing({
 
       {(briefing.expectedFormat ||
         (briefing.contractLines && briefing.contractLines.length > 0)) && (
-        <section
-          className="border border-ml-border bg-ml-bg-1/40 px-3 py-2.5"
-          style={{ borderRadius: "var(--ml-frame-radius)" }}
-        >
-          <p className="font-mono text-[11px] tracking-[0.14em] text-ml-accent uppercase">
+        <section className="space-y-1.5">
+          <p className="ml-mission-section-label">
             {messages.expectedFormatLabel}
           </p>
           {briefing.expectedFormat && (
-            <pre className="mt-1.5 overflow-x-auto font-mono text-[12px] leading-snug whitespace-pre-wrap text-ml-text">
+            <pre className="overflow-x-auto font-mono text-[12px] leading-snug whitespace-pre-wrap text-ml-text-primary">
               {briefing.expectedFormat}
             </pre>
           )}
           {briefing.contractLines && briefing.contractLines.length > 0 && (
-            <ul className="mt-2 space-y-1 font-mono text-[11px] text-ml-text-secondary">
+            <ul className="space-y-1 font-mono text-[11px] text-ml-text-muted">
               {briefing.contractLines.map((line) => (
                 <li key={line.name}>
-                  <span className="text-ml-text">{line.name}</span>
+                  <span className="text-ml-text-primary">{line.name}</span>
                   <span className="text-ml-text-muted"> · </span>
                   {line.values}
                 </li>
@@ -179,39 +174,23 @@ export function MissionBriefing({
       )}
 
       {currentSentiment && (
-        <section
-          className="border border-ml-border bg-ml-surface-1/40 px-3 py-2.5"
-          style={{ borderRadius: "var(--ml-frame-radius)" }}
-        >
-          <p className="font-mono text-[11px] tracking-[0.14em] text-ml-accent uppercase">
-            {currentSentiment.title}
-          </p>
-          <div className="mt-2">
-            <SentimentPolicyBody policy={currentSentiment} />
-          </div>
+        <section className="space-y-2">
+          <p className="ml-mission-section-label">{currentSentiment.title}</p>
+          <SentimentPolicyBody policy={currentSentiment} />
         </section>
       )}
 
       {currentPolicy && (
-        <section
-          className="border border-ml-border bg-ml-surface-1/40 px-3 py-2.5"
-          style={{ borderRadius: "var(--ml-frame-radius)" }}
-        >
-          <p className="font-mono text-[11px] tracking-[0.14em] text-ml-accent uppercase">
-            {currentPolicy.title}
-          </p>
-          <div className="mt-2">
-            <SupportPolicyBody policy={currentPolicy} />
-          </div>
+        <section className="space-y-2">
+          <p className="ml-mission-section-label">{currentPolicy.title}</p>
+          <SupportPolicyBody policy={currentPolicy} />
         </section>
       )}
 
       {briefing.flowSteps && briefing.flowSteps.length > 0 && (
         <section>
-          <p className="font-mono text-[11px] tracking-[0.12em] text-ml-secondary uppercase">
-            {messages.howItWorks}
-          </p>
-          <p className="mt-1 text-[length:var(--ml-text-sm)] text-ml-text">
+          <p className="ml-mission-section-label">{messages.howItWorks}</p>
+          <p className="mt-1 text-ml-text-secondary">
             {briefing.flowSteps.join(" → ")}
           </p>
           {briefing.flowCaption && (
@@ -227,7 +206,7 @@ export function MissionBriefing({
           <div className="space-y-3">
             {previous.sentimentPolicy && (
               <div>
-                <p className="mb-1.5 font-mono text-[11px] text-ml-secondary">
+                <p className="mb-1.5 font-mono text-[11px] text-ml-text-muted">
                   {previous.sentimentPolicy.title}
                 </p>
                 <SentimentPolicyBody policy={previous.sentimentPolicy} />
@@ -235,7 +214,7 @@ export function MissionBriefing({
             )}
             {previous.policy && (
               <div>
-                <p className="mb-1.5 font-mono text-[11px] text-ml-secondary">
+                <p className="mb-1.5 font-mono text-[11px] text-ml-text-muted">
                   {previous.policy.title}
                 </p>
                 <SupportPolicyBody policy={previous.policy} />

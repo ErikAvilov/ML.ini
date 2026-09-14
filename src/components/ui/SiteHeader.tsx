@@ -18,7 +18,7 @@ export function SiteHeader({ authSlot }: SiteHeaderProps) {
   const { progress, authStatus } = useEffectiveProgress();
   const { locale, messages } = useLocale();
 
-  if (pathname.startsWith("/missions/")) {
+  if (pathname.startsWith("/missions/") || pathname.startsWith("/app")) {
     return null;
   }
 

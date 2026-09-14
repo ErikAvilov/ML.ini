@@ -8,6 +8,7 @@ import { AuthUserMenu } from "@/components/auth/AuthUserMenu";
 import { getMissionStatus } from "@/lib/progression";
 import { useEffectiveProgress } from "@/lib/use-effective-progress";
 import { useLocale } from "@/i18n/locale-context";
+import { useMissionRoutes } from "@/components/mission/MissionRouteProvider";
 import type { MissionDefinition, MissionStatus } from "@/lib/types";
 import type { AuthIdentity } from "@/lib/auth/types";
 
@@ -24,6 +25,7 @@ export function MissionNavBar({
 }: MissionNavBarProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const routes = useMissionRoutes();
   const { progress, ready, authStatus, identity: liveIdentity } =
     useEffectiveProgress();
   const { messages, t } = useLocale();
@@ -64,7 +66,7 @@ export function MissionNavBar({
     const st = statusOf(m);
     if (st === "locked") return;
     if (m.id === mission.id) return;
-    router.push(`/missions/${m.slug}`);
+    router.push(routes.missionHref(m.slug));
   }
 
   const titlePrefix =
@@ -76,7 +78,7 @@ export function MissionNavBar({
     <div className="shrink-0 border-b border-ml-border bg-ml-surface-1/75">
       <div className="grid h-12 w-full grid-cols-[7.5rem_minmax(0,1fr)_7.5rem] items-center gap-2 px-2 sm:px-4">
         <Link
-          href="/royaume"
+          href={routes.kingdomHref}
           className="inline-flex w-fit items-center gap-1 px-2 py-1.5 text-[length:var(--ml-text-sm)] text-ml-text-secondary transition hover:bg-ml-surface-hover hover:text-ml-text"
           style={{ borderRadius: "var(--ml-frame-radius)" }}
         >

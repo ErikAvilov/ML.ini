@@ -4,6 +4,7 @@ import {
   Playfair_Display,
   Plus_Jakarta_Sans,
   JetBrains_Mono,
+  Inter,
 } from "next/font/google";
 import { LocaleProvider } from "@/i18n/locale-context";
 import { getRequestLocale } from "@/i18n/get-request-locale";
@@ -15,12 +16,14 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
+/** Marketing body + app headings (Editorial remaps .font-display → this family). */
 const body = Plus_Jakarta_Sans({
   variable: "--font-body",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
 
+/** Marketing display only — Playfair stays on landing. */
 const display = Playfair_Display({
   variable: "--font-display",
   subsets: ["latin"],
@@ -31,6 +34,13 @@ const mono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
+});
+
+/** /app body copy (Editorial Cartographic). */
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -58,7 +68,7 @@ export default async function RootLayout({
     <html
       lang={locale}
       data-theme="adventure-tech"
-      className={`${body.variable} ${display.variable} ${mono.variable} h-full antialiased`}
+      className={`${body.variable} ${display.variable} ${mono.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="relative flex h-dvh flex-col overflow-hidden bg-ml-bg-0 text-ml-text-body">
         <SiteAtmosphere />

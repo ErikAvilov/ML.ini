@@ -93,11 +93,11 @@ export function TestResults({
               onClick={() => toggleRow(i, Boolean(result))}
               className={`flex w-full items-start gap-2.5 border px-2.5 py-2 text-left transition duration-150 ${
                 result?.matchesExpected
-                  ? "border-[color-mix(in_srgb,var(--ml-success)_25%,transparent)] bg-[var(--ml-success-soft)]"
+                  ? "border-[color-mix(in_srgb,var(--ml-state-completed)_28%,transparent)] bg-[color-mix(in_srgb,var(--ml-state-completed)_10%,transparent)]"
                   : result
-                    ? "border-[color-mix(in_srgb,var(--ml-danger)_25%,transparent)] bg-[var(--ml-danger-soft)]"
+                    ? "border-[color-mix(in_srgb,var(--ml-state-error)_28%,transparent)] bg-[color-mix(in_srgb,var(--ml-state-error)_10%,transparent)]"
                     : isRunning
-                      ? "border-[var(--ml-border-accent)] bg-ml-surface-1"
+                      ? "border-ml-border-accent bg-ml-surface-1"
                       : "border-ml-border bg-ml-bg-1/40"
               } ${
                 result && !running

@@ -157,8 +157,8 @@ export function CodeFillPanel({
           {messages.yourCodeLabel}
         </p>
         <p
-          className={`font-mono text-[11px] tracking-[0.08em] uppercase ${
-            passed ? "text-ml-accent" : "text-ml-text-muted"
+          className={`font-mono text-[11px] tracking-[0.06em] uppercase ${
+            passed ? "text-ml-state-completed" : "text-ml-text-muted"
           }`}
         >
           {passed ? `✓ ${task.passLabel}` : task.checkLabel}
