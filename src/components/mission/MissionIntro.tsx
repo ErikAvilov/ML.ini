@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MissionNavBar } from "@/components/mission/MissionNavBar";
 import { MiraMessage } from "@/components/mission/MiraMessage";
-import { useProgress } from "@/lib/progress-context";
+import { useEffectiveProgress } from "@/lib/use-effective-progress";
 import { requestCloudCompletion } from "@/lib/missions/cloud-completion-client";
 import { useLocale } from "@/i18n/locale-context";
 import type { MissionDefinition } from "@/lib/types";
@@ -30,7 +30,7 @@ export function MissionIntro({
   identity = null,
 }: MissionIntroProps) {
   const router = useRouter();
-  const { completeMissionAndUnlock, markMissionPlayed } = useProgress();
+  const { completeMissionAndUnlock, markMissionPlayed } = useEffectiveProgress();
   const { locale, messages } = useLocale();
   const intro = mission.intro;
   const [saving, setSaving] = useState(false);

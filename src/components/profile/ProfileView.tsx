@@ -12,12 +12,13 @@ import { PROFILE_TITLES } from "@/data/profile/titles";
 import { getKingdoms } from "@/data/kingdoms/construire-avec-ia";
 import { getMissions } from "@/data/missions";
 import { useLocale } from "@/i18n/locale-context";
-import { useProgress } from "@/lib/progress-context";
+import { useEffectiveProgress } from "@/lib/use-effective-progress";
 import { xpProgressInLevel } from "@/lib/validation";
 import type { AuthIdentity } from "@/lib/auth/types";
 import { playerDisplayName } from "@/lib/auth/username";
 import { AccountDeletionPanel } from "@/components/profile/AccountDeletionPanel";
 import { EditableUsername } from "@/components/profile/EditableUsername";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 
 const panel =
   "border border-ml-border bg-[color-mix(in_srgb,var(--ml-surface-1)_92%,transparent)]";
@@ -34,18 +35,25 @@ interface ProfileViewProps {
 
 export function ProfileView({ identity = null }: ProfileViewProps) {
   const { locale, messages, t } = useLocale();
-  const { progress, equipTitle, equipFrame, resetProgress } = useProgress();
+  const {
+    progress,
+    authStatus,
+    identity: liveIdentity,
+    equipTitle,
+    equipFrame,
+    resetProgress,
+  } = useEffectiveProgress();
   const view = progress;
   const missions = getMissions(locale);
   const kingdoms = getKingdoms(locale);
-  const cloudXp = identity?.progress?.total_xp ?? null;
-  const useCloudXp = Boolean(identity) && cloudXp != null;
-  const displayXp = useCloudXp ? cloudXp : view.xp;
-  const xp = xpProgressInLevel(displayXp);
-  const hasLocalResidue =
-    Boolean(identity) &&
-    (view.xp > 0 ||
-      view.completedMissions.some((id) => id !== "mission-00"));
+  // Prefer live hydrator identity; page prop is SSR snapshot.
+  const resolvedIdentity =
+    authStatus === "authenticated"
+      ? liveIdentity ?? identity
+      : authStatus === "anonymous"
+        ? null
+        : identity;
+  const xp = xpProgressInLevel(view.xp);
   const equippedTitle = PROFILE_TITLES.find(
     (title) => title.id === view.equippedTitleId
   );
@@ -70,10 +78,11 @@ export function ProfileView({ identity = null }: ProfileViewProps) {
   ];
 
   const displayName = playerDisplayName(
-    identity?.profile ?? null,
+    resolvedIdentity?.profile ?? null,
     messages.profileDefaultName
   );
-  const avatarUrl = identity?.profile?.avatar_url;
+  const avatarUrl = resolvedIdentity?.profile?.avatar_url;
+  const isCloud = authStatus === "authenticated" || Boolean(resolvedIdentity);
 
   return (
     <div className="mx-auto w-full max-w-[86rem] space-y-6 px-4 py-6 sm:px-6 sm:py-8">
@@ -108,11 +117,11 @@ export function ProfileView({ identity = null }: ProfileViewProps) {
 
             <div>
               <p className="text-[length:var(--ml-text-sm)] text-ml-text-muted">
-                {identity
+                {isCloud
                   ? messages.profileMemberCloud
                   : messages.profileMemberSince}
               </p>
-              {identity ? (
+              {isCloud ? (
                 <EditableUsername
                   key={displayName}
                   initialUsername={displayName}
@@ -127,15 +136,15 @@ export function ProfileView({ identity = null }: ProfileViewProps) {
                   {equippedTitle.label[locale]}
                 </p>
               )}
-              {useCloudXp && (
+              {isCloud && (
                 <p className="mt-2 font-mono text-[length:var(--ml-text-xs)] text-ml-text-muted">
-                  {t(messages.profileCloudXp, { xp: cloudXp })}
+                  {t(messages.profileCloudXp, { xp: view.xp })}
                 </p>
               )}
 
               <div className="mt-5 w-full max-w-sm">
                 <div className="mb-2 flex justify-between gap-4 font-mono text-[length:var(--ml-text-xs)] text-ml-text-muted">
-                  <span>{t(messages.xpShort, { xp: displayXp })}</span>
+                  <span>{t(messages.xpShort, { xp: view.xp })}</span>
                   <span>
                     {t(messages.profileXpToNext, {
                       xp: xp.needed - xp.current,
@@ -150,15 +159,10 @@ export function ProfileView({ identity = null }: ProfileViewProps) {
                   />
                 </div>
                 <p className="mt-1.5 text-[length:var(--ml-text-xs)] text-ml-text-muted">
-                  {useCloudXp
+                  {isCloud
                     ? messages.profileCloudProgressNote
                     : messages.profileLocalProgressNote}
                 </p>
-                {hasLocalResidue && (
-                  <p className="mt-1 text-[length:var(--ml-text-xs)] text-ml-text-muted">
-                    {messages.profileLocalResidueNote}
-                  </p>
-                )}
               </div>
             </div>
           </div>
@@ -365,6 +369,19 @@ export function ProfileView({ identity = null }: ProfileViewProps) {
         style={{ borderRadius: "var(--ml-frame-radius-lg)" }}
       >
         <h2 className="font-display text-lg text-ml-text">
+          {messages.profileLanguageTitle}
+        </h2>
+        <p className="mt-2 max-w-xl text-[length:var(--ml-text-sm)] text-ml-text-muted">
+          {messages.profileLanguageHelp}
+        </p>
+        <LanguageSwitcher className="mt-4" />
+      </section>
+
+      <section
+        className={`${panel} p-5 sm:p-6`}
+        style={{ borderRadius: "var(--ml-frame-radius-lg)" }}
+      >
+        <h2 className="font-display text-lg text-ml-text">
           {messages.profileResetTitle}
         </h2>
         <p className="mt-2 max-w-xl text-[length:var(--ml-text-sm)] text-ml-text-muted">
@@ -382,7 +399,7 @@ export function ProfileView({ identity = null }: ProfileViewProps) {
         </Button>
       </section>
 
-      {identity ? <AccountDeletionPanel /> : null}
+      {isCloud ? <AccountDeletionPanel /> : null}
     </div>
   );
 }

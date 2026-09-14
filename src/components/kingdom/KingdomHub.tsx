@@ -20,12 +20,12 @@ import {
   getSkillIdForMission,
 } from "@/data/skills/tree";
 import { useLocale } from "@/i18n/locale-context";
-import { useProgress } from "@/lib/progress-context";
+import { useEffectiveProgress } from "@/lib/use-effective-progress";
 import { getMissionStatus } from "@/lib/progression";
 import type { MissionDefinition, MissionStatus } from "@/lib/types";
 
 export function KingdomHub() {
-  const { progress, ready } = useProgress();
+  const { progress, ready } = useEffectiveProgress();
   const { locale, messages } = useLocale();
   const [selectedMissionId, setSelectedMissionId] = useState<string | null>(
     null
@@ -223,7 +223,7 @@ function MissionDetailsPanel({
 }
 
 function MildredPanel() {
-  const { progress, ready } = useProgress();
+  const { progress, ready } = useEffectiveProgress();
   const { locale, messages, t } = useLocale();
   const onlineIds = new Set(ready ? progress.unlockedCapabilities : []);
   const catalogCapabilities = Object.entries(MILDRED_CAPABILITY_CATALOG).map(

@@ -16,6 +16,7 @@ import { GitFork, LogOut, Map, UserRound } from "lucide-react";
 import { betterAuthClient } from "@/lib/better-auth/client";
 import { playerDisplayName } from "@/lib/auth/username";
 import { useLocale } from "@/i18n/locale-context";
+import { useAuthProgressState } from "@/lib/auth-progress-context";
 import type { AuthIdentity } from "@/lib/auth/types";
 
 interface AuthUserMenuProps {
@@ -64,6 +65,7 @@ export function AuthUserMenu({ identity }: AuthUserMenuProps) {
   const { messages } = useLocale();
   const router = useRouter();
   const pathname = usePathname();
+  const { commit } = useAuthProgressState();
   const menuId = useId();
   const [open, setOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
@@ -91,6 +93,8 @@ export function AuthUserMenu({ identity }: AuthUserMenuProps) {
     } catch {
       // Navigate home anyway so the shell re-renders logged-out.
     }
+    // Local anonymous progression becomes active again (no merge).
+    commit({ status: "anonymous", identity: null, cloudProgress: null });
     router.replace("/");
     router.refresh();
   }

@@ -1,12 +1,18 @@
 "use client";
 
 import { Play, Layers } from "lucide-react";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/Button";
-import { CodeFillPanel } from "@/components/mission/CodeFillPanel";
 import { PipelineVisual } from "@/components/mission/PipelineVisual";
 import { TestResults } from "@/components/mission/TestResults";
 import { useLocale } from "@/i18n/locale-context";
 import type { ClassificationResult, CodeFillTask } from "@/lib/types";
+
+const CodeFillPanel = dynamic(
+  () =>
+    import("@/components/mission/CodeFillPanel").then((m) => m.CodeFillPanel),
+  { ssr: false }
+);
 
 type Stage = "idle" | "input" | "instruction" | "model" | "output";
 type RunMode = "idle" | "sequential" | "batch";
@@ -111,6 +117,7 @@ export function MissionPlayground({
 
         <div className="min-h-0 flex-[4] overflow-hidden border-b border-ml-border">
           <CodeFillPanel
+            key={missionId}
             missionId={missionId}
             task={codeFill}
             passed={codeFillPassed}

@@ -2,12 +2,12 @@
 
 import { Flame, Sparkles } from "lucide-react";
 import { XpBar } from "@/components/ui/XpBar";
-import { useProgress } from "@/lib/progress-context";
+import { useEffectiveProgress } from "@/lib/use-effective-progress";
 import { xpProgressInLevel } from "@/lib/validation";
 import { useLocale } from "@/i18n/locale-context";
 
 export function PlayerStatsBar() {
-  const { progress, ready } = useProgress();
+  const { progress, ready } = useEffectiveProgress();
   const { messages, t } = useLocale();
   const xp = xpProgressInLevel(progress.xp);
 

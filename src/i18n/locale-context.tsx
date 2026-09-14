@@ -6,95 +6,63 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useSyncExternalStore,
+  useState,
   type ReactNode,
 } from "react";
+import { type Locale } from "@/i18n/config";
 import {
-  DEFAULT_LOCALE,
-  LOCALE_STORAGE_KEY,
-  isLocale,
-  type Locale,
-} from "@/i18n/config";
+  readLocaleCookieClient,
+  readStoredLocaleClient,
+  writeLocalePreference,
+} from "@/i18n/locale-preference";
 import { getCommonMessages, t, type CommonMessages } from "@/i18n/messages/common";
 
 interface LocaleContextValue {
   locale: Locale;
   messages: CommonMessages;
+  /**
+   * Persists preference (cookie + localStorage) and reloads so SSR matches.
+   * Not a live in-page switch.
+   */
   setLocale: (locale: Locale) => void;
   t: (template: string, vars?: Record<string, string | number>) => string;
 }
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
-let memoryLocale: Locale = DEFAULT_LOCALE;
-let hydrated = false;
-const listeners = new Set<() => void>();
+export function LocaleProvider({
+  initialLocale,
+  children,
+}: {
+  initialLocale: Locale;
+  children: ReactNode;
+}) {
+  const [locale] = useState(initialLocale);
 
-function emit() {
-  listeners.forEach((l) => l());
-}
-
-function readStoredLocale(): Locale {
-  if (typeof window === "undefined") return DEFAULT_LOCALE;
-  try {
-    const raw = localStorage.getItem(LOCALE_STORAGE_KEY);
-    if (isLocale(raw)) return raw;
-  } catch {
-    /* ignore */
-  }
-  return DEFAULT_LOCALE;
-}
-
-function subscribe(listener: () => void) {
-  listeners.add(listener);
-  // Defer localStorage so the first client render matches SSR (DEFAULT_LOCALE).
-  queueMicrotask(() => {
-    if (!hydrated && typeof window !== "undefined") {
-      memoryLocale = readStoredLocale();
-      hydrated = true;
-      emit();
+  // One-time migration: old localStorage preference → cookie, then reload.
+  useEffect(() => {
+    const stored = readStoredLocaleClient();
+    const cookie = readLocaleCookieClient();
+    if (stored && !cookie) {
+      writeLocalePreference(stored);
+      if (stored !== initialLocale) {
+        window.location.reload();
+      }
     }
-  });
-  return () => listeners.delete(listener);
-}
-
-function getClientSnapshot(): Locale {
-  if (!hydrated) return DEFAULT_LOCALE;
-  return memoryLocale;
-}
-
-function getServerSnapshot(): Locale {
-  return DEFAULT_LOCALE;
-}
-
-function writeLocale(next: Locale) {
-  memoryLocale = next;
-  hydrated = true;
-  try {
-    localStorage.setItem(LOCALE_STORAGE_KEY, next);
-  } catch {
-    /* ignore */
-  }
-  emit();
-  if (typeof document !== "undefined") {
-    document.documentElement.lang = next;
-  }
-}
-
-export function LocaleProvider({ children }: { children: ReactNode }) {
-  const locale = useSyncExternalStore(
-    subscribe,
-    getClientSnapshot,
-    getServerSnapshot
-  );
+  }, [initialLocale]);
 
   useEffect(() => {
     document.documentElement.lang = locale;
   }, [locale]);
 
-  const setLocale = useCallback((next: Locale) => {
-    writeLocale(next);
-  }, []);
+  const setLocale = useCallback(
+    (next: Locale) => {
+      if (next === locale) return;
+      writeLocalePreference(next);
+      window.location.reload();
+    },
+    [locale]
+  );
 
   const messages = useMemo(() => getCommonMessages(locale), [locale]);
 

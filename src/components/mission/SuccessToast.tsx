@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { X } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { useLocale } from "@/i18n/locale-context";
 
 export interface SuccessToastData {
@@ -25,10 +25,17 @@ interface SuccessToastProps {
 const TOAST_DURATION_MS = 7000;
 const SLIDE_S = 0.4;
 
+function subscribe() {
+  return () => {};
+}
+
 export function SuccessToast({ data, onDismiss }: SuccessToastProps) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return null;
+  const body = useSyncExternalStore(
+    subscribe,
+    () => document.body,
+    () => null
+  );
+  if (!body) return null;
 
   return createPortal(
     <div className="pointer-events-none fixed inset-0 z-[80] overflow-hidden">
@@ -42,7 +49,7 @@ export function SuccessToast({ data, onDismiss }: SuccessToastProps) {
         ) : null}
       </AnimatePresence>
     </div>,
-    document.body
+    body
   );
 }
 
@@ -92,7 +99,7 @@ function SuccessToastCard({
   }, []);
 
   return (
-    <motion.div
+    <m.div
       role="status"
       aria-live="polite"
       className="pointer-events-none absolute right-4 bottom-4 w-[min(100%-2rem,22rem)] sm:right-6 sm:bottom-6"
@@ -173,6 +180,6 @@ function SuccessToastCard({
           />
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 }

@@ -5,7 +5,7 @@ import { createKingdomConstruireAvecIA } from "@/data/kingdoms/construire-avec-i
 import { getMissions } from "@/data/missions";
 import { getSkillDefinitions } from "@/data/skills/tree";
 import { useLocale } from "@/i18n/locale-context";
-import { useProgress } from "@/lib/progress-context";
+import { useEffectiveProgress } from "@/lib/use-effective-progress";
 import { getMissionStatus } from "@/lib/progression";
 import { HomeHero } from "@/components/home/HomeHero";
 import { HomeLearningLoop } from "@/components/home/HomeLearningLoop";
@@ -15,7 +15,7 @@ import { HomeFinalCta } from "@/components/home/HomeFinalCta";
 
 export function HomeExperience() {
   const { locale, messages } = useLocale();
-  const { progress } = useProgress();
+  const { progress } = useEffectiveProgress();
 
   const kingdom = createKingdomConstruireAvecIA(locale);
   const missions = getMissions(locale).filter((m) =>

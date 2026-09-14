@@ -3,6 +3,10 @@
 import { useLocale } from "@/i18n/locale-context";
 import type { Locale } from "@/i18n/config";
 
+/**
+ * Profile-only language control.
+ * Changing language reloads the page so SSR uses the new cookie.
+ */
 export function LanguageSwitcher({ className = "" }: { className?: string }) {
   const { locale, setLocale, messages } = useLocale();
 
@@ -20,19 +24,6 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
     >
       <button
         type="button"
-        onClick={() => select("fr")}
-        className={`cursor-pointer px-2 py-1 text-[length:var(--ml-text-xs)] font-medium transition ${
-          locale === "fr"
-            ? "bg-ml-surface-2 text-ml-text"
-            : "text-ml-text-muted hover:bg-ml-surface-hover hover:text-ml-text"
-        }`}
-        style={{ borderRadius: "calc(var(--ml-frame-radius) - 1px)" }}
-        aria-pressed={locale === "fr"}
-      >
-        {messages.langFr}
-      </button>
-      <button
-        type="button"
         onClick={() => select("en")}
         className={`cursor-pointer px-2 py-1 text-[length:var(--ml-text-xs)] font-medium transition ${
           locale === "en"
@@ -43,6 +34,19 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
         aria-pressed={locale === "en"}
       >
         {messages.langEn}
+      </button>
+      <button
+        type="button"
+        onClick={() => select("fr")}
+        className={`cursor-pointer px-2 py-1 text-[length:var(--ml-text-xs)] font-medium transition ${
+          locale === "fr"
+            ? "bg-ml-surface-2 text-ml-text"
+            : "text-ml-text-muted hover:bg-ml-surface-hover hover:text-ml-text"
+        }`}
+        style={{ borderRadius: "calc(var(--ml-frame-radius) - 1px)" }}
+        aria-pressed={locale === "fr"}
+      >
+        {messages.langFr}
       </button>
     </div>
   );

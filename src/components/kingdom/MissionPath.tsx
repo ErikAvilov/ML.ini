@@ -5,7 +5,7 @@ import { LocateFixed } from "lucide-react";
 import { MissionNode } from "@/components/kingdom/MissionNode";
 import { useLocale } from "@/i18n/locale-context";
 import { getMissionStatus } from "@/lib/progression";
-import { useProgress } from "@/lib/progress-context";
+import { useEffectiveProgress } from "@/lib/use-effective-progress";
 import type { MissionDefinition } from "@/lib/types";
 
 interface MissionPathProps {
@@ -26,7 +26,7 @@ export function MissionPath({
   activeMissionId,
   onSelectMission,
 }: MissionPathProps) {
-  const { progress, ready } = useProgress();
+  const { progress, ready } = useEffectiveProgress();
   const { messages } = useLocale();
   const activeNodeRef = useRef<HTMLLIElement>(null);
   const intro = missions.find((m) => m.kind === "intro");

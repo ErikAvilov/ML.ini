@@ -1,4 +1,7 @@
-/** Server-only by convention — imported by Better Auth config; do not import from Client Components. */
+/**
+ * Server runtime only — never import from Client Components.
+ * (No `server-only` import: Node/tsx admin scripts also load this module.)
+ */
 
 /** Bounded webhook timeout — keep auth / mission paths responsive. */
 export const N8N_WEBHOOK_TIMEOUT_MS = 4_000;

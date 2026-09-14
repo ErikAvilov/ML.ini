@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:unit": "npx tsx scripts/check-safe-next.ts && npx tsx scripts/check-username.ts && npx tsx scripts/check-cloud-progression.ts && npx tsx scripts/check-account-delete.ts && npx tsx scripts/check-migration-transform.ts && npx tsx scripts/check-github-auth.ts && npx tsx scripts/check-n8n-user-created.ts && npx tsx scripts/check-code-fill.ts && npx tsx scripts/check-mission-04-json.ts && npx tsx scripts/check-progression-celebrations.ts",
+    "test:unit": "npx tsx scripts/check-safe-next.ts && npx tsx scripts/check-username.ts && npx tsx scripts/check-cloud-progression.ts && npx tsx scripts/check-account-delete.ts && npx tsx scripts/check-migration-transform.ts && npx tsx scripts/check-github-auth.ts && npx tsx scripts/check-n8n-user-created.ts && npx tsx scripts/check-code-fill.ts && npx tsx scripts/check-mission-04-json.ts && npx tsx scripts/check-progression-celebrations.ts && npx tsx scripts/check-effective-progress.ts",
     "db:check:neon": "npx tsx --env-file=.env --env-file=.env.local scripts/check-neon-phase2.ts",
     "db:migrate:neon:delivery": "npx tsx --env-file=.env --env-file=.env.local scripts/apply-neon-migrations.ts --only=004",
     "db:ensure-better-auth-schema": "npx tsx --env-file=.env --env-file=.env.local scripts/ensure-better-auth-schema.ts",

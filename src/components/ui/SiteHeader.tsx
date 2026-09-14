@@ -4,8 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BrandLogo } from "@/components/ui/BrandLogo";
-import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
-import { useProgress } from "@/lib/progress-context";
+import { useEffectiveProgress } from "@/lib/use-effective-progress";
 import { useLocale } from "@/i18n/locale-context";
 import { getMissionById } from "@/data/missions";
 
@@ -16,16 +15,18 @@ interface SiteHeaderProps {
 
 export function SiteHeader({ authSlot }: SiteHeaderProps) {
   const pathname = usePathname();
-  const { progress } = useProgress();
+  const { progress, authStatus } = useEffectiveProgress();
   const { locale, messages } = useLocale();
 
   if (pathname.startsWith("/missions/")) {
     return null;
   }
 
-  const lastMission = progress.lastPlayedMissionId
-    ? getMissionById(progress.lastPlayedMissionId, locale)
-    : null;
+  // While auth loads, don't point Missions at local lastPlayed (could be stale anon).
+  const lastMission =
+    authStatus !== "loading" && progress.lastPlayedMissionId
+      ? getMissionById(progress.lastPlayedMissionId, locale)
+      : null;
   const missionsLink = lastMission
     ? `/missions/${lastMission.slug}`
     : "/royaume";
@@ -66,7 +67,6 @@ export function SiteHeader({ authSlot }: SiteHeaderProps) {
         </div>
 
         <div className="flex items-center gap-3 sm:gap-4">
-          <LanguageSwitcher />
           {authSlot}
         </div>
       </div>

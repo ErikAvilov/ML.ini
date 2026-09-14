@@ -22,6 +22,26 @@ interface CodeFillPanelProps {
   onPassedChange: (passed: boolean) => void;
 }
 
+function readStoredSource(missionId: string, starter: string): string {
+  if (typeof window === "undefined") return starter;
+  try {
+    const saved = sessionStorage.getItem(SOURCE_PREFIX + missionId);
+    if (saved != null && saved.length > 0) return saved;
+  } catch {
+    /* ignore */
+  }
+  return starter;
+}
+
+function readStoredPassed(missionId: string): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return sessionStorage.getItem(PASSED_PREFIX + missionId) === "1";
+  } catch {
+    return false;
+  }
+}
+
 export function CodeFillPanel({
   missionId,
   task,
@@ -30,24 +50,19 @@ export function CodeFillPanel({
 }: CodeFillPanelProps) {
   const { messages } = useLocale();
   const starter = useMemo(() => buildCodeFillStarterSource(task), [task]);
-  const [source, setSource] = useState(starter);
+  const [source, setSource] = useState(() =>
+    readStoredSource(missionId, starter)
+  );
   const [feedback, setFeedback] = useState<string | null>(null);
   const onPassedChangeRef = useRef(onPassedChange);
-  onPassedChangeRef.current = onPassedChange;
 
   useEffect(() => {
-    let initial = starter;
-    try {
-      const saved = sessionStorage.getItem(SOURCE_PREFIX + missionId);
-      if (saved != null && saved.length > 0) initial = saved;
-      if (sessionStorage.getItem(PASSED_PREFIX + missionId) === "1") {
-        onPassedChangeRef.current(true);
-      }
-    } catch {
-      /* ignore */
-    }
-    setSource(initial);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- missionId only
+    onPassedChangeRef.current = onPassedChange;
+  }, [onPassedChange]);
+
+  // Parent should remount via key={missionId}; restore local passed flag once.
+  useEffect(() => {
+    if (readStoredPassed(missionId)) onPassedChangeRef.current(true);
   }, [missionId]);
 
   function setPassed(next: boolean) {

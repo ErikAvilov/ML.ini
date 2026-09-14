@@ -1,24 +1,24 @@
 import { AuthUserMenu } from "@/components/auth/AuthUserMenu";
 import { HeaderAuthFallback } from "@/components/ui/HeaderAuthFallback";
 import { HeaderSignInLink } from "@/components/ui/HeaderSignInLink";
-import { getAuthIdentity } from "@/lib/auth/get-identity";
+import { getAppSessionState, type AppSessionState } from "@/lib/auth/app-session";
 import { getCommonMessages } from "@/i18n/messages/common";
-import { DEFAULT_LOCALE } from "@/i18n/config";
+import { getRequestLocale } from "@/i18n/get-request-locale";
 import { xpProgressInLevel } from "@/lib/validation";
 
-/**
- * Server-only header auth chrome.
- * Isolated so RootLayout does NOT block page RSC on Neon profile/progress.
- */
-export async function HeaderAuth() {
-  const identity = await getAuthIdentity();
-  const messages = getCommonMessages(DEFAULT_LOCALE);
+/** Header auth from an already-resolved AppSessionState (no extra getSession). */
+export async function HeaderAuthFromSession({
+  session,
+}: {
+  session: AppSessionState;
+}) {
+  const messages = getCommonMessages(await getRequestLocale());
 
-  if (!identity) {
+  if (session.status === "anonymous") {
     return <HeaderSignInLink />;
   }
 
-  const cloudXp = identity.progress?.total_xp ?? 0;
+  const cloudXp = session.cloudProgress.xp;
   const xp = xpProgressInLevel(cloudXp);
   const pct = Math.round((xp.current / Math.max(xp.needed, 1)) * 100);
   const levelLabel = messages.levelShort.replace("{level}", String(xp.level));
@@ -46,9 +46,17 @@ export async function HeaderAuth() {
           </span>
         </div>
       </div>
-      <AuthUserMenu identity={identity} />
+      <AuthUserMenu identity={session.identity} />
     </>
   );
+}
+
+/**
+ * Standalone entry — shares getAppSessionState cache with AppSessionShell.
+ */
+export async function HeaderAuth() {
+  const session = await getAppSessionState();
+  return <HeaderAuthFromSession session={session} />;
 }
 
 export { HeaderAuthFallback };

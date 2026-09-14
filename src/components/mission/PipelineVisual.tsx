@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import { useLocale } from "@/i18n/locale-context";
 
 type Stage = "idle" | "input" | "instruction" | "model" | "output";
@@ -98,7 +98,7 @@ export function PipelineVisual({
                 >
                   {step.label}
                   {state === "processing" && (
-                    <motion.span
+                    <m.span
                       className="text-ml-accent"
                       animate={
                         reduceMotion ? undefined : { opacity: [0.4, 1, 0.4] }
@@ -110,7 +110,7 @@ export function PipelineVisual({
                       }
                     >
                       …
-                    </motion.span>
+                    </m.span>
                   )}
                   {step.id === "output" && !running && outcome === "success" && (
                     <span className="text-ml-success">{messages.testPass}</span>
@@ -192,7 +192,7 @@ export function PipelineVisual({
                   {step.label}
                 </p>
                 {state === "processing" && (
-                  <motion.p
+                  <m.p
                     className="mt-0.5 text-[length:var(--ml-text-xs)] text-ml-accent"
                     animate={
                       reduceMotion ? undefined : { opacity: [0.45, 1, 0.45] }
@@ -204,7 +204,7 @@ export function PipelineVisual({
                     }
                   >
                     {messages.pipelineProcessing}
-                  </motion.p>
+                  </m.p>
                 )}
                 {step.id === "output" && output && !idle && (
                   <p

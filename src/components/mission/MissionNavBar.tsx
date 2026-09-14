@@ -6,7 +6,7 @@ import { ChevronLeft } from "lucide-react";
 import { ProgressNode } from "@/components/ui/ProgressNode";
 import { AuthUserMenu } from "@/components/auth/AuthUserMenu";
 import { getMissionStatus } from "@/lib/progression";
-import { useProgress } from "@/lib/progress-context";
+import { useEffectiveProgress } from "@/lib/use-effective-progress";
 import { useLocale } from "@/i18n/locale-context";
 import type { MissionDefinition, MissionStatus } from "@/lib/types";
 import type { AuthIdentity } from "@/lib/auth/types";
@@ -24,9 +24,16 @@ export function MissionNavBar({
 }: MissionNavBarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { progress, ready } = useProgress();
+  const { progress, ready, authStatus, identity: liveIdentity } =
+    useEffectiveProgress();
   const { messages, t } = useLocale();
   const sorted = [...missions].sort((a, b) => a.order - b.order);
+  const resolvedIdentity =
+    authStatus === "authenticated"
+      ? liveIdentity ?? identity
+      : authStatus === "anonymous"
+        ? null
+        : identity;
 
   function statusOf(m: MissionDefinition): MissionStatus {
     if (!ready) return m.order === 0 ? "available" : "locked";
@@ -161,8 +168,13 @@ export function MissionNavBar({
         </div>
 
         <div className="flex items-center justify-end">
-          {identity ? (
-            <AuthUserMenu identity={identity} />
+          {authStatus === "loading" ? (
+            <div
+              className="h-8 w-8 animate-pulse rounded-full border border-ml-border bg-ml-surface-2"
+              aria-hidden
+            />
+          ) : resolvedIdentity ? (
+            <AuthUserMenu identity={resolvedIdentity} />
           ) : (
             <Link
               href={`/auth?next=${encodeURIComponent(pathname || "/")}`}

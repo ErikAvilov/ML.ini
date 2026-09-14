@@ -2,7 +2,7 @@ import "server-only";
 
 import { classifyBatchItems } from "@/lib/ai-batch-classify";
 import { resolveCanonicalMission } from "@/lib/missions/canonical";
-import { DEFAULT_LOCALE, type Locale } from "@/i18n/config";
+import { DEFAULT_LOCALE, isLocale, type Locale } from "@/i18n/config";
 import {
   evaluateAiIntegrationFill,
   evaluateAiIntegrationRun,
@@ -46,7 +46,7 @@ function priorityFromLogicFixture(message: string): string {
 export async function validateMissionAttempt(
   input: MissionAttemptInput
 ): Promise<MissionAttemptResult> {
-  const locale = (input.locale === "en" ? "en" : DEFAULT_LOCALE) as Locale;
+  const locale: Locale = isLocale(input.locale) ? input.locale : DEFAULT_LOCALE;
   const canonical = resolveCanonicalMission(input.missionId, locale);
   if (!canonical) return { ok: false, code: "unknown_mission" };
 

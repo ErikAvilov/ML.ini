@@ -171,6 +171,9 @@ const common = {
     language: "Langue",
     langFr: "FR",
     langEn: "EN",
+    profileLanguageTitle: "Langue",
+    profileLanguageHelp:
+      "L’anglais est la langue par défaut. Le changement recharge la page.",
     kingdomFreeAccess: "Royaume · Accès libre",
     kingdomProgress: "Progression du Royaume",
     activeMission: "Mission active :",
@@ -544,6 +547,9 @@ const common = {
     language: "Language",
     langFr: "FR",
     langEn: "EN",
+    profileLanguageTitle: "Language",
+    profileLanguageHelp:
+      "English is the default. Changing language reloads the page.",
     kingdomFreeAccess: "Kingdom · Free access",
     kingdomProgress: "Kingdom progress",
     activeMission: "Active mission:",

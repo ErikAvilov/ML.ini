@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { MliniEmblem } from "@/components/ui/MliniEmblem";
 import { useLocale } from "@/i18n/locale-context";
@@ -112,14 +112,14 @@ export function ProgressionPopup({
     : false;
 
   return (
-    <motion.div
+    <m.div
       className="fixed inset-0 z-[60] flex items-center justify-center bg-[color-mix(in_srgb,var(--ml-bg-0)_82%,transparent)] p-3 backdrop-blur-[2px] sm:p-4"
       initial={reduceMotion ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={reduceMotion ? undefined : { opacity: 0 }}
       transition={{ duration: 0.22 }}
     >
-      <motion.div
+      <m.div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
@@ -330,7 +330,7 @@ export function ProgressionPopup({
             </Button>
           </div>
         </div>
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 }

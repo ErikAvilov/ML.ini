@@ -1,3 +1,7 @@
+/**
+ * Server AI client — Gemini / OpenAI. Never import from Client Components.
+ * (No `server-only` package: Node/tsx eval scripts also import this module.)
+ */
 import { GoogleGenAI } from "@google/genai";
 import OpenAI from "openai";
 import type { ReasoningEffort } from "openai/resources/shared";

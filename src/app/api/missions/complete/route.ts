@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { validateMissionAttempt } from "@/lib/missions/validate-attempt";
 import { recordMissionCompletion } from "@/lib/missions/record-completion";
-import { DEFAULT_LOCALE } from "@/i18n/config";
+import { isLocale, DEFAULT_LOCALE } from "@/i18n/config";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -39,7 +39,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "mission_required" }, { status: 400 });
   }
 
-  const locale = asString(body.locale) === "en" ? "en" : DEFAULT_LOCALE;
+  const localeRaw = asString(body.locale);
+  const locale = isLocale(localeRaw) ? localeRaw : DEFAULT_LOCALE;
 
   const user = await getCurrentUser();
   if (!user) {

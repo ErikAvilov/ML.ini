@@ -5,7 +5,7 @@ import { getBetterAuthSocialStatus } from "@/lib/better-auth/social-status";
 import { safeInternalPath } from "@/lib/auth/safe-next";
 import { playerDisplayName } from "@/lib/auth/username";
 import { getCommonMessages } from "@/i18n/messages/common";
-import { DEFAULT_LOCALE } from "@/i18n/config";
+import { getRequestLocale } from "@/i18n/get-request-locale";
 
 interface AuthPageProps {
   searchParams: Promise<{ next?: string; error?: string }>;
@@ -34,7 +34,7 @@ function oauthErrorMessage(
 
 export default async function AuthPage({ searchParams }: AuthPageProps) {
   const params = await searchParams;
-  const messages = getCommonMessages(DEFAULT_LOCALE);
+  const messages = getCommonMessages(await getRequestLocale());
   const nextPath = safeInternalPath(params.next, "/");
   const identity = await getAuthIdentity();
   const socialConfigured = getBetterAuthSocialStatus();

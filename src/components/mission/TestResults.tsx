@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Check, X, Loader2, Maximize2, Minimize2 } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import { useLocale } from "@/i18n/locale-context";
 import { LEAD } from "@/data/narrative/canon";
 import { Frame } from "@/components/ui/Frame";
@@ -484,27 +484,27 @@ export function TestResults({
         {list}
         <AnimatePresence>
           {feedbackBlock && (
-            <motion.div
+            <m.div
               initial={reduceMotion ? false : { opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
             >
               {feedbackBlock}
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>
 
       <AnimatePresence>
         {showExpanded && (
-          <motion.div
+          <m.div
             className="fixed inset-0 z-50 flex items-center justify-center bg-[color-mix(in_srgb,var(--ml-bg-0)_88%,transparent)] p-4 backdrop-blur-md"
             initial={reduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={reduceMotion ? undefined : { opacity: 0 }}
             onClick={() => setExpanded(false)}
           >
-            <motion.div
+            <m.div
               role="dialog"
               aria-modal="true"
               aria-label={messages.tests}
@@ -520,8 +520,8 @@ export function TestResults({
                 {list}
                 {feedbackBlock}
               </Frame>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
     </>

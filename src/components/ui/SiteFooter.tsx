@@ -25,12 +25,14 @@ export function SiteFooter() {
         >
           <Link
             href={LEGAL_PATHS.privacy}
+            prefetch={false}
             className="text-ml-text-muted underline-offset-2 transition hover:text-ml-accent hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ml-accent"
           >
             {messages.legalPrivacy}
           </Link>
           <Link
             href={LEGAL_PATHS.terms}
+            prefetch={false}
             className="text-ml-text-muted underline-offset-2 transition hover:text-ml-accent hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ml-accent"
           >
             {messages.legalTerms}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
@@ -9,12 +10,9 @@ import { MissionIntro } from "@/components/mission/MissionIntro";
 import { MissionBriefing } from "@/components/mission/MissionBriefing";
 import { MissionNavBar } from "@/components/mission/MissionNavBar";
 import { MissionPlayground } from "@/components/mission/MissionPlayground";
-import {
-  SuccessToast,
-  type SuccessToastData,
-} from "@/components/mission/SuccessToast";
-import { ProgressionPopup } from "@/components/progression/ProgressionPopup";
-import { useProgress } from "@/lib/progress-context";
+import type { SuccessToastData } from "@/components/mission/SuccessToast";
+import { MotionProvider } from "@/components/motion/MotionProvider";
+import { useEffectiveProgress } from "@/lib/use-effective-progress";
 import { getMissionStatus } from "@/lib/progression";
 import {
   buildCelebrationsAfterMission,
@@ -47,6 +45,20 @@ import type { Locale } from "@/i18n/config";
 import type { CommonMessages } from "@/i18n/messages/common";
 import type { AuthIdentity } from "@/lib/auth/types";
 
+const SuccessToast = dynamic(
+  () =>
+    import("@/components/mission/SuccessToast").then((m) => m.SuccessToast),
+  { ssr: false }
+);
+
+const ProgressionPopup = dynamic(
+  () =>
+    import("@/components/progression/ProgressionPopup").then(
+      (m) => m.ProgressionPopup
+    ),
+  { ssr: false }
+);
+
 type Stage = "idle" | "input" | "instruction" | "model" | "output";
 type MobileTab = "brief" | "workspace";
 
@@ -68,8 +80,21 @@ export function MissionWorkspace({
   isAuthenticated = false,
   identity = null,
 }: MissionWorkspaceProps) {
-  const { progress, ready } = useProgress();
+  const { progress, ready, authStatus, identity: liveIdentity } =
+    useEffectiveProgress();
   const { locale, messages } = useLocale();
+  const resolvedAuth =
+    authStatus === "authenticated"
+      ? true
+      : authStatus === "anonymous"
+        ? false
+        : isAuthenticated;
+  const resolvedIdentity =
+    authStatus === "authenticated"
+      ? liveIdentity ?? identity
+      : authStatus === "anonymous"
+        ? null
+        : identity;
 
   const missions = useMemo(() => getMissions(locale), [locale]);
   const mission = useMemo(
@@ -110,7 +135,7 @@ export function MissionWorkspace({
         <MissionNavBar
           mission={mission}
           missions={missions}
-          identity={identity}
+          identity={resolvedIdentity}
         />
         <div className="flex flex-1 items-center justify-center px-4">
           <div className="max-w-md text-center">
@@ -147,8 +172,8 @@ export function MissionWorkspace({
         mission={mission}
         missions={missions}
         nextMissionId={nextMissionId}
-        isAuthenticated={isAuthenticated}
-        identity={identity}
+        isAuthenticated={resolvedAuth}
+        identity={resolvedIdentity}
       />
     );
   }
@@ -161,8 +186,8 @@ export function MissionWorkspace({
       nextMissionId={nextMissionId}
       locale={locale}
       messages={messages}
-      isAuthenticated={isAuthenticated}
-      identity={identity}
+      isAuthenticated={resolvedAuth}
+      identity={resolvedIdentity}
     />
   );
 }
@@ -193,7 +218,7 @@ function MissionSession({
     markMissionPlayed,
     equipTitle,
     equipFrame,
-  } = useProgress();
+  } = useEffectiveProgress();
   const alreadyCleared = progress.completedMissions.includes(mission.id);
   const kingdom = useMemo(
     () => createKingdomConstruireAvecIA(locale),
@@ -782,6 +807,7 @@ function MissionSession({
   }
 
   return (
+    <MotionProvider>
     <div className="flex h-full min-h-0 flex-col overflow-hidden">
       <MissionNavBar
         mission={mission}
@@ -933,6 +959,7 @@ function MissionSession({
         onDismiss={dismissSuccessToast}
       />
     </div>
+    </MotionProvider>
   );
 }
 

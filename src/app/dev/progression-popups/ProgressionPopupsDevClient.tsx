@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ProgressionPopup } from "@/components/progression/ProgressionPopup";
+import { MotionProvider } from "@/components/motion/MotionProvider";
 import { Button } from "@/components/ui/Button";
 import { useLocale } from "@/i18n/locale-context";
 import type {
@@ -102,6 +103,7 @@ export function ProgressionPopupsDevClient() {
   const celebration = all[variant];
 
   return (
+    <MotionProvider>
     <main className="min-h-dvh bg-ml-bg-0 px-4 py-8 text-ml-text">
       <div className="mx-auto max-w-lg space-y-4">
         <p className="font-mono text-[11px] tracking-[0.14em] text-ml-text-muted uppercase">
@@ -138,5 +140,6 @@ export function ProgressionPopupsDevClient() {
         />
       )}
     </main>
+    </MotionProvider>
   );
 }

@@ -11,7 +11,7 @@ import {
 import Link from "next/link";
 import { RotateCcw, ZoomIn, ZoomOut } from "lucide-react";
 import { resolveSkillTree, type ResolvedSkillNode } from "@/lib/skills";
-import { useProgress } from "@/lib/progress-context";
+import { useEffectiveProgress } from "@/lib/use-effective-progress";
 import { useLocale } from "@/i18n/locale-context";
 import { getKingdoms } from "@/data/kingdoms/construire-avec-ia";
 import { getMissionById } from "@/data/missions";
@@ -113,7 +113,7 @@ function applyWorldTransform(
 }
 
 export function SkillTreeView() {
-  const { progress } = useProgress();
+  const { progress } = useEffectiveProgress();
   const { locale, messages, t } = useLocale();
   const { nodes, edges } = useMemo(
     () => resolveSkillTree(progress, locale),
