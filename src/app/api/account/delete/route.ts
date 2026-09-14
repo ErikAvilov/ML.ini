@@ -40,11 +40,18 @@ export async function POST(request: Request) {
 
   try {
     await deleteAccountForUser(user.id);
-  } catch {
-    console.error("[account/delete] deletion failed for session user");
+  } catch (err) {
+    const status =
+      err &&
+      typeof err === "object" &&
+      "status" in err &&
+      (err as { status?: string }).status === "UNAUTHORIZED"
+        ? 401
+        : 500;
+    console.error("[account/delete] deletion failed for session user", err);
     return NextResponse.json(
-      { ok: false, error: "delete_failed" },
-      { status: 500 }
+      { ok: false, error: status === 401 ? "unauthorized" : "delete_failed" },
+      { status }
     );
   }
 

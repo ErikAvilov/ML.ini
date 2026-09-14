@@ -7,8 +7,8 @@ export const BETTER_AUTH_SCHEMA = "better_auth";
 export const APP_SCHEMA = "public";
 
 const globalForNeon = globalThis as unknown as {
-  __mliniNeonAuthPool?: Pool;
-  __mliniNeonAppPool?: Pool;
+  __mliniNeonAuthPoolV2?: Pool;
+  __mliniNeonAppPoolV2?: Pool;
 };
 
 function resolveRuntimeConnectionString(): string {
@@ -34,17 +34,15 @@ function resolveRuntimeConnectionString(): string {
 
 /**
  * Neon pooled endpoints reject startup `options=search_path`.
- * SET search_path once per physical connection (not on every checkout).
+ * Always SET on checkout: Neon pooler (PgBouncer) may RESET backend session
+ * state while node-pg reuses the same Client object — a WeakSet "once" cache
+ * then leaves search_path as public and Better Auth queries miss `session`/`user`.
  */
 function withSearchPath(pool: Pool, schema: string): Pool {
-  const prepared = new WeakSet<object>();
   const originalConnect = pool.connect.bind(pool);
 
   async function prepare(client: PoolClient): Promise<PoolClient> {
-    if (!prepared.has(client)) {
-      await client.query(`SET search_path TO ${schema}`);
-      prepared.add(client);
-    }
+    await client.query(`SET search_path TO ${schema}`);
     return client;
   }
 
@@ -109,12 +107,12 @@ function createRuntimePool(schema: string): Pool {
  * Server-only by convention — do not import from Client Components.
  */
 export function getNeonAuthPool(): Pool {
-  if (globalForNeon.__mliniNeonAuthPool) {
-    return globalForNeon.__mliniNeonAuthPool;
+  if (globalForNeon.__mliniNeonAuthPoolV2) {
+    return globalForNeon.__mliniNeonAuthPoolV2;
   }
 
   const pool = createRuntimePool(BETTER_AUTH_SCHEMA);
-  globalForNeon.__mliniNeonAuthPool = pool;
+  globalForNeon.__mliniNeonAuthPoolV2 = pool;
   return pool;
 }
 
@@ -127,12 +125,12 @@ export function getNeonAuthPool(): Pool {
  * Server-only by convention — do not import from Client Components.
  */
 export function getNeonAppPool(): Pool {
-  if (globalForNeon.__mliniNeonAppPool) {
-    return globalForNeon.__mliniNeonAppPool;
+  if (globalForNeon.__mliniNeonAppPoolV2) {
+    return globalForNeon.__mliniNeonAppPoolV2;
   }
 
   const pool = createRuntimePool(APP_SCHEMA);
-  globalForNeon.__mliniNeonAppPool = pool;
+  globalForNeon.__mliniNeonAppPoolV2 = pool;
   return pool;
 }
 
