@@ -1,8 +1,13 @@
 # MLINI Design System — Adventure Tech
 
-> Toute nouvelle interface MLINI doit utiliser les design tokens `--ml-*` avant toute valeur hex arbitraire.
+> **LEGACY for the `/app` redesign.**  
+> Authoritative app visual system: [`MLINI_DESIGN_SYSTEM.md`](MLINI_DESIGN_SYSTEM.md) (Editorial Cartographic).  
+> Authority order: [`UX_FOUNDATION.md`](UX_FOUNDATION.md) → `MLINI_DESIGN_SYSTEM.md` → [`MLINI_INTERACTIONS.md`](MLINI_INTERACTIONS.md) → specialized docs → this file.  
+> **Keep this document** while the marketing landing `/` still uses Adventure Tech tokens. Do not apply conflicting rules from this file to `/app` UI.
 
-Thème par défaut : **Adventure Tech** (`data-theme="adventure-tech"`).  
+> Toute interface qui suit encore Adventure Tech doit utiliser les design tokens `--ml-*` avant toute valeur hex arbitraire.
+
+Thème par défaut (landing / legacy) : **Adventure Tech** (`data-theme="adventure-tech"`).  
 Alias conservés : `arcane-academy`, `arcane-tech` (mêmes tokens).
 
 Références Stitch (`design-reference/stitch/`) = **inspiration visuelle uniquement**.  
