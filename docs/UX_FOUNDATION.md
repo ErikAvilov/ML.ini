@@ -27,7 +27,7 @@ If an element does not help answer one of these questions, it is secondary.
 
 ### Primary destinations
 
-- **World** — application home (`/app`) and global learning progression. Soft-auth: available to anonymous and authenticated users.
+- **World** — application home (`/app`) and global learning progression. Authenticated only.
 - **Skill Tree** — acquired, active, and unlockable skills.
 
 ### Contextual destinations
@@ -40,32 +40,47 @@ If an element does not help answer one of these questions, it is secondary.
 ### Explicitly removed
 
 - No global **Missions** navigation item.
-- No separate marketing-style home page inside `/app` (landing stays at `/`).
 - No permanent dashboard section for generic stats.
 
 Missions belong to Kingdoms. Profile is utility, not primary navigation.
 
-### Soft-auth (authoritative)
+### Surface split (authoritative)
 
-Mlini is **soft-auth**. The `/app` experience is not an authentication wall.
+- **Public marketing** — `/` and legal pages; Editorial Cartographic **Marketing** variant ([`MLINI_DESIGN_SYSTEM.md`](MLINI_DESIGN_SYSTEM.md) §2).
+- **Canonical product** — learning UX under `/app` (World, Kingdom, Mission, Skill Tree, Profile).
+- **Utility auth** — sign-in, sign-up, onboarding outside `/app`; **Utility** variant.
 
-- Anonymous users may enter `/app`, view World, access the free Kingdom, play free missions, and keep progression via the existing **local** persistence mechanism.
-- Authenticated users use the existing **cloud** progression system.
-- Authentication upgrades persistence and account capabilities; it is **not** an entry requirement for the free learning path.
-- Do not rewrite progression/auth architecture as part of the UI redesign.
+Entry & auth (authoritative):
+
+- Anonymous `/` → public landing.
+- Authenticated `/` → server redirect to `/app` (no marketing flash).
+- Primary CTA **Start learning** → existing `/auth` flow (`next=/app`) → onboarding if required → `/app`.
+- `/app/**` requires authentication (proxy cookie gate + layout session check). Deep links preserve `next`.
+- Progression is **account/cloud only**. There is no anonymous learning product mode.
+
+### Auth gate (authoritative)
+
+Mlini is **auth-required** for the application.
+
+- Unauthenticated users cannot access `/app` or any `/app/**` route.
+- Authentication uses the existing Better Auth + utility `/auth` flow — do not invent a second login system.
+- LocalStorage progression helpers may still exist in code for legacy/tests; they must not be reachable as a product path.
 
 ---
 
 ## 3. Route model
 
-Target hierarchy (Next.js App Router — the `app` **segment** must exist as `src/app/app/…`; a route group `(app)` alone does **not** create `/app`):
+Canonical hierarchy (Next.js App Router — the `app` **segment** must exist as `src/app/app/…`; a route group `(app)` alone does **not** create `/app`):
 
 ```text
 /
-  Marketing landing page (unchanged during the /app redesign)
+  Public marketing (anonymous). Authenticated → redirect /app.
+
+/auth/*, onboarding
+  Utility auth (outside /app)
 
 /app
-  World (application home — soft-auth)
+  World (application home — authenticated only)
 
 /app/kingdom/[kingdomId]
   Kingdom view
@@ -80,16 +95,18 @@ Target hierarchy (Next.js App Router — the `app` **segment** must exist as `sr
   Profile / account settings
 ```
 
+Route groups `(public)`, `(utility)`, and `app` may organize layouts; URLs above are canonical.
+
 **Mission result (V1):** keep the existing **in-mission completion overlay** architecture. Do **not** add a dedicated `/result` route.
 
-**Legacy URLs** — preserve temporarily via Next.js redirects:
+**Legacy URLs** — preserve via Next.js redirects until traffic drops:
 
-- `/royaume` → Kingdom (canonical free Kingdom)
-- `/missions/[missionId]` → nested mission under its Kingdom
-- `/skills` → `/app/tree`
 - `/profil` → `/app/profile`
+- `/skills` → `/app/tree`
+- `/royaume` → `/app` (World; free Kingdom surfaced from canonical data)
+- `/missions/[missionId]` → `/app/kingdom/[kingdomId]/mission/[missionId]` (resolve `kingdomId` from repo data)
 
-The hierarchy above is fixed; temporary redirect targets may use the free Kingdom’s real `kingdomId` from repo data.
+The hierarchy above is fixed; redirect targets must use real `kingdomId` / `missionId` from repo data — do not invent routes.
 
 ---
 
@@ -122,7 +139,7 @@ Right:
 
 ### Purpose
 
-The World is the **application home** at `/app`. It gives a clear global view and gets the user back into learning quickly — whether they are anonymous (local progress) or authenticated (cloud progress).
+The World is the **application home** at `/app`. It gives a clear global view and gets the authenticated learner back into learning quickly using account/cloud progression.
 
 ### It must show
 
@@ -282,7 +299,7 @@ The Skill Tree represents capabilities, not content order.
 
 ### New user
 
-The first session in `/app` (anonymous or authenticated) should:
+The first session in `/app` should:
 
 - briefly establish the World;
 - make Kingdom I the obvious starting point;
@@ -475,7 +492,7 @@ Reject globally:
 
 ## 17. Non-negotiable product rules
 
-1. World is the application home (`/app`), available under soft-auth (anonymous + authenticated).
+1. World is the application home (`/app`), authenticated only.
 2. World and Skill Tree are the only permanent primary navigation destinations.
 3. Missions belong to Kingdoms.
 4. Profile lives behind the avatar.
@@ -495,8 +512,8 @@ Reject globally:
 
 Gate 0 is complete when all of the following are accepted:
 
-- [x] Landing (`/`) and application (`/app`) are separate concepts.
-- [x] World is the application home (soft-auth: anonymous + authenticated).
+- [x] Public marketing (`/`) and canonical product (`/app`) are distinct surfaces sharing one Editorial Cartographic identity.
+- [x] World is the application home (authenticated only).
 - [x] Primary navigation is World + Skill Tree.
 - [x] Profile is moved to avatar/account menu.
 - [x] Global Missions navigation is removed.
@@ -517,4 +534,4 @@ Gate 1 required three approved reference screens (World, Kingdom, Mission) shari
 
 **Gate 1 status: APPROVED.**
 
-Implementation may proceed under the human decisions recorded with the implementation audit (routing `/app/…`, soft-auth, landing scoped separately, Result overlay V1, canonical Kingdom data only).
+Implementation may proceed under the human decisions recorded with the implementation audit (routing `/app/…`, auth-required `/app`, Start learning → `/auth` → `/app`, Result overlay V1, canonical Kingdom data only).

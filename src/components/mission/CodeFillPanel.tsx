@@ -7,8 +7,10 @@ import {
   buildCodeFillStarterSource,
   evaluateAiIntegrationFill,
   evaluateCodeFillTask,
+  evaluateServiceActionFill,
   extractAiIntegrationFillFromSource,
   extractLogicFillFromSource,
+  extractServiceActionFillFromSource,
 } from "@/lib/validation";
 import type { CodeFillTask } from "@/lib/types";
 
@@ -131,8 +133,30 @@ export function CodeFillPanel({
     setFeedback(failKey);
   }
 
+  function checkServiceAction() {
+    if (task.mode !== "service-action") return;
+    const values = extractServiceActionFillFromSource(source);
+    const result = evaluateServiceActionFill(values);
+    if (result.ok) {
+      markPassed();
+      return;
+    }
+    setPassed(false);
+    const map = {
+      humanMethod: messages.serviceActionWrongMethod,
+      humanMessage: messages.serviceActionMessageFail,
+      humanPriorityHardcoded: messages.serviceActionHardcodedPriority,
+      humanPriorityObject: messages.serviceActionPriorityObject,
+      humanPriority: messages.serviceActionPriorityFail,
+      queueMethod: messages.serviceActionWrongQueueMethod,
+      queueMessage: messages.serviceActionMessageFail,
+    } as const;
+    setFeedback(map[result.which]);
+  }
+
   function check() {
     if (task.mode === "ai-integration") checkAiIntegration();
+    else if (task.mode === "service-action") checkServiceAction();
     else checkLogic();
   }
 
@@ -176,7 +200,9 @@ export function CodeFillPanel({
           <Button variant="secondary" size="sm" onClick={check}>
             {task.mode === "ai-integration"
               ? messages.codeFillWiringCheck
-              : messages.codeFillCheck}
+              : task.mode === "service-action"
+                ? messages.serviceActionCheck
+                : messages.codeFillCheck}
           </Button>
         </div>
       </div>

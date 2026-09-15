@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import {
-  Playfair_Display,
   Plus_Jakarta_Sans,
   JetBrains_Mono,
   Inter,
@@ -16,18 +15,18 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
-/** Marketing body + app headings (Editorial remaps .font-display → this family). */
+/** Body + headings (Editorial Cartographic — product-wide). */
 const body = Plus_Jakarta_Sans({
   variable: "--font-body",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
 
-/** Marketing display only — Playfair stays on landing. */
-const display = Playfair_Display({
+/** Kept for CSS variable continuity; display remaps to Jakarta site-wide. */
+const display = Plus_Jakarta_Sans({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["500", "600"],
+  weight: ["500", "600", "700"],
 });
 
 const mono = JetBrains_Mono({
@@ -36,7 +35,7 @@ const mono = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
-/** /app body copy (Editorial Cartographic). */
+/** Interface / body copy site-wide. */
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -67,10 +66,10 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      data-theme="adventure-tech"
+      data-theme="editorial-cartographic"
       className={`${body.variable} ${display.variable} ${mono.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="relative flex h-dvh flex-col overflow-hidden bg-ml-bg-0 text-ml-text-body">
+      <body className="relative flex h-dvh flex-col overflow-hidden bg-ml-canvas text-ml-text-body">
         <SiteAtmosphere />
         <div className="relative z-10 flex min-h-0 flex-1 flex-col">
           <LocaleProvider initialLocale={locale}>

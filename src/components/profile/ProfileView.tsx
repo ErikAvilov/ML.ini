@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { useEffect, useState } from "react";
 import { Award, CalendarDays, Map, ShieldCheck } from "lucide-react";
 import { AchievementBadge } from "@/components/profile/AchievementBadge";
 import { ActivityHeatmap } from "@/components/profile/ActivityHeatmap";
@@ -82,6 +82,11 @@ export function ProfileView({ identity = null }: ProfileViewProps) {
     messages.profileDefaultName
   );
   const avatarUrl = resolvedIdentity?.profile?.avatar_url;
+  const [avatarBroken, setAvatarBroken] = useState(false);
+  useEffect(() => {
+    setAvatarBroken(false);
+  }, [avatarUrl]);
+  const showAvatar = Boolean(avatarUrl) && !avatarBroken;
   const isCloud = authStatus === "authenticated" || Boolean(resolvedIdentity);
 
   return (
@@ -97,14 +102,17 @@ export function ProfileView({ identity = null }: ProfileViewProps) {
                 className={`flex h-28 w-28 items-center justify-center overflow-hidden border-2 bg-ml-bg-0 ${frameClasses[equippedFrame.tone]}`}
                 style={{ borderRadius: "var(--ml-frame-radius-lg)" }}
               >
-                {avatarUrl ? (
-                  <Image
-                    src={avatarUrl}
+                {showAvatar ? (
+                  // Google avatars 403 when Referer is sent — omit it.
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={avatarUrl!}
                     alt=""
                     width={112}
                     height={112}
+                    referrerPolicy="no-referrer"
                     className="h-full w-full object-cover"
-                    unoptimized
+                    onError={() => setAvatarBroken(true)}
                   />
                 ) : (
                   <MliniEmblem size={62} title={displayName} />

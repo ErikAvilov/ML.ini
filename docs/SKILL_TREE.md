@@ -58,15 +58,23 @@ Résolution principale : `completedMissions` contient `unlockedByMissionId`.
 
 ---
 
-## Compétences V1 (Missions 01–03)
+## Compétences V1 (Royaume I — Missions 01–09)
 
 | Id | Nom | Mission |
 |----|-----|---------|
 | `llm-fundamentals-1` | LLM Fundamentals I | mission-01 |
 | `prompting-1` | Prompting I | mission-02 |
 | `structured-output-1` | Structured Output I | mission-03 |
+| `json-basics-1` | JSON I | mission-04 |
+| `logic-1` | Logic I | mission-05 |
+| `ai-integration-i` | AI Integration I | mission-06 |
+| `external-actions-1` | External Actions I | mission-07 |
+| `workflow-composition-1` | Workflow Composition I | mission-08 |
+| `guardrails-1` | Guardrails I | mission-09 |
 
-Chaîne : Fundamentals → Prompting → Structured Output.
+Chaîne : Fundamentals → Prompting → Structured Output → JSON → Logic → AI Integration → External Actions → Workflow Composition → Guardrails.
+
+Mission 10 (boss) ne débloque **pas** de nouvelle compétence : elle vérifie la reconstruction du système.
 
 Les textes de completion mission (`skillUnlocked.skillId`) doivent matcher le registry.
 

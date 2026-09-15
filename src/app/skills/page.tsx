@@ -1,9 +1,6 @@
-import { SkillTreeView } from "@/components/skills/SkillTreeView";
+import { redirect } from "next/navigation";
 
-export default function SkillsPage() {
-  return (
-    <div className="h-full min-h-0 overflow-hidden">
-      <SkillTreeView />
-    </div>
-  );
+/** Legacy → canonical Skill Tree. */
+export default function SkillsRedirectPage() {
+  redirect("/app/tree");
 }

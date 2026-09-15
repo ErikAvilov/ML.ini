@@ -1,16 +1,14 @@
 # UI Architecture — MLINI
 
-**Status:** documents **current** runtime vs **target** `/app` redesign. The target is **not** implemented yet.
+**Status:** architecture **actuelle** post-unification Editorial Cartographic (Marketing, Utility, Application).
 
 ## Documentation authority
 
-For `/app` redesign work:
-
 1. [`UX_FOUNDATION.md`](UX_FOUNDATION.md)
-2. [`MLINI_DESIGN_SYSTEM.md`](MLINI_DESIGN_SYSTEM.md)
+2. [`MLINI_DESIGN_SYSTEM.md`](MLINI_DESIGN_SYSTEM.md) — tokens and contextual variants (§2)
 3. [`MLINI_INTERACTIONS.md`](MLINI_INTERACTIONS.md)
 4. Specialized docs (MISSION-UX, QOL, SKILL_TREE, NARRATIVE, …)
-5. Legacy [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) — landing `/` only when still Adventure Tech
+5. [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) — **historical archive only** (Adventure Tech); do not apply
 
 Stitch (`design-reference/stitch/`) = **visual reference only**. Never curriculum, telemetry, or HTML architecture.
 
@@ -18,55 +16,53 @@ Product data (missions, XP, validation, AI, MILDRED, skills) always comes from t
 
 ---
 
-## Current architecture (as shipped today)
+## Shells
 
-| Route | Layout | Notes |
-|-------|--------|-------|
-| `/` | Scroll marketing | `HomeExperience` — **keep during `/app` redesign** |
-| `/royaume` | Map + detail panel | Single Kingdom hub (`KingdomHub`) |
-| `/missions/[missionId]` | Full-viewport shell | Brief / playground ; `SiteHeader` hidden |
-| `/skills` | Canvas pan/zoom + detail | Real skills only |
-| `/profil` | Scrollable profile | Progress-derived stats ; account tools |
+| Shell | Layout role | Variant | Typical routes |
+|-------|-------------|---------|----------------|
+| **PublicShell** | Marketing, legal | Marketing | `/`, `/legal/*` |
+| **UtilityShell** | Auth, onboarding | Utility | `/auth/*`, onboarding flows |
+| **AppShell** | Persistent World · Skill Tree nav | Application | `/app`, `/app/tree`, `/app/profile`, `/app/kingdom/[kingdomId]` |
+| **Mission focus** | De-emphasized global nav; Learning Pane + Workspace | Application | `/app/kingdom/[kingdomId]/mission/[missionId]` |
 
-**Nav today (`SiteHeader`):** Royaumes · Arbre · Missions · Profil (+ auth chrome).  
-**Auth:** soft-auth — pages are reachable anonymously; progression = localStorage (anon) or Neon (authenticated).
-
-### Reusable components (current)
-
-- **Brand** : `MliniEmblem`, `BrandLogo`
-- **Shell** : `SiteHeader`, `SiteAtmosphere`
-- **Kingdom** : `KingdomHub`, `MissionPath`, `MissionNode`
-- **Mission** : `MissionWorkspace`, `MissionBriefing`, `MissionPlayground`, …
-- **Skills** : `SkillTreeView`
-- **Profile** : `ProfileView`, `ActivityHeatmap`, `AchievementBadge`
-- **Data profile** : `src/data/profile/{titles,frames,achievements}.ts`
+Route groups `(public)`, `(utility)`, and segment `app/` organize layouts under `src/app/`. A route group alone does **not** create `/app` — the `app` segment must exist as `src/app/app/…`.
 
 ---
 
-## Target architecture (approved — not yet implemented)
+## Canonical routes
 
-### Route hierarchy
-
-Real App Router segment `src/app/app/…` (a route group `(app)` alone does **not** create `/app`):
-
-| Target URL | Screen |
-|------------|--------|
-| `/` | Marketing landing (unchanged in this redesign) |
-| `/app` | **World** — application home (soft-auth) |
+| URL | Screen |
+|-----|--------|
+| `/` | Public marketing (anonymous). Authenticated → `/app` |
+| `/auth/*` | Sign-in, sign-up (utility) |
+| `/app` | **World** — application home (authenticated only) |
 | `/app/kingdom/[kingdomId]` | Kingdom |
 | `/app/kingdom/[kingdomId]/mission/[missionId]` | Mission workspace (focus shell) |
 | `/app/tree` | Skill Tree |
 | `/app/profile` | Profile / settings (avatar entry) |
 
-**Temporary redirects** from `/royaume`, `/missions/[missionId]`, `/skills`, `/profil` until cut-over is complete.
+**Auth gate:** `/app/**` requires authentication (proxy + layout). Primary CTA **Start learning** → `/auth?next=/app`. Authenticated `/` redirects to `/app`. Anonymous progression is not a product path.
 
 **Result (V1):** in-mission completion **overlay** — no dedicated `/result` route.
 
-### World
+**Primary nav (AppShell):** **World** · **Skill Tree** only. Profile via avatar. Contextual Continue Mission allowed — not a third permanent nav item.
 
-New primary surface. Pathway/progression structure; cartographic identity as layer only. Render **only** Kingdoms present in repo data — no invented locked Kingdoms or Stitch curriculum.
+---
 
-### Mission focus shell
+## Legacy redirects
+
+Preserve until traffic drops (Next.js redirects; resolve IDs from repo data):
+
+| Legacy | Canonical |
+|--------|-----------|
+| `/profil` | `/app/profile` |
+| `/skills` | `/app/tree` |
+| `/royaume` | `/app` |
+| `/missions/[missionId]` | `/app/kingdom/[kingdomId]/mission/[missionId]` |
+
+---
+
+## Mission focus shell
 
 When a mission is active:
 
@@ -77,9 +73,21 @@ When a mission is active:
 
 Detail: [`design/MISSION-UX.md`](design/MISSION-UX.md) + `MLINI_DESIGN_SYSTEM` / `MLINI_INTERACTIONS`.
 
-### Primary nav (target)
+### World
 
-**World** · **Skill Tree** only. Profile via avatar. Compact progression indicator. Contextual Continue Mission allowed — not a third permanent nav item.
+Pathway/progression structure; cartographic identity as layer only. Render **only** Kingdoms present in repo data — no invented locked Kingdoms or Stitch curriculum.
+
+---
+
+## Reusable components
+
+- **Brand** : `MliniEmblem`, `BrandLogo`
+- **Shells** : PublicShell, UtilityShell, AppShell (+ mission focus layout)
+- **Kingdom** : `KingdomHub`, `MissionPath`, `MissionNode`
+- **Mission** : `MissionWorkspace`, `MissionBriefing`, `MissionPlayground`, …
+- **Skills** : `SkillTreeView`
+- **Profile** : `ProfileView`, `ActivityHeatmap`, `AchievementBadge`
+- **Data profile** : `src/data/profile/{titles,frames,achievements}.ts`
 
 ---
 
@@ -90,7 +98,6 @@ Pas d’économie, pas de points à dépenser, pas de leaderboard.
 
 Heatmap : `activityDates` (YYYY-MM-DD) — vide OK pour un nouveau compte.
 
-## Intensité / identité visuelle
+## Identité visuelle
 
-- **App `/app`:** Editorial Cartographic — [`MLINI_DESIGN_SYSTEM.md`](MLINI_DESIGN_SYSTEM.md).
-- **Landing `/` (until redesigned):** Adventure Tech notes in legacy [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) §1 may still apply; scope tokens so app styles do not break the landing.
+**Site-wide:** Editorial Cartographic — semantic tokens and typography from [`MLINI_DESIGN_SYSTEM.md`](MLINI_DESIGN_SYSTEM.md). Marketing, Utility, and Application variants share the same DNA at different densities.

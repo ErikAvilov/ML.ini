@@ -1,5 +1,5 @@
 /**
- * Self-check for Mission 05/06 code-fill helpers.
+ * Self-check for Mission 05/06/07 code-fill helpers.
  * Run: npx tsx scripts/check-code-fill.ts
  */
 import assert from "node:assert/strict";
@@ -13,10 +13,19 @@ import {
   evaluateDictKeyBlank,
   evaluateIdentifierBlank,
   evaluateLogicRoute,
+  evaluateServiceActionFill,
+  evaluateServiceActionRun,
   extractAiIntegrationFillFromSource,
   extractLogicFillFromSource,
+  extractServiceActionFillFromSource,
   normalizeCodeBlank,
 } from "../src/lib/validation";
+import {
+  createSupportService,
+  formatSupportActionReport,
+  matchSupportCall,
+  simulateServiceAction,
+} from "../src/lib/missions/support-service";
 
 assert.equal(normalizeCodeBlank(`  priority  ==  'URGENT' `), 'priority == "URGENT"');
 
@@ -150,5 +159,103 @@ const badJson = evaluateAiIntegrationRun(
 );
 assert.equal(badJson.matchesExpected, false);
 assert.equal(badJson.jsonOk, false);
+
+// --- Mission 07 service-action ---
+const goodSource = `
+if route == "HUMAN_REVIEW":
+    support.create_ticket(
+        message=message,
+        priority=result["priority"]
+    )
+else:
+    support.queue_message(
+        message=message
+    )
+`;
+const extracted = extractServiceActionFillFromSource(goodSource);
+assert.deepEqual(extracted, {
+  humanMethod: "create_ticket",
+  humanMessage: "message",
+  humanPriority: 'result["priority"]',
+  queueMethod: "queue_message",
+  queueMessage: "message",
+});
+assert.equal(evaluateServiceActionFill(extracted).ok, true);
+
+assert.equal(
+  (
+    evaluateServiceActionFill({
+      ...extracted,
+      humanPriority: '"URGENT"',
+    }) as { which: string }
+  ).which,
+  "humanPriorityHardcoded"
+);
+assert.equal(
+  (
+    evaluateServiceActionFill({
+      ...extracted,
+      humanPriority: "result",
+    }) as { which: string }
+  ).which,
+  "humanPriorityObject"
+);
+assert.equal(
+  (
+    evaluateServiceActionFill({
+      ...extracted,
+      humanMethod: "queue_message",
+    }) as { which: string }
+  ).which,
+  "humanMethod"
+);
+
+const support = createSupportService();
+const call = simulateServiceAction(support, {
+  route: "HUMAN_REVIEW",
+  priority: "URGENT",
+  message: "My card was charged twice.",
+});
+assert.equal(call.action, "create_ticket");
+assert.ok(
+  matchSupportCall(call, {
+    action: "create_ticket",
+    message: "My card was charged twice.",
+    priority: "URGENT",
+  })
+);
+assert.ok(formatSupportActionReport(call).includes("ACTION SENT"));
+assert.ok(formatSupportActionReport(call).includes("create_ticket"));
+
+const runPass = evaluateServiceActionRun(
+  {
+    id: "t1",
+    message: "My card was charged twice.",
+    expected: "create_ticket",
+    serviceFixture: { route: "HUMAN_REVIEW", priority: "URGENT" },
+  },
+  { humanRoute: "HUMAN_REVIEW" }
+);
+assert.equal(runPass.matchesExpected, true);
+assert.equal(runPass.normalized, "create_ticket");
+
+const runQueue = evaluateServiceActionRun(
+  {
+    id: "t2",
+    message: "Where can I download my invoice?",
+    expected: "queue_message",
+    serviceFixture: { route: "STANDARD_QUEUE", priority: "NORMAL" },
+  },
+  { humanRoute: "HUMAN_REVIEW" }
+);
+assert.equal(runQueue.matchesExpected, true);
+assert.equal(runQueue.normalized, "queue_message");
+
+const serviceStarter = buildCodeFillStarterSource({
+  mode: "service-action",
+  segments: ["support.", "(\n  message=", "\n)"],
+  blanks: [{}, {}],
+});
+assert.ok(serviceStarter.includes(CODE_FILL_BLANK_MARK));
 
 console.log("code-fill: ok");

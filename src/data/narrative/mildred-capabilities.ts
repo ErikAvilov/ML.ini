@@ -32,4 +32,20 @@ export const MILDRED_CAPABILITY_CATALOG: Record<
     label: { en: "AI Integration", fr: "AI Integration" },
     status: "ONLINE",
   },
+  "external-actions": {
+    label: { en: "External Actions", fr: "External Actions" },
+    status: "ONLINE",
+  },
+  "workflow-composition": {
+    label: { en: "Workflow Composition", fr: "Workflow Composition" },
+    status: "ONLINE",
+  },
+  guardrails: {
+    label: { en: "Guardrails", fr: "Guardrails" },
+    status: "ONLINE",
+  },
+  "mildred-live": {
+    label: { en: "MILDRED Live", fr: "MILDRED Live" },
+    status: "LIVE",
+  },
 };

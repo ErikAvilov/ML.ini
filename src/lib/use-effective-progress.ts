@@ -29,9 +29,8 @@ export type EffectiveProgressValue = EffectiveProgressSnapshot & {
 
 /**
  * Canonical progression hook for UI.
- * Authenticated → Neon cloud snapshot only.
- * Anonymous → localStorage.
- * Loading → ready=false, DEFAULT progress (not local).
+ * Product gate: `/app` is auth-only — cloud progression is canonical.
+ * Local/anonymous branch remains for legacy helpers/tests only (unreachable in product).
  */
 export function useEffectiveProgress(): EffectiveProgressValue {
   const local = useProgress();

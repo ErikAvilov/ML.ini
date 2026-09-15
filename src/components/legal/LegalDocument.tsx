@@ -14,17 +14,15 @@ export function LegalDocument({
   return (
     <article className="mx-auto w-full max-w-[52rem] px-4 py-10 sm:px-6 sm:py-14">
       <header className="border-b border-ml-border pb-6">
-        <p className="font-mono text-[11px] tracking-[0.14em] text-ml-accent uppercase">
-          {LEGAL_OPERATOR.productName}
-        </p>
-        <h1 className="mt-2 font-display text-3xl text-ml-text sm:text-4xl">
+        <h1 className="font-display text-3xl font-semibold text-ml-text-primary sm:text-4xl">
           {title}
         </h1>
         <p className="mt-3 text-[length:var(--ml-text-sm)] text-ml-text-muted">
-          Dernière mise à jour : {LEGAL_LAST_UPDATED_LABEL}
+          {LEGAL_OPERATOR.productName} · Dernière mise à jour :{" "}
+          {LEGAL_LAST_UPDATED_LABEL}
         </p>
       </header>
-      <div className="legal-prose mt-8 space-y-8 text-[length:var(--ml-text-base)] leading-[var(--ml-leading-body)] text-ml-text-body">
+      <div className="legal-prose mt-8 space-y-8 text-[length:var(--ml-text-base)] leading-[var(--ml-leading-body)] text-ml-text-muted">
         {children}
       </div>
     </article>

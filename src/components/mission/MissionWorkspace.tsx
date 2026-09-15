@@ -28,8 +28,14 @@ import {
   evaluateMissionTest,
   evaluateLogicRoute,
   evaluateAiIntegrationRun,
+  evaluateServiceActionRun,
   summarizeSuite,
 } from "@/lib/validation";
+import {
+  emptyConnections,
+  pipelineResultToClassification,
+  simulatePipeline,
+} from "@/lib/missions/pipeline";
 import {
   readSessionSolution,
   requestCloudCompletion,
@@ -44,11 +50,77 @@ import { getMissionBySlug, getMissions } from "@/data/missions";
 import { createKingdomConstruireAvecIA } from "@/data/kingdoms/construire-avec-ia";
 import type {
   ClassificationResult,
+  ClassificationTest,
   MissionDefinition,
+  PipelineConnections,
+  SafetyReasonCode,
+  SafetyRuleConfig,
+  SafetyTask,
 } from "@/lib/types";
 import type { Locale } from "@/i18n/config";
 import type { CommonMessages } from "@/i18n/messages/common";
 import type { AuthIdentity } from "@/lib/auth/types";
+
+const PIPELINE_CONN_PREFIX = "mlini-pipeline-conn-v1:";
+const PIPELINE_PASS_PREFIX = "mlini-pipeline-pass-v1:";
+const SAFETY_CFG_PREFIX = "mlini-safety-cfg-v1:";
+const SAFETY_PASS_PREFIX = "mlini-safety-pass-v1:";
+const BOSS_STEP_PREFIX = "mlini-boss-step-v1:";
+const BOSS_PROMPT_PASS_PREFIX = "mlini-boss-prompt-v1:";
+
+const SAFETY_REASON_CODES: ReadonlySet<string> = new Set([
+  "INVALID_AI_OUTPUT",
+  "INVALID_PRIORITY",
+  "ACTION_FAILED",
+]);
+
+function defaultSafetyConfig(task: SafetyTask): SafetyRuleConfig {
+  return {
+    onParseFail: {
+      target: "MANUAL_REVIEW",
+      reason: task.parseFailReasons[0] ?? "INVALID_AI_OUTPUT",
+    },
+    onInvalidPriority: {
+      target: "MANUAL_REVIEW",
+      reason: task.invalidPriorityReasons[0] ?? "INVALID_PRIORITY",
+    },
+    onActionFail: {
+      target: "MANUAL_REVIEW",
+      reason: task.actionFailReasons[0] ?? "ACTION_FAILED",
+    },
+  };
+}
+
+function loadPipelineConnections(
+  missionId: string,
+  task: NonNullable<MissionDefinition["pipeline"]>
+): PipelineConnections {
+  const base = emptyConnections(task);
+  if (typeof window === "undefined") return base;
+  try {
+    const raw = sessionStorage.getItem(PIPELINE_CONN_PREFIX + missionId);
+    if (!raw) return base;
+    const parsed = JSON.parse(raw) as PipelineConnections;
+    return { ...base, ...parsed };
+  } catch {
+    return base;
+  }
+}
+
+function loadSafetyConfig(
+  missionId: string,
+  task: SafetyTask
+): SafetyRuleConfig {
+  const base = defaultSafetyConfig(task);
+  if (typeof window === "undefined") return base;
+  try {
+    const raw = sessionStorage.getItem(SAFETY_CFG_PREFIX + missionId);
+    if (!raw) return base;
+    return { ...base, ...(JSON.parse(raw) as SafetyRuleConfig) };
+  } catch {
+    return base;
+  }
+}
 
 const SuccessToast = dynamic(
   () =>
@@ -260,7 +332,40 @@ function MissionSession({
     () => createKingdomConstruireAvecIA(locale),
     [locale]
   );
-  const tests = mission.tests ?? [];
+  const [bossStep, setBossStep] = useState(() => {
+    if (!mission.boss) return 0;
+    if (typeof window === "undefined") return 0;
+    try {
+      const raw = sessionStorage.getItem(BOSS_STEP_PREFIX + mission.id);
+      const n = raw ? Number(raw) : 0;
+      return Number.isFinite(n)
+        ? Math.max(0, Math.min(n, mission.boss.steps.length - 1))
+        : 0;
+    } catch {
+      return 0;
+    }
+  });
+  const [promptStepPassed, setPromptStepPassed] = useState(() => {
+    if (!mission.boss) return true;
+    if (typeof window === "undefined") return false;
+    try {
+      return sessionStorage.getItem(BOSS_PROMPT_PASS_PREFIX + mission.id) === "1";
+    } catch {
+      return false;
+    }
+  });
+
+  const tests = useMemo(() => {
+    if (mission.boss && bossStep === 0) {
+      return mission.boss.promptTests;
+    }
+    // Step 1: connection check only — no run suite.
+    if (mission.boss && bossStep === 1) {
+      return [];
+    }
+    return mission.tests ?? [];
+  }, [mission.boss, mission.tests, bossStep]);
+
   const [cloudSaving, setCloudSaving] = useState(false);
   const [cloudSaveError, setCloudSaveError] = useState<string | null>(null);
   const cloudSavingRef = useRef(false);
@@ -296,6 +401,34 @@ function MissionSession({
       return false;
     }
   });
+  const [pipelineConnections, setPipelineConnections] =
+    useState<PipelineConnections>(() =>
+      mission.pipeline
+        ? loadPipelineConnections(mission.id, mission.pipeline)
+        : {}
+    );
+  const [pipelinePassed, setPipelinePassed] = useState(() => {
+    if (!mission.pipeline) return true;
+    if (typeof window === "undefined") return false;
+    try {
+      return sessionStorage.getItem(PIPELINE_PASS_PREFIX + mission.id) === "1";
+    } catch {
+      return false;
+    }
+  });
+  const [safetyConfig, setSafetyConfig] = useState<SafetyRuleConfig | undefined>(
+    () =>
+      mission.safety ? loadSafetyConfig(mission.id, mission.safety) : undefined
+  );
+  const [safetyPassed, setSafetyPassed] = useState(() => {
+    if (!mission.safety) return true;
+    if (typeof window === "undefined") return false;
+    try {
+      return sessionStorage.getItem(SAFETY_PASS_PREFIX + mission.id) === "1";
+    } catch {
+      return false;
+    }
+  });
   const [activeMessage, setActiveMessage] = useState(showcase);
   const [liveOutput, setLiveOutput] = useState<string | null>(null);
   const [results, setResults] = useState<ClassificationResult[]>([]);
@@ -323,6 +456,10 @@ function MissionSession({
   const instructionRef = useRef(instruction);
   const repairPassedRef = useRef(repairPassed);
   const codeFillPassedRef = useRef(codeFillPassed);
+  const pipelinePassedRef = useRef(pipelinePassed);
+  const safetyPassedRef = useRef(safetyPassed);
+  const pipelineConnectionsRef = useRef(pipelineConnections);
+  const safetyConfigRef = useRef(safetyConfig);
   const resultsRef = useRef(results);
   const handleRunRef = useRef<() => Promise<void>>(async () => {});
 
@@ -340,6 +477,22 @@ function MissionSession({
   }, [codeFillPassed]);
 
   useEffect(() => {
+    pipelinePassedRef.current = pipelinePassed;
+  }, [pipelinePassed]);
+
+  useEffect(() => {
+    safetyPassedRef.current = safetyPassed;
+  }, [safetyPassed]);
+
+  useEffect(() => {
+    pipelineConnectionsRef.current = pipelineConnections;
+  }, [pipelineConnections]);
+
+  useEffect(() => {
+    safetyConfigRef.current = safetyConfig;
+  }, [safetyConfig]);
+
+  useEffect(() => {
     resultsRef.current = results;
   }, [results]);
 
@@ -348,15 +501,32 @@ function MissionSession({
   }, [mission.id, markMissionPlayed]);
 
   useEffect(() => {
-    if (mission.codeFill?.mode === "ai-integration") return;
+    if (
+      mission.codeFill?.mode === "ai-integration" ||
+      mission.codeFill?.mode === "service-action" ||
+      (mission.pipeline && !mission.boss)
+    ) {
+      return;
+    }
     saveMissionDraft(mission.id, instruction);
-  }, [mission.id, mission.codeFill, instruction]);
+  }, [mission.id, mission.codeFill, mission.pipeline, mission.boss, instruction]);
 
   const workspace = resolveWorkspaceKind(mission);
   const fillMode =
     workspace.kind === "code-fill" ? workspace.codeFillMode ?? null : null;
   const isLogic = fillMode === "logic";
   const isAiIntegration = fillMode === "ai-integration";
+  const isServiceAction = fillMode === "service-action";
+  const isPipeline = workspace.kind === "pipeline";
+  const isBoss = workspace.kind === "boss";
+  const isBossPrompt = isBoss && bossStep === 0;
+  const isBossPipeline = isBoss && bossStep >= 1;
+  const isPipelineRun = isPipeline || isBossPipeline;
+  const isDeterministicFill = isLogic || isServiceAction || isPipelineRun;
+  const outputSchema =
+    isBossPrompt && mission.boss
+      ? mission.boss.promptSchema
+      : mission.outputSchema;
 
   async function runClassify(message: string) {
     const instructionForCall =
@@ -459,6 +629,8 @@ function MissionSession({
         instruction: instructionForCall,
         codeSource: sessionBits.codeSource,
         payloadRepairText: sessionBits.payloadRepairText,
+        pipelineConnectionsJson: sessionBits.pipelineConnectionsJson,
+        safetyConfigJson: sessionBits.safetyConfigJson,
       });
 
       if (result.ok) {
@@ -485,6 +657,9 @@ function MissionSession({
   }
 
   async function tryGrantMissionSuccess() {
+    if (mission.boss && bossStep !== mission.boss.steps.length - 1) {
+      return;
+    }
     if (mission.payloadRepair && !repairPassedRef.current) {
       setFeedback(messages.payloadRepairRequired);
       setFeedbackSpeaker("mira");
@@ -497,8 +672,53 @@ function MissionSession({
       setMobileTab("workspace");
       return;
     }
+    if (mission.pipeline && !pipelinePassedRef.current) {
+      setFeedback(messages.pipelineRequired);
+      setFeedbackSpeaker("mira");
+      setMobileTab("workspace");
+      return;
+    }
+    if (mission.safety && !safetyPassedRef.current) {
+      setFeedback(messages.safetyRequired);
+      setFeedbackSpeaker("mira");
+      setMobileTab("workspace");
+      return;
+    }
     await persistCloudAfterPass();
     grantMissionSuccess();
+  }
+
+  function persistBossStep(next: number) {
+    if (!mission.boss) return;
+    const clamped = Math.max(
+      0,
+      Math.min(next, mission.boss.steps.length - 1)
+    );
+    setBossStep(clamped);
+    try {
+      sessionStorage.setItem(BOSS_STEP_PREFIX + mission.id, String(clamped));
+    } catch {
+      /* ignore */
+    }
+    setResults([]);
+    setFeedback(null);
+    setFeedbackSpeaker(null);
+    setLiveOutput(null);
+    setCurrentIndex(0);
+    setActiveMessage(
+      clamped === 0
+        ? (mission.boss.promptTests[0]?.message ?? showcase)
+        : (mission.tests?.[0]?.message ?? showcase)
+    );
+  }
+
+  function markPromptStepPassed() {
+    setPromptStepPassed(true);
+    try {
+      sessionStorage.setItem(BOSS_PROMPT_PASS_PREFIX + mission.id, "1");
+    } catch {
+      /* ignore */
+    }
   }
 
   async function retryCloudSave() {
@@ -518,6 +738,8 @@ function MissionSession({
         instruction: instructionForCall,
         codeSource: sessionBits.codeSource,
         payloadRepairText: sessionBits.payloadRepairText,
+        pipelineConnectionsJson: sessionBits.pipelineConnectionsJson,
+        safetyConfigJson: sessionBits.safetyConfigJson,
       });
       if (result.ok || result.kind === "anonymous") {
         setCloudSaveError(null);
@@ -593,11 +815,62 @@ function MissionSession({
     });
   }
 
+  function evaluateServiceActionTest(
+    test: (typeof tests)[number]
+  ): ClassificationResult {
+    const fill = mission.codeFill;
+    if (!fill || fill.mode !== "service-action") {
+      throw new Error("service-action fill required");
+    }
+    return evaluateServiceActionRun(test, { humanRoute: fill.humanRoute });
+  }
+
+  function evaluatePipelineTest(test: ClassificationTest): ClassificationResult {
+    const pipe = mission.pipeline;
+    if (!pipe) throw new Error("pipeline required");
+    const fixture = test.serviceFixture;
+    const expectedIsFallback = SAFETY_REASON_CODES.has(test.expected);
+    const sim = simulatePipeline({
+      connections: pipelineConnectionsRef.current,
+      message: test.message,
+      aiResponse: fixture?.aiResponse ?? "",
+      urgentPriority: pipe.urgentPriority,
+      humanRoute: pipe.humanRoute,
+      queueRoute: pipe.queueRoute,
+      safety:
+        mission.safety && (!isBoss || bossStep >= 2)
+          ? safetyConfigRef.current ?? null
+          : null,
+      forceActionFailure: fixture?.forceActionFailure,
+      expectedAction: expectedIsFallback ? undefined : test.expected,
+      expectedFallback: expectedIsFallback
+        ? (test.expected as SafetyReasonCode)
+        : null,
+    });
+    return pipelineResultToClassification(test, sim);
+  }
+
   async function handleRun() {
     if (runningRef.current || tests.length === 0) return;
-    if (isLogic || isAiIntegration) {
+    if (isLogic || isAiIntegration || isServiceAction) {
       if (!codeFillPassedRef.current) {
         setFeedback(messages.codeFillRequired);
+        setFeedbackSpeaker("mira");
+        setMobileTab("workspace");
+        return;
+      }
+    } else if (isPipelineRun) {
+      if (!pipelinePassedRef.current) {
+        setFeedback(messages.pipelineRequired);
+        setFeedbackSpeaker("mira");
+        setMobileTab("workspace");
+        return;
+      }
+      if (
+        (isPipeline && mission.safety && !safetyPassedRef.current) ||
+        (isBoss && bossStep >= 2 && !safetyPassedRef.current)
+      ) {
+        setFeedback(messages.safetyRequired);
         setFeedbackSpeaker("mira");
         setMobileTab("workspace");
         return;
@@ -617,7 +890,7 @@ function MissionSession({
     setSuccessToast(null);
 
     const collected: ClassificationResult[] = [];
-    const fast = isLogic;
+    const fast = isDeterministicFill;
 
     try {
       for (let i = 0; i < tests.length; i++) {
@@ -634,6 +907,12 @@ function MissionSession({
         if (isLogic) {
           await wait(120);
           evaluated = evaluateLogicTest(test);
+        } else if (isServiceAction) {
+          await wait(120);
+          evaluated = evaluateServiceActionTest(test);
+        } else if (isPipelineRun) {
+          await wait(120);
+          evaluated = evaluatePipelineTest(test);
         } else if (isAiIntegration) {
           const output = await runClassify(test.message);
           setLiveOutput(output);
@@ -645,10 +924,14 @@ function MissionSession({
             output,
             test,
             mission.allowedOutputs ?? [],
-            mission.outputSchema
+            outputSchema
           );
         }
-        setLiveOutput(evaluated.normalized ?? evaluated.raw);
+        setLiveOutput(
+          isServiceAction || isPipelineRun
+            ? evaluated.raw
+            : (evaluated.normalized ?? evaluated.raw)
+        );
         setStage("output");
         collected.push(evaluated);
         setResults([...collected]);
@@ -660,7 +943,13 @@ function MissionSession({
       setFeedbackSpeaker(summary.feedbackSpeaker);
 
       if (summary.allPassed) {
-        void tryGrantMissionSuccess();
+        if (isBossPrompt) {
+          markPromptStepPassed();
+          setFeedback(messages.bossPromptPassed);
+          setFeedbackSpeaker("mira");
+        } else if (!isBoss || bossStep >= 2) {
+          void tryGrantMissionSuccess();
+        }
       }
     } catch (err) {
       setSystemError(
@@ -716,9 +1005,25 @@ function MissionSession({
 
   async function handleRunBatch() {
     if (running || tests.length === 0) return;
-    if (isLogic || isAiIntegration) {
+    if (isLogic || isAiIntegration || isServiceAction) {
       if (!codeFillPassedRef.current) {
         setFeedback(messages.codeFillRequired);
+        setFeedbackSpeaker("mira");
+        setMobileTab("workspace");
+        return;
+      }
+    } else if (isPipelineRun) {
+      if (!pipelinePassedRef.current) {
+        setFeedback(messages.pipelineRequired);
+        setFeedbackSpeaker("mira");
+        setMobileTab("workspace");
+        return;
+      }
+      if (
+        (isPipeline && mission.safety && !safetyPassedRef.current) ||
+        (isBoss && bossStep >= 2 && !safetyPassedRef.current)
+      ) {
+        setFeedback(messages.safetyRequired);
         setFeedbackSpeaker("mira");
         setMobileTab("workspace");
         return;
@@ -746,6 +1051,12 @@ function MissionSession({
       if (isLogic) {
         await wait(280);
         collected = tests.map((test) => evaluateLogicTest(test));
+      } else if (isServiceAction) {
+        await wait(280);
+        collected = tests.map((test) => evaluateServiceActionTest(test));
+      } else if (isPipelineRun) {
+        await wait(280);
+        collected = tests.map((test) => evaluatePipelineTest(test));
       } else {
         const instructionForCall =
           isAiIntegration && mission.codeFill?.mode === "ai-integration"
@@ -781,14 +1092,16 @@ function MissionSession({
             output,
             test,
             mission.allowedOutputs ?? [],
-            mission.outputSchema
+            outputSchema
           );
         });
       }
 
       const last =
         collected[collected.length - 1] ?? null;
-      setLiveOutput(last?.normalized ?? last?.raw ?? null);
+      setLiveOutput(
+        isPipelineRun ? (last?.raw ?? null) : (last?.normalized ?? last?.raw ?? null)
+      );
       setStage("output");
       setResults(collected);
       setCurrentIndex(Math.max(0, tests.length - 1));
@@ -798,7 +1111,13 @@ function MissionSession({
       setFeedbackSpeaker(summary.feedbackSpeaker);
 
       if (summary.allPassed) {
-        void tryGrantMissionSuccess();
+        if (isBossPrompt) {
+          markPromptStepPassed();
+          setFeedback(messages.bossPromptPassed);
+          setFeedbackSpeaker("mira");
+        } else if (!isBoss || bossStep >= 2) {
+          void tryGrantMissionSuccess();
+        }
       }
     } catch (err) {
       setSystemError(
@@ -846,6 +1165,50 @@ function MissionSession({
     queueMicrotask(() => void tryGrantMissionSuccess());
   }
 
+  function onPipelinePassedChange(passed: boolean) {
+    setPipelinePassed(passed);
+    pipelinePassedRef.current = passed;
+    if (!passed || !mission.pipeline) return;
+    if (isBoss) return;
+    if (mission.safety && !safetyPassedRef.current) return;
+    const latest = resultsRef.current;
+    if (
+      latest.length !== tests.length ||
+      tests.length === 0 ||
+      !latest.every((r) => r.matchesExpected)
+    ) {
+      return;
+    }
+    queueMicrotask(() => void tryGrantMissionSuccess());
+  }
+
+  function onSafetyPassedChange(passed: boolean) {
+    setSafetyPassed(passed);
+    safetyPassedRef.current = passed;
+    if (!passed || !mission.safety) return;
+    if (isBoss) return;
+    if (!pipelinePassedRef.current) return;
+    const latest = resultsRef.current;
+    if (
+      latest.length !== tests.length ||
+      tests.length === 0 ||
+      !latest.every((r) => r.matchesExpected)
+    ) {
+      return;
+    }
+    queueMicrotask(() => void tryGrantMissionSuccess());
+  }
+
+  function onPipelineConnectionsChange(next: PipelineConnections) {
+    setPipelineConnections(next);
+    pipelineConnectionsRef.current = next;
+  }
+
+  function onSafetyConfigChange(next: SafetyRuleConfig) {
+    setSafetyConfig(next);
+    safetyConfigRef.current = next;
+  }
+
   return (
     <MotionProvider>
     <div className="flex h-full min-h-0 flex-col overflow-hidden">
@@ -882,7 +1245,7 @@ function MissionSession({
 
       <div
         className={`grid min-h-0 flex-1 ${
-          fillMode
+          fillMode || isPipeline || isBoss
             ? "lg:grid-cols-[minmax(0,38fr)_minmax(0,62fr)]"
             : "lg:grid-cols-[minmax(0,42fr)_minmax(0,58fr)]"
         }`}
@@ -903,7 +1266,7 @@ function MissionSession({
               objective={mission.objective}
               missionId={mission.id}
               payloadRepair={mission.payloadRepair}
-              outputSchema={mission.outputSchema}
+              outputSchema={outputSchema}
               repairPassed={repairPassed}
               onRepairPassedChange={onRepairPassedChange}
             />
@@ -944,6 +1307,21 @@ function MissionSession({
             }
             codeFillPassed={codeFillPassed}
             onCodeFillPassedChange={onCodeFillPassedChange}
+            pipelineConnections={pipelineConnections}
+            onPipelineConnectionsChange={onPipelineConnectionsChange}
+            pipelinePassed={pipelinePassed}
+            onPipelinePassedChange={onPipelinePassedChange}
+            safetyConfig={safetyConfig}
+            onSafetyConfigChange={
+              mission.safety ? onSafetyConfigChange : undefined
+            }
+            safetyPassed={safetyPassed}
+            onSafetyPassedChange={
+              mission.safety ? onSafetyPassedChange : undefined
+            }
+            bossStep={bossStep}
+            onBossStepChange={persistBossStep}
+            promptStepPassed={promptStepPassed}
           />
         </section>
       </div>

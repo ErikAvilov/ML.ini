@@ -1,28 +1,20 @@
-import { notFound } from "next/navigation";
-import { MissionWorkspace } from "@/components/mission/MissionWorkspace";
-import { getAuthIdentity } from "@/lib/auth/get-identity";
-import { getMissionBySlug, getMissionSlugs } from "@/data/missions";
+import { notFound, redirect } from "next/navigation";
+import { resolveCanonicalMission } from "@/lib/missions/canonical";
+import { appMissionPath } from "@/lib/missions/mission-routes";
+import { getRequestLocale } from "@/i18n/get-request-locale";
 
 interface PageProps {
   params: Promise<{ missionId: string }>;
 }
 
-export function generateStaticParams() {
-  return getMissionSlugs().map((slug) => ({ missionId: slug }));
-}
-
-export default async function MissionPage({ params }: PageProps) {
+/**
+ * Legacy `/missions/[slug]` → canonical `/app/kingdom/.../mission/...`.
+ * Preserves mission slug compatibility.
+ */
+export default async function MissionLegacyRedirectPage({ params }: PageProps) {
   const { missionId } = await params;
-  const mission = getMissionBySlug(missionId);
-  if (!mission) notFound();
-
-  const identity = await getAuthIdentity();
-
-  return (
-    <MissionWorkspace
-      missionSlug={mission.slug}
-      isAuthenticated={Boolean(identity)}
-      identity={identity}
-    />
-  );
+  const locale = await getRequestLocale();
+  const ref = resolveCanonicalMission(missionId, locale);
+  if (!ref) notFound();
+  redirect(appMissionPath(ref.kingdomSlug, ref.missionSlug));
 }

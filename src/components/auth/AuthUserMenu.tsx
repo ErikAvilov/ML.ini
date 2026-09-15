@@ -9,7 +9,6 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
 } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { GitFork, LogOut, Map, UserRound } from "lucide-react";
@@ -77,6 +76,8 @@ export function AuthUserMenu({ identity }: AuthUserMenuProps) {
   const username = identity.profile?.username?.trim() || null;
   const email = identity.email?.trim() || null;
   const avatarUrl = identity.profile?.avatar_url;
+  const [avatarBrokenUrl, setAvatarBrokenUrl] = useState<string | null>(null);
+  const showAvatar = Boolean(avatarUrl) && avatarBrokenUrl !== avatarUrl;
   const initial = label.slice(0, 1).toUpperCase();
 
   const close = useCallback(() => {
@@ -105,9 +106,9 @@ export function AuthUserMenu({ identity }: AuthUserMenuProps) {
     {
       kind: "link",
       id: "profile",
-      href: "/profil",
+      href: inApp ? "/app/profile" : "/profil",
       label: messages.navProfile,
-      match: "/profil",
+      match: inApp ? "/app/profile" : "/profil",
       icon: <UserRound className="h-4 w-4 shrink-0 opacity-80" aria-hidden />,
     },
     {
@@ -212,14 +213,17 @@ export function AuthUserMenu({ identity }: AuthUserMenuProps) {
             : "border-ml-border hover:scale-105 hover:border-ml-accent hover:ring-2 hover:ring-[color-mix(in_srgb,var(--ml-accent)_28%,transparent)] active:scale-95"
         }`}
       >
-        {avatarUrl ? (
-          <Image
-            src={avatarUrl}
+        {showAvatar ? (
+          // Google avatars 403 when Referer is sent — omit it.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={avatarUrl!}
             alt=""
             width={32}
             height={32}
+            referrerPolicy="no-referrer"
             className="h-full w-full object-cover"
-            unoptimized
+            onError={() => setAvatarBrokenUrl(avatarUrl!)}
           />
         ) : (
           <span className="font-mono text-[11px] font-semibold text-ml-accent">
@@ -240,14 +244,16 @@ export function AuthUserMenu({ identity }: AuthUserMenuProps) {
         >
           <div className="flex items-start gap-3 px-3 pb-2.5 pt-1.5">
             <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-ml-border bg-ml-surface-2">
-              {avatarUrl ? (
-                <Image
-                  src={avatarUrl}
+              {showAvatar ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={avatarUrl!}
                   alt=""
                   width={36}
                   height={36}
+                  referrerPolicy="no-referrer"
                   className="h-full w-full object-cover"
-                  unoptimized
+                  onError={() => setAvatarBrokenUrl(avatarUrl!)}
                 />
               ) : (
                 <span className="font-mono text-xs font-semibold text-ml-accent">

@@ -170,6 +170,78 @@ const SKILL_SEEDS: SkillSeed[] = [
       },
     },
   },
+  {
+    id: "external-actions-1",
+    name: "External Actions I",
+    level: 1,
+    type: "normal",
+    prerequisites: ["ai-integration-i"],
+    unlockedByMissionId: "mission-07",
+    kingdomId: KINGDOM_I,
+    position: { x: 0, y: -330 },
+    copy: {
+      en: {
+        displayName: "Send data to another system",
+        description:
+          "You can send data from your program to another system.",
+        category: "Service Integration",
+      },
+      fr: {
+        displayName: "Envoyer des données à un autre système",
+        description:
+          "Tu peux envoyer des données de ton programme vers un autre système.",
+        category: "Intégration de service",
+      },
+    },
+  },
+  {
+    id: "workflow-composition-1",
+    name: "Workflow Composition I",
+    level: 1,
+    type: "major",
+    prerequisites: ["external-actions-1"],
+    unlockedByMissionId: "mission-08",
+    kingdomId: KINGDOM_I,
+    position: { x: 0, y: -440 },
+    copy: {
+      en: {
+        displayName: "Connect processing steps",
+        description:
+          "You can connect multiple processing steps into a working automation.",
+        category: "Data Flow",
+      },
+      fr: {
+        displayName: "Connecter des étapes de traitement",
+        description:
+          "Tu peux connecter plusieurs étapes de traitement en une automatisation qui marche.",
+        category: "Flux de données",
+      },
+    },
+  },
+  {
+    id: "guardrails-1",
+    name: "Guardrails I",
+    level: 1,
+    type: "major",
+    prerequisites: ["workflow-composition-1"],
+    unlockedByMissionId: "mission-09",
+    kingdomId: KINGDOM_I,
+    position: { x: 0, y: -550 },
+    copy: {
+      en: {
+        displayName: "Fail safely",
+        description:
+          "You can detect unreliable states and route them to a safe fallback.",
+        category: "Safe Fallbacks",
+      },
+      fr: {
+        displayName: "Échouer en sécurité",
+        description:
+          "Tu peux détecter des états non fiables et les aiguiller vers un repli sûr.",
+        category: "Replis sûrs",
+      },
+    },
+  },
 ];
 
 export const SKILL_EDGES: SkillEdge[] = [
@@ -178,6 +250,9 @@ export const SKILL_EDGES: SkillEdge[] = [
   { from: "structured-output-1", to: "json-basics-1" },
   { from: "json-basics-1", to: "logic-1" },
   { from: "logic-1", to: "ai-integration-i" },
+  { from: "ai-integration-i", to: "external-actions-1" },
+  { from: "external-actions-1", to: "workflow-composition-1" },
+  { from: "workflow-composition-1", to: "guardrails-1" },
 ];
 
 export function getSkillDefinitions(locale: Locale): SkillDefinition[] {

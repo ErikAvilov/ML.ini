@@ -10,11 +10,25 @@ import {
   evaluateLogicRoute,
   evaluateMissionTest,
   evaluatePayloadRepair,
+  evaluateServiceActionFill,
+  evaluateServiceActionRun,
   extractAiIntegrationFillFromSource,
   extractLogicFillFromSource,
+  extractServiceActionFillFromSource,
   summarizeSuite,
 } from "@/lib/validation";
-import type { ClassificationResult } from "@/lib/types";
+import {
+  evaluatePipelineConnections,
+  evaluateSafetyConfig,
+  pipelineResultToClassification,
+  simulatePipeline,
+} from "@/lib/missions/pipeline";
+import type {
+  ClassificationResult,
+  PipelineConnections,
+  SafetyReasonCode,
+  SafetyRuleConfig,
+} from "@/lib/types";
 
 export type MissionAttemptInput = {
   missionId: string;
@@ -22,6 +36,8 @@ export type MissionAttemptInput = {
   instruction?: string;
   codeSource?: string;
   payloadRepairText?: string;
+  pipelineConnectionsJson?: string;
+  safetyConfigJson?: string;
 };
 
 export type MissionAttemptFailure =
@@ -129,6 +145,105 @@ export async function validateMissionAttempt(
         falseRoute: fill.falseRoute,
       })
     );
+    const summary = summarizeSuite(collected, locale);
+    return summary.allPassed
+      ? { ok: true, missionId: mission.id }
+      : { ok: false, code: "validation_failed" };
+  }
+
+  if (fill?.mode === "service-action") {
+    const source = input.codeSource ?? "";
+    if (!source.trim()) return { ok: false, code: "missing_solution" };
+    const values = extractServiceActionFillFromSource(source);
+    const fillOk = evaluateServiceActionFill(values);
+    if (!fillOk.ok) return { ok: false, code: "validation_failed" };
+
+    const collected = tests.map((test) =>
+      evaluateServiceActionRun(test, { humanRoute: fill.humanRoute })
+    );
+    const summary = summarizeSuite(collected, locale);
+    return summary.allPassed
+      ? { ok: true, missionId: mission.id }
+      : { ok: false, code: "validation_failed" };
+  }
+
+  if (mission.boss) {
+    const instruction = input.instruction?.trim() ?? "";
+    if (!instruction) return { ok: false, code: "missing_solution" };
+    const promptTests = mission.boss.promptTests;
+    const { results: promptResults } = await classifyBatchItems({
+      instruction,
+      tests: promptTests.map((t) => ({ testId: t.id, message: t.message })),
+    });
+    const promptById = new Map(
+      promptResults.map((r) => [r.testId, r.rawOutput] as const)
+    );
+    const promptCollected = promptTests.map((test) =>
+      evaluateMissionTest(
+        promptById.get(test.id) ?? "",
+        test,
+        mission.boss!.allowedOutputs ?? mission.allowedOutputs ?? [],
+        mission.boss!.promptSchema
+      )
+    );
+    if (!summarizeSuite(promptCollected, locale).allPassed) {
+      return { ok: false, code: "validation_failed" };
+    }
+    // fall through to pipeline+launch validation below
+  }
+
+  if (mission.pipeline) {
+    const connectionsRaw = input.pipelineConnectionsJson?.trim() ?? "";
+    if (!connectionsRaw) return { ok: false, code: "missing_solution" };
+    let connections: PipelineConnections;
+    try {
+      connections = JSON.parse(connectionsRaw) as PipelineConnections;
+    } catch {
+      return { ok: false, code: "validation_failed" };
+    }
+    const connOk = evaluatePipelineConnections(
+      connections,
+      mission.pipeline.expectedConnections
+    );
+    if (!connOk.ok) return { ok: false, code: "validation_failed" };
+
+    let safety: SafetyRuleConfig | null = null;
+    if (mission.safety) {
+      const safetyRaw = input.safetyConfigJson?.trim() ?? "";
+      if (!safetyRaw) return { ok: false, code: "missing_solution" };
+      try {
+        safety = JSON.parse(safetyRaw) as SafetyRuleConfig;
+      } catch {
+        return { ok: false, code: "validation_failed" };
+      }
+      const safetyOk = evaluateSafetyConfig(safety, mission.safety.expected);
+      if (!safetyOk.ok) return { ok: false, code: "validation_failed" };
+    }
+
+    const SAFETY_REASONS = new Set([
+      "INVALID_AI_OUTPUT",
+      "INVALID_PRIORITY",
+      "ACTION_FAILED",
+    ]);
+    const collected = tests.map((test) => {
+      const fixture = test.serviceFixture;
+      const expectedIsFallback = SAFETY_REASONS.has(test.expected);
+      const sim = simulatePipeline({
+        connections,
+        message: test.message,
+        aiResponse: fixture?.aiResponse ?? "",
+        urgentPriority: mission.pipeline!.urgentPriority,
+        humanRoute: mission.pipeline!.humanRoute,
+        queueRoute: mission.pipeline!.queueRoute,
+        safety,
+        forceActionFailure: fixture?.forceActionFailure,
+        expectedAction: expectedIsFallback ? undefined : test.expected,
+        expectedFallback: expectedIsFallback
+          ? (test.expected as SafetyReasonCode)
+          : null,
+      });
+      return pipelineResultToClassification(test, sim);
+    });
     const summary = summarizeSuite(collected, locale);
     return summary.allPassed
       ? { ok: true, missionId: mission.id }

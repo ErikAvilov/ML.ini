@@ -1,7 +1,7 @@
 # Mlini — DESIGN_SYSTEM.md
 Status: **LOCKED — Gate 1**
 Version: 1.0
-Scope: application UI under `/app` (soft-auth: anonymous + authenticated). Marketing landing `/` is out of scope until a separate redesign.
+Scope: **product-wide Mlini identity** — all surfaces (marketing, utility, application). This file is the single source of truth for tokens, color, typography, shapes, and language rules. Contextual variants below express the same DNA at different densities; they do not introduce alternate palettes or fonts.
 
 ## 1. Product identity
 
@@ -17,7 +17,19 @@ Core qualities:
 - low visual noise;
 - no generic “AI futurism”.
 
-## 2. Semantic color system
+## 2. Contextual variants
+
+Same tokens, typography, and cartographic DNA everywhere. Density and composition adapt to context:
+
+| Variant | Routes (typical) | Expression |
+|---------|------------------|------------|
+| **Marketing** | `/`, legal pages | Expressive, spacious; editorial hierarchy; cartographic motifs as atmosphere, not navigation |
+| **Utility** | `/auth`, onboarding | Minimal, focused; reduced ornament; one dominant action per screen |
+| **Application** | `/app/*` | Dense, functional, restrained; approved reference screens (World, Kingdom, Mission) |
+
+Do not invent a fourth visual system. When in doubt, prefer deletion and the semantic rules in §3–§5 over local styling.
+
+## 3. Semantic color system
 
 ### Surfaces
 - `canvas`: `#0D1117`
@@ -45,7 +57,7 @@ Semantic rule:
 
 Never use color only decoratively when it could imply a state.
 
-## 3. Typography
+## 4. Typography
 
 Only three families:
 - **Plus Jakarta Sans** — page titles, Kingdom titles, major headings.
@@ -64,7 +76,7 @@ Recommended scale:
 - Small: 12/18
 - Mono labels: 10–13px
 
-## 4. Shapes, depth and spacing
+## 5. Shapes, depth and spacing
 
 - Base radius: 4px.
 - Large containers may use 8px max.
@@ -76,7 +88,7 @@ Recommended scale:
 - Desktop canvas margin: ~32px.
 - Standard gutter: 24px.
 
-## 5. Navigation
+## 6. Navigation
 
 Global authenticated navigation:
 - `World`
@@ -96,7 +108,7 @@ When a mission is active:
 - show `Exit Mission`;
 - keep autosave/state information compact.
 
-## 6. Screen responsibilities
+## 7. Screen responsibilities
 
 ### World
 Must answer within ~3 seconds:
@@ -142,7 +154,7 @@ The Workspace is polymorphic. It may render:
 
 The Mission shell must never assume every exercise is Python.
 
-## 7. State grammar
+## 8. State grammar
 
 ### Completed
 - green marker;
@@ -163,7 +175,7 @@ The Mission shell must never assume every exercise is Python.
 Skeletons preserve final layout geometry.
 No generic large shimmering rectangles detached from final component structure.
 
-## 8. Language rules
+## 9. Language rules
 
 Preferred product vocabulary:
 - World
@@ -198,7 +210,7 @@ Forbidden as default UI language:
 
 Rule: **visual identity may be stylized; learning language must remain literal.**
 
-## 9. Visual motifs
+## 10. Visual motifs
 
 Allowed:
 - thin topographic contours;
@@ -216,7 +228,7 @@ Not allowed:
 - animated decoration with no state meaning;
 - fake dashboards/telemetry.
 
-## 10. Reference screens
+## 11. Reference screens
 
 The approved desktop references are:
 1. World — vertical curriculum path with active Kingdom expanded.
@@ -225,7 +237,7 @@ The approved desktop references are:
 
 These references define hierarchy and composition, not literal lesson content.
 
-## 11. Agent rules
+## 12. Agent rules
 
 When implementing UI:
 1. Do not invent new navigation.

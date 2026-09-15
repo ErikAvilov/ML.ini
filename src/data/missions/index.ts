@@ -8,12 +8,10 @@ import { createMission03 } from "./mission-03";
 import { createMission04 } from "./mission-04";
 import { createMission05 } from "./mission-05";
 import { createMission06 } from "./mission-06";
-import {
-  createMission07,
-  createMission08,
-  createMission09,
-  createMission10,
-} from "./mission-placeholders";
+import { createMission07 } from "./mission-07";
+import { createMission08 } from "./mission-08";
+import { createMission09 } from "./mission-09";
+import { createMission10 } from "./mission-10";
 
 const factories = [
   createMission00,

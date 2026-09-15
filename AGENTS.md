@@ -10,15 +10,15 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # Mlini — consignes agents
 
-## Autorité documentation (redesign app `/app`)
+## Autorité documentation (produit Mlini)
 
 Ordre strict — en cas de conflit, le rang supérieur gagne :
 
-1. [`docs/UX_FOUNDATION.md`](docs/UX_FOUNDATION.md) — IA, navigation, World → Kingdom → Mission, UX app
-2. [`docs/MLINI_DESIGN_SYSTEM.md`](docs/MLINI_DESIGN_SYSTEM.md) — identité visuelle Editorial Cartographic (app)
+1. [`docs/UX_FOUNDATION.md`](docs/UX_FOUNDATION.md) — IA, navigation, World → Kingdom → Mission, routes canoniques
+2. [`docs/MLINI_DESIGN_SYSTEM.md`](docs/MLINI_DESIGN_SYSTEM.md) — identité visuelle Editorial Cartographic (produit entier ; tokens §3–§5)
 3. [`docs/MLINI_INTERACTIONS.md`](docs/MLINI_INTERACTIONS.md) — motion, timings exacts, skeletons, états
 4. Docs spécialisés — [`docs/design/MISSION-UX.md`](docs/design/MISSION-UX.md), [`docs/QOL.md`](docs/QOL.md), [`docs/SKILL_TREE.md`](docs/SKILL_TREE.md), [`docs/NARRATIVE.md`](docs/NARRATIVE.md), [`docs/design/PEDAGOGY.md`](docs/design/PEDAGOGY.md), [`docs/design/PRODUCT.md`](docs/design/PRODUCT.md), [`docs/UI_ARCHITECTURE.md`](docs/UI_ARCHITECTURE.md)
-5. Legacy — [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) (Adventure Tech ; encore utile pour la landing `/` tant qu’elle n’est pas redessinée). Ne pas appliquer une règle legacy qui contredit (1)–(3) pour l’UI `/app`.
+5. Archive historique — [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) (Adventure Tech, pré-unification). **Ne pas appliquer** ; ne pas utiliser pour implémenter une surface actuelle.
 
 Index design : [`docs/design/README.md`](docs/design/README.md).
 
@@ -26,7 +26,8 @@ Si `graphify-out/graph.json` existe : préférer `graphify query` pour naviguer 
 
 ## Rappels non négociables (V0)
 
-- Soft-auth : `/app` jouable anonymement (progression locale) ; compte = persistance cloud — ne pas réécrire l’archi auth/progression pendant le redesign UI
+- `/app/**` = authentifié uniquement (gate proxy + layout) ; `/` = landing anonyme ; `/` connecté → redirect `/app`
+- Progression = compte cloud uniquement (pas de mode anonyme produit)
 - Pas d’exposition de `GEMINI_API_KEY` / `OPENAI_API_KEY` côté client
 - Pas de Stripe / auth alternative / nouvelle DB sans demande explicite (runtime = Better Auth + Neon)
 - Missions desktop = viewport shell, pas page SaaS scrollable centrée
@@ -34,7 +35,7 @@ Si `graphify-out/graph.json` existe : préférer `graphify query` pour naviguer 
 - Contenu pédagogique dans `src/data/missions/`, pas enfoui dans le JSX
 - Compétences globales dans `src/data/skills/`, pas enfouies dans le JSX
 - Identités narratives (Mira, Veyra, MILDRED) via `src/data/narrative/canon.ts`
-- UI app : tokens sémantiques selon `MLINI_DESIGN_SYSTEM.md` (pas de hex arbitraire) ; scopés pour ne pas casser la landing `/`
+- UI : tokens sémantiques Editorial Cartographic selon [`docs/MLINI_DESIGN_SYSTEM.md`](docs/MLINI_DESIGN_SYSTEM.md) (pas de hex arbitraire) — site-wide ; variantes contextuelles Marketing / Utility / Application
 - Continuité narrative : ne pas casser le canon sans demande explicite du product owner
 - Skill tree ≠ progression MILDRED / carte Royaume — deux systèmes distincts
 - IA serveur via `src/lib/ai-client.ts` (`completeChat`) — provider Gemini par défaut

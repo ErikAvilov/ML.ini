@@ -1,5 +1,6 @@
-import { KingdomHub } from "@/components/kingdom/KingdomHub";
+import { redirect } from "next/navigation";
 
-export default function RoyaumePage() {
-  return <KingdomHub />;
+/** Legacy Kingdom hub → World (canonical product home). */
+export default function RoyaumeRedirectPage() {
+  redirect("/app");
 }

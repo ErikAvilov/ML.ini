@@ -2,12 +2,19 @@
 
 import { MissionPlayground } from "@/components/mission/MissionPlayground";
 import { CodeFillWorkspace } from "@/components/mission/workspace/CodeFillWorkspace";
+import { PipelineBuilderWorkspace } from "@/components/mission/workspace/PipelineBuilderWorkspace";
+import { BossWorkspace } from "@/components/mission/workspace/BossWorkspace";
 import {
   isSessionWorkspace,
   resolveWorkspaceKind,
 } from "@/lib/missions/resolve-workspace-kind";
 import { useLocale } from "@/i18n/locale-context";
-import type { MissionDefinition, ClassificationResult } from "@/lib/types";
+import type {
+  ClassificationResult,
+  MissionDefinition,
+  PipelineConnections,
+  SafetyRuleConfig,
+} from "@/lib/types";
 
 type Stage = "idle" | "input" | "instruction" | "model" | "output";
 type RunMode = "idle" | "sequential" | "batch";
@@ -39,6 +46,19 @@ export interface WorkspaceHostProps {
   showSuccess: boolean;
   codeFillPassed: boolean;
   onCodeFillPassedChange: (passed: boolean) => void;
+  /** Pipeline missions (08+). Optional so older call sites stay type-safe until wired. */
+  pipelineConnections?: PipelineConnections;
+  onPipelineConnectionsChange?: (next: PipelineConnections) => void;
+  pipelinePassed?: boolean;
+  onPipelinePassedChange?: (passed: boolean) => void;
+  safetyConfig?: SafetyRuleConfig;
+  onSafetyConfigChange?: (next: SafetyRuleConfig) => void;
+  safetyPassed?: boolean;
+  onSafetyPassedChange?: (passed: boolean) => void;
+  /** Boss (Mission 10) */
+  bossStep?: number;
+  onBossStepChange?: (step: number) => void;
+  promptStepPassed?: boolean;
 }
 
 function UnsupportedWorkspace({ detail }: { detail: string }) {
@@ -60,6 +80,7 @@ function UnsupportedWorkspace({ detail }: { detail: string }) {
 /**
  * Routes:
  * - code-fill → CodeFillWorkspace
+ * - pipeline → PipelineBuilderWorkspace
  * - prompt / payload-repair → MissionPlayground
  */
 export function WorkspaceHost({
@@ -85,6 +106,17 @@ export function WorkspaceHost({
   error,
   justUnlocked,
   showSuccess,
+  pipelineConnections,
+  onPipelineConnectionsChange,
+  pipelinePassed = false,
+  onPipelinePassedChange,
+  safetyConfig,
+  onSafetyConfigChange,
+  safetyPassed = false,
+  onSafetyPassedChange,
+  bossStep = 0,
+  onBossStepChange,
+  promptStepPassed = false,
 }: WorkspaceHostProps) {
   const resolution = resolveWorkspaceKind(mission);
 
@@ -135,6 +167,127 @@ export function WorkspaceHost({
         justUnlocked={justUnlocked}
         showSuccess={showSuccess}
         canRun={codeFillPassed}
+      />
+    );
+  }
+
+  if (resolution.kind === "pipeline") {
+    const pipeline = mission.pipeline;
+    if (!pipeline) {
+      return (
+        <UnsupportedWorkspace
+          detail={`${mission.id} → pipeline without pipeline data`}
+        />
+      );
+    }
+    // TODO(pipeline): MissionSession must pass connections + passed flags.
+    if (
+      !pipelineConnections ||
+      !onPipelineConnectionsChange ||
+      !onPipelinePassedChange
+    ) {
+      return (
+        <UnsupportedWorkspace
+          detail={`${mission.id} → pipeline props missing from MissionSession`}
+        />
+      );
+    }
+    const safetyReady =
+      !mission.safety || (Boolean(safetyConfig) && Boolean(onSafetyConfigChange));
+    if (mission.safety && !safetyReady) {
+      return (
+        <UnsupportedWorkspace
+          detail={`${mission.id} → safety props missing from MissionSession`}
+        />
+      );
+    }
+    return (
+      <PipelineBuilderWorkspace
+        missionId={mission.id}
+        pipeline={pipeline}
+        safety={mission.safety}
+        connections={pipelineConnections}
+        onConnectionsChange={onPipelineConnectionsChange}
+        pipelinePassed={pipelinePassed}
+        onPipelinePassedChange={onPipelinePassedChange}
+        safetyConfig={safetyConfig}
+        onSafetyConfigChange={onSafetyConfigChange}
+        safetyPassed={safetyPassed}
+        onSafetyPassedChange={onSafetyPassedChange}
+        showcaseMessage={showcaseMessage}
+        activeMessage={activeMessage}
+        onRun={onRun}
+        onRunBatch={onRunBatch}
+        onDevComplete={onDevComplete}
+        running={running}
+        runMode={runMode}
+        stage={stage}
+        liveOutput={liveOutput}
+        results={results}
+        feedback={feedback}
+        feedbackSpeaker={feedbackSpeaker}
+        currentIndex={currentIndex}
+        testCount={testCount}
+        error={error}
+        justUnlocked={justUnlocked}
+        showSuccess={showSuccess}
+        canRun={
+          pipelinePassed && (!mission.safety || safetyPassed)
+        }
+      />
+    );
+  }
+
+  if (resolution.kind === "boss") {
+    if (
+      !mission.boss ||
+      !mission.pipeline ||
+      !pipelineConnections ||
+      !onPipelineConnectionsChange ||
+      !onPipelinePassedChange ||
+      !onBossStepChange ||
+      !safetyConfig ||
+      !onSafetyConfigChange
+    ) {
+      return (
+        <UnsupportedWorkspace
+          detail={`${mission.id} → boss props missing from MissionSession`}
+        />
+      );
+    }
+    return (
+      <BossWorkspace
+        mission={mission}
+        bossStep={bossStep}
+        onBossStepChange={onBossStepChange}
+        showcaseMessage={showcaseMessage}
+        activeMessage={activeMessage}
+        instruction={instruction}
+        onInstructionChange={onInstructionChange}
+        onRun={onRun}
+        onRunBatch={onRunBatch}
+        onDevComplete={onDevComplete}
+        running={running}
+        runMode={runMode}
+        stage={stage}
+        liveOutput={liveOutput}
+        results={results}
+        feedback={feedback}
+        feedbackSpeaker={feedbackSpeaker}
+        currentIndex={currentIndex}
+        testCount={testCount}
+        error={error}
+        justUnlocked={justUnlocked}
+        showSuccess={showSuccess}
+        pipelineConnections={pipelineConnections}
+        onPipelineConnectionsChange={onPipelineConnectionsChange}
+        pipelinePassed={pipelinePassed}
+        onPipelinePassedChange={onPipelinePassedChange}
+        safetyConfig={safetyConfig}
+        onSafetyConfigChange={onSafetyConfigChange}
+        safetyPassed={safetyPassed}
+        onSafetyPassedChange={onSafetyPassedChange ?? (() => {})}
+        promptStepPassed={promptStepPassed}
       />
     );
   }

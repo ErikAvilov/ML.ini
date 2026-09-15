@@ -8,6 +8,8 @@ export type WorkspaceKind =
   | "prompt"
   | "payload-repair"
   | "code-fill"
+  | "pipeline"
+  | "boss"
   | "coming-soon"
   | "unsupported";
 
@@ -17,6 +19,8 @@ export type WorkspaceResolution =
   | { kind: "prompt" }
   | { kind: "payload-repair" }
   | { kind: "code-fill"; codeFillMode: CodeFillMode }
+  | { kind: "pipeline" }
+  | { kind: "boss" }
   | { kind: "coming-soon" }
   | { kind: "unsupported" };
 
@@ -36,12 +40,24 @@ export function resolveWorkspaceKind(
     return { kind: "coming-soon" };
   }
 
+  if (mission.boss) {
+    return { kind: "boss" };
+  }
+
   if (mission.codeFill) {
     const mode = mission.codeFill.mode;
-    if (mode === "logic" || mode === "ai-integration") {
+    if (
+      mode === "logic" ||
+      mode === "ai-integration" ||
+      mode === "service-action"
+    ) {
       return { kind: "code-fill", codeFillMode: mode };
     }
     return { kind: "unsupported" };
+  }
+
+  if (mission.pipeline) {
+    return { kind: "pipeline" };
   }
 
   if (mission.payloadRepair) {
@@ -58,7 +74,11 @@ export function resolveWorkspaceKind(
 /** Right-pane session workspaces (host renders something interactive). */
 export function isSessionWorkspace(kind: WorkspaceKind): boolean {
   return (
-    kind === "prompt" || kind === "payload-repair" || kind === "code-fill"
+    kind === "prompt" ||
+    kind === "payload-repair" ||
+    kind === "code-fill" ||
+    kind === "pipeline" ||
+    kind === "boss"
   );
 }
 

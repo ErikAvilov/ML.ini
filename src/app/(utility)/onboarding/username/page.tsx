@@ -21,5 +21,5 @@ export default async function UsernameOnboardingPage({
     redirect(`/auth?next=${encodeURIComponent(nextPath)}`);
   }
 
-  redirect(nextPath === "/onboarding/username" ? "/" : nextPath);
+  redirect(nextPath === "/onboarding/username" ? "/app" : nextPath);
 }

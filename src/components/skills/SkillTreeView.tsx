@@ -16,6 +16,7 @@ import { useLocale } from "@/i18n/locale-context";
 import { getKingdoms } from "@/data/kingdoms/construire-avec-ia";
 import { getMissionById } from "@/data/missions";
 import type { SkillEdge, SkillNodeState } from "@/lib/types";
+import { appMissionPath } from "@/lib/missions/mission-routes";
 import { Button } from "@/components/ui/Button";
 
 const NODE_W = 168;
@@ -71,12 +72,12 @@ function nodeClasses(
   if (state === "unlocked") {
     const major =
       type === "major" || type === "keystone"
-        ? "border-[color-mix(in_srgb,var(--ml-reward)_50%,transparent)] bg-[color-mix(in_srgb,var(--ml-surface-2)_86%,var(--ml-reward-soft))] before:border-ml-reward before:bg-ml-reward"
-        : "border-[color-mix(in_srgb,var(--ml-accent)_55%,transparent)] bg-[color-mix(in_srgb,var(--ml-surface-2)_88%,var(--ml-accent-soft))] before:border-ml-accent before:bg-ml-accent";
-    return `${base} ${size} ${selectedRing} ${major} text-ml-text`;
+        ? "border-[color-mix(in_srgb,var(--ml-state-completed)_50%,transparent)] bg-[color-mix(in_srgb,var(--ml-surface-2)_86%,var(--ml-success-soft))] before:border-ml-state-completed before:bg-ml-state-completed"
+        : "border-[color-mix(in_srgb,var(--ml-state-completed)_55%,transparent)] bg-[color-mix(in_srgb,var(--ml-surface-2)_88%,var(--ml-success-soft))] before:border-ml-state-completed before:bg-ml-state-completed";
+    return `${base} ${size} ${selectedRing} ${major} text-ml-text-primary`;
   }
   if (state === "available") {
-    return `${base} ${size} ${selectedRing} border-[color-mix(in_srgb,var(--ml-accent)_50%,var(--ml-border))] bg-ml-surface-2/90 text-ml-text-secondary before:border-ml-accent before:bg-[color-mix(in_srgb,var(--ml-accent)_30%,transparent)]`;
+    return `${base} ${size} ${selectedRing} border-[color-mix(in_srgb,var(--ml-state-active)_50%,var(--ml-border))] bg-ml-surface-2/90 text-ml-text-secondary before:border-ml-state-active before:bg-[color-mix(in_srgb,var(--ml-state-active)_30%,transparent)]`;
   }
   return `${base} ${size} ${selectedRing} border-ml-border bg-ml-surface-1/80 text-ml-text-muted opacity-75 before:border-ml-border before:bg-transparent`;
 }
@@ -243,19 +244,10 @@ export function SkillTreeView() {
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden bg-transparent">
       <div className="shrink-0 border-b border-ml-border bg-ml-surface-1/60 px-4 py-3 sm:px-6">
-        <div className="flex items-center gap-2">
-          <span
-            className="h-1.5 w-1.5 rotate-45 bg-ml-accent"
-            aria-hidden
-          />
-          <p className="font-mono text-[11px] tracking-[0.18em] text-ml-text-muted uppercase">
-            {messages.skillsTitle}
-          </p>
-        </div>
-        <h1 className="mt-1 font-display text-[length:var(--ml-text-2xl)] text-ml-text">
+        <h1 className="font-display text-[length:var(--ml-text-2xl)] font-semibold text-ml-text-primary">
           {messages.skillsTitle}
         </h1>
-        <p className="mt-1 max-w-2xl text-[length:var(--ml-text-sm)] text-ml-text-secondary">
+        <p className="mt-1 max-w-2xl text-[length:var(--ml-text-sm)] text-ml-text-muted">
           {messages.skillsLead}
         </p>
       </div>
@@ -439,8 +431,11 @@ export function SkillTreeView() {
                 )}
                 {selected.state === "unlocked" && mission && (
                   <Link
-                    href={`/missions/${mission.slug}`}
-                    className="mt-3 inline-block text-[length:var(--ml-text-sm)] text-ml-accent transition hover:text-ml-accent-bright"
+                    href={appMissionPath(
+                      selected.kingdomId,
+                      mission.slug
+                    )}
+                    className="mt-3 inline-block text-[length:var(--ml-text-sm)] text-ml-state-active transition hover:text-ml-state-active-hover"
                   >
                     {messages.skillOpenMission}
                   </Link>

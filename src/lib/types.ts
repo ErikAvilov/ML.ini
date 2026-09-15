@@ -5,6 +5,18 @@ export type MissionStatus = "locked" | "available" | "completed";
 
 export type MissionKind = "standard" | "boss" | "coming-soon" | "intro";
 
+/** Deterministic Support fixture for service-action / pipeline tests. */
+export interface ServiceActionFixture {
+  route: string;
+  priority: string;
+  /** Display-only — must never drive routing by itself. */
+  sentiment?: string;
+  /** When true, Support.create_ticket / queue_message fails (M09/M10). */
+  forceActionFailure?: boolean;
+  /** Raw AI text for pipeline parse fixtures (may be invalid JSON). */
+  aiResponse?: string;
+}
+
 export interface ClassificationTest {
   id: string;
   message: string;
@@ -15,6 +27,8 @@ export interface ClassificationTest {
   expected: string;
   /** Structured missions: expected field values keyed by field name */
   expectedFields?: Record<string, string>;
+  /** Mission 07+: support call / pipeline fixture (deterministic). */
+  serviceFixture?: ServiceActionFixture;
   /** Indice ciblé si ce test échoue (sans révéler la solution) */
   failHint?: string;
   failHints?: {
@@ -266,7 +280,7 @@ export interface PayloadRepairTask {
 }
 
 /** Code-fill execution mode — do not overload `logic` with AI calls. */
-export type CodeFillMode = "logic" | "ai-integration";
+export type CodeFillMode = "logic" | "ai-integration" | "service-action";
 
 export interface CodeFillBlank {
   id: string;
@@ -322,7 +336,125 @@ export interface AiIntegrationCodeFillTask extends CodeFillTaskBase {
   compareValue: string;
 }
 
-export type CodeFillTask = LogicCodeFillTask | AiIntegrationCodeFillTask;
+/**
+ * Mission 07: wire Support service actions from an existing route decision.
+ * Deterministic mock — no network. `segments.length === blanks.length + 1`.
+ */
+export interface ServiceActionCodeFillTask extends CodeFillTaskBase {
+  mode: "service-action";
+  segments: string[];
+  blanks: CodeFillBlank[];
+  humanRoute: string;
+  queueRoute: string;
+}
+
+export type CodeFillTask =
+  | LogicCodeFillTask
+  | AiIntegrationCodeFillTask
+  | ServiceActionCodeFillTask;
+
+/** Fixed pipeline block ids for Missions 08–10 (no free canvas). */
+export type PipelineBlockId =
+  | "customer"
+  | "ai"
+  | "parse"
+  | "decision"
+  | "action"
+  | "fallback";
+
+export type PipelinePortRef = {
+  blockId: PipelineBlockId;
+  /** Output field id on that block, or nested path like data.priority */
+  field: string;
+};
+
+/**
+ * Learner selections: each required input port → chosen upstream output.
+ * Keys are `${blockId}.${inputId}` e.g. `ai.message`, `decision.priority`.
+ */
+export type PipelineConnections = Record<string, PipelinePortRef | null>;
+
+export type PipelineInputSpec = {
+  id: string;
+  label: string;
+  /** Allowed upstream sources the learner may pick. */
+  allowed: PipelinePortRef[];
+};
+
+export type PipelineOutputSpec = {
+  id: string;
+  label: string;
+};
+
+export type PipelineBlockSpec = {
+  id: PipelineBlockId;
+  title: string;
+  inputs: PipelineInputSpec[];
+  outputs: PipelineOutputSpec[];
+};
+
+export type PipelineTask = {
+  title: string;
+  description: string;
+  blocks: PipelineBlockSpec[];
+  /** Canonical solution connections (for check / feedback), keyed like Connections. */
+  expectedConnections: Record<string, PipelinePortRef>;
+  /** Decision rule shown/edited in Mission 10 step 2; fixed in Mission 08. */
+  urgentPriority?: string;
+  humanRoute?: string;
+  queueRoute?: string;
+  checkLabel: string;
+  passLabel: string;
+};
+
+export type SafetyFallbackTarget = "MANUAL_REVIEW";
+
+export type SafetyReasonCode =
+  | "INVALID_AI_OUTPUT"
+  | "INVALID_PRIORITY"
+  | "ACTION_FAILED";
+
+export type SafetyRuleConfig = {
+  onParseFail: { target: SafetyFallbackTarget; reason: SafetyReasonCode };
+  onInvalidPriority: {
+    target: SafetyFallbackTarget;
+    reason: SafetyReasonCode;
+  };
+  onActionFail: { target: SafetyFallbackTarget; reason: SafetyReasonCode };
+};
+
+export type SafetyTask = {
+  title: string;
+  description: string;
+  /** Allowed reason codes per failure family (learner picks). */
+  parseFailReasons: SafetyReasonCode[];
+  invalidPriorityReasons: SafetyReasonCode[];
+  actionFailReasons: SafetyReasonCode[];
+  expected: SafetyRuleConfig;
+  checkLabel: string;
+  passLabel: string;
+};
+
+export type BossStepKind = "prompt" | "pipeline" | "safety";
+
+export type BossStep = {
+  id: string;
+  kind: BossStepKind;
+  title: string;
+  shortTitle: string;
+  objective: string;
+};
+
+export type BossTask = {
+  title: string;
+  steps: BossStep[];
+  /** Field manual reminders — no new teaching. */
+  fieldManual: { title: string; body: string }[];
+  /** Step 1 prompt drills (Missions 01–04 concepts). */
+  promptTests: ClassificationTest[];
+  promptSchema: StructuredOutputSchema;
+  allowedOutputs?: string[];
+};
 
 export interface MissionDefinition {
   id: string;
@@ -351,14 +483,21 @@ export interface MissionDefinition {
    */
   payloadRepair?: PayloadRepairTask;
   /**
-   * Optional code fill-in (Mission 05 logic / Mission 06 ai-integration).
+   * Optional code fill-in (Mission 05 logic / Mission 06 ai-integration / Mission 07 service-action).
    * Mode is on `codeFill.mode` — do not infer AI vs logic from presence alone.
    */
   codeFill?: CodeFillTask;
+  /** Mission 08+: fixed-block pipeline wiring (no free canvas). */
+  pipeline?: PipelineTask;
+  /** Mission 09+: safe-fallback configuration. */
+  safety?: SafetyTask;
+  /** Mission 10 boss: ordered internal steps (not Kingdom path index). */
+  boss?: BossTask;
   /**
    * Tests: prompt missions use messages + expected labels/fields;
    * `logic` fill uses priority fixtures → route;
-   * `ai-integration` uses customer messages → route after real model JSON.
+   * `ai-integration` uses customer messages → route after real model JSON;
+   * `service-action` / pipeline / safety use `serviceFixture` where set.
    */
   tests?: ClassificationTest[];
   hints?: MissionHint[];

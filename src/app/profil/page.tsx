@@ -1,7 +1,6 @@
-import { ProfileView } from "@/components/profile/ProfileView";
-import { getAuthIdentity } from "@/lib/auth/get-identity";
+import { redirect } from "next/navigation";
 
-export default async function ProfilPage() {
-  const identity = await getAuthIdentity();
-  return <ProfileView identity={identity} />;
+/** Legacy → canonical Profile. */
+export default function ProfilRedirectPage() {
+  redirect("/app/profile");
 }

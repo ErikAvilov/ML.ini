@@ -8,6 +8,12 @@ import type {
   StructuredOutputSchema,
   TestSuiteSummary,
 } from "@/lib/types";
+import {
+  createSupportService,
+  formatSupportActionReport,
+  matchSupportCall,
+} from "@/lib/missions/support-service";
+import type { SupportActionName } from "@/lib/missions/support-service";
 
 export function normalizeClassification(raw: string): string {
   return raw
@@ -467,7 +473,7 @@ type CodeFillSourceTask =
       suffix: string;
     }
   | {
-      mode: "ai-integration";
+      mode: "ai-integration" | "service-action";
       segments: string[];
       blanks: unknown[];
     };
@@ -521,6 +527,153 @@ export function extractAiIntegrationFillFromSource(source: string): {
       cleanExtractedBlank(ask?.[2] ?? ""),
       cleanExtractedBlank(priorityKey?.[1] ?? anyKey?.[1] ?? ""),
     ],
+  };
+}
+
+export type ServiceActionFillValues = {
+  humanMethod: string;
+  humanMessage: string;
+  humanPriority: string;
+  queueMethod: string;
+  queueMessage: string;
+};
+
+/** Pull Support action wiring from free-edited Mission 07 source. */
+export function extractServiceActionFillFromSource(
+  source: string
+): ServiceActionFillValues {
+  const human = source.match(
+    /support\.(\w+)\s*\(\s*message\s*=\s*([^,\n]+?)\s*,\s*priority\s*=\s*([^\n)]+?)\s*\)/
+  );
+  const queue = source.match(
+    /else\s*:[\s\S]*?support\.(\w+)\s*\(\s*message\s*=\s*([^\n)]+?)\s*\)/
+  );
+  return {
+    humanMethod: cleanExtractedBlank(human?.[1] ?? ""),
+    humanMessage: cleanExtractedBlank(human?.[2] ?? ""),
+    humanPriority: cleanExtractedBlank(human?.[3] ?? ""),
+    queueMethod: cleanExtractedBlank(queue?.[1] ?? ""),
+    queueMessage: cleanExtractedBlank(queue?.[2] ?? ""),
+  };
+}
+
+export type ServiceActionFillFail =
+  | "humanMethod"
+  | "humanMessage"
+  | "humanPriorityHardcoded"
+  | "humanPriorityObject"
+  | "humanPriority"
+  | "queueMethod"
+  | "queueMessage";
+
+function normalizePriorityExpr(raw: string): string {
+  return normalizeCodeBlank(raw).replace(/\s+/g, "");
+}
+
+/**
+ * Mission 07 wiring check — exact methods + message var + priority from result.
+ */
+export function evaluateServiceActionFill(
+  values: ServiceActionFillValues,
+  opts?: {
+    humanMethod?: string;
+    queueMethod?: string;
+    messageVar?: string;
+    priorityExpr?: string;
+  }
+): { ok: true } | { ok: false; which: ServiceActionFillFail } {
+  const humanMethod = opts?.humanMethod ?? "create_ticket";
+  const queueMethod = opts?.queueMethod ?? "queue_message";
+  const messageVar = opts?.messageVar ?? "message";
+  const priorityExpr = opts?.priorityExpr ?? 'result["priority"]';
+
+  if (!evaluateIdentifierBlank(values.humanMethod, humanMethod)) {
+    return { ok: false, which: "humanMethod" };
+  }
+  if (!evaluateIdentifierBlank(values.humanMessage, messageVar)) {
+    return { ok: false, which: "humanMessage" };
+  }
+
+  const pri = normalizePriorityExpr(values.humanPriority);
+  const expectedPri = normalizePriorityExpr(priorityExpr);
+  if (pri !== expectedPri) {
+    // Hardcoded literal priority
+    if (/^["']?(URGENT|NORMAL)["']?$/i.test(pri)) {
+      return { ok: false, which: "humanPriorityHardcoded" };
+    }
+    // Whole result object
+    if (pri === "result" || /^result$/.test(pri)) {
+      return { ok: false, which: "humanPriorityObject" };
+    }
+    return { ok: false, which: "humanPriority" };
+  }
+
+  if (!evaluateIdentifierBlank(values.queueMethod, queueMethod)) {
+    return { ok: false, which: "queueMethod" };
+  }
+  if (!evaluateIdentifierBlank(values.queueMessage, messageVar)) {
+    return { ok: false, which: "queueMessage" };
+  }
+  return { ok: true };
+}
+
+/**
+ * Mission 07 RUN: verified fill → simulate Support call from fixture.
+ */
+export function evaluateServiceActionRun(
+  test: ClassificationTest,
+  opts: { humanRoute: string }
+): ClassificationResult {
+  const fixture = test.serviceFixture;
+  const message = test.message;
+  if (!fixture) {
+    return {
+      raw: "",
+      normalized: null,
+      isValidCategory: false,
+      matchesExpected: false,
+      expected: test.expected,
+      message,
+      testId: test.id,
+      failHint: test.failHint,
+    };
+  }
+
+  const expectedAction = test.expected as SupportActionName;
+  const support = createSupportService();
+  if (fixture.route === opts.humanRoute) {
+    support.create_ticket(message, fixture.priority);
+  } else {
+    support.queue_message(message);
+  }
+  const call = support.calls[0]!;
+  const report = formatSupportActionReport(call);
+
+  const matches =
+    support.calls.length === 1 &&
+    matchSupportCall(call, {
+      action: expectedAction,
+      message,
+      priority:
+        expectedAction === "create_ticket" ? fixture.priority : undefined,
+    });
+
+  return {
+    raw: report,
+    normalized: call.action,
+    isValidCategory: true,
+    matchesExpected: matches,
+    expected: test.expected,
+    message,
+    testId: test.id,
+    failHint: matches
+      ? undefined
+      : (test.failHints?.fields?.action ?? test.failHint),
+    parsedFields: {
+      action: call.action,
+      ...call.args,
+      route: fixture.route,
+    },
   };
 }
 

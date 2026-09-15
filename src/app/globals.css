@@ -199,9 +199,9 @@
 }
 
 body {
-  background: var(--ml-bg-0);
+  background: var(--ml-canvas, var(--ml-bg-0));
   color: var(--ml-text-body);
-  font-family: var(--font-body), system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
   font-size: var(--ml-text-base);
   line-height: var(--ml-leading-body);
   min-height: 100vh;
@@ -226,56 +226,50 @@ button:disabled,
   cursor: not-allowed;
 }
 
-/* --- Site atmosphere (global) — mineral slate under Arcane Academy night ---
-   Target: ~15–25% felt texture, ~75–85% --ml-bg-0 influence.
-   Atmosphere only — never competes with panels, text, or accents. */
+/* --- Public atmosphere — restrained cartographic grid (marketing only) --- */
 .ml-atmosphere {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
-  background-color: var(--ml-bg-0);
+  background-color: var(--ml-canvas, var(--ml-bg-0));
 }
 
-.ml-atmosphere__stone {
+.ml-atmosphere__grid {
   position: absolute;
   inset: 0;
-  background-image: url("/images/background-1.jpg");
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  /* Subdue bright source into slate/night before navy wash */
-  filter: saturate(0.4) brightness(0.52) contrast(1.04);
-  opacity: 0.88;
+  opacity: 0.45;
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--ml-border) 40%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--ml-border) 40%, transparent) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      ellipse 70% 50% at 18% 12%,
+      color-mix(in srgb, var(--ml-state-active, var(--ml-accent)) 8%, transparent),
+      transparent 55%
+    );
+  background-size:
+    32px 32px,
+    32px 32px,
+    auto;
 }
 
 .ml-atmosphere__wash {
   position: absolute;
   inset: 0;
-  /* ~80% navy influence — texture remains a murmur */
-  background: color-mix(in srgb, var(--ml-bg-0) 80%, transparent);
-}
-
-.ml-atmosphere__veil {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    ellipse 90% 85% at 50% 45%,
-    transparent 50%,
-    color-mix(in srgb, var(--ml-bg-0) 30%, transparent) 100%
-  );
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ml-atmosphere__stone {
-    filter: saturate(0.4) brightness(0.52) contrast(1.04);
-  }
+  background: color-mix(in srgb, var(--ml-canvas, var(--ml-bg-0)) 72%, transparent);
 }
 
 /* ============================================================
-   Editorial Cartographic — scoped to /app shell
-   Does NOT change :root / adventure-tech (marketing landing).
+   Editorial Cartographic — product-wide identity (default html theme)
+   Contextual density: Marketing / Utility / Application shells.
    ============================================================ */
 [data-theme="editorial-cartographic"] {
   --ml-canvas: #0d1117;
@@ -340,22 +334,28 @@ button:disabled,
   --danger: var(--ml-state-error);
 }
 
-/* App shell surface: Inter body, Jakarta headings via .font-display → --font-body */
-.ml-app {
+/* Shell surfaces: Inter body, Jakarta headings */
+.ml-app,
+.ml-public,
+.ml-utility {
   background-color: var(--ml-canvas);
   color: var(--ml-text-body);
   font-family: var(--font-inter), system-ui, sans-serif;
   font-size: var(--ml-text-base);
   line-height: var(--ml-leading-body);
-  /* Opaque fill — never let marketing atmosphere show through */
   isolation: isolate;
 }
 
-.ml-app .font-display {
+.ml-app .font-display,
+.ml-public .font-display,
+.ml-utility .font-display,
+.font-display {
   font-family: var(--font-body), system-ui, sans-serif;
 }
 
-.ml-app :focus-visible {
+.ml-app :focus-visible,
+.ml-public :focus-visible,
+.ml-utility :focus-visible {
   outline: 2px solid var(--ml-state-active);
   outline-offset: 2px;
 }
@@ -530,17 +530,13 @@ button:disabled,
   }
 }
 
-/* Homepage: slightly more texture than mission shells */
-html[data-home="true"] .ml-atmosphere__wash {
-  background: color-mix(in srgb, var(--ml-bg-0) 72%, transparent);
+/* Homepage: slightly more grid presence */
+html[data-home="true"] .ml-atmosphere__grid {
+  opacity: 0.55;
 }
 
-html[data-home="true"] .ml-atmosphere__veil {
-  background: radial-gradient(
-    ellipse 95% 80% at 50% 28%,
-    transparent 42%,
-    color-mix(in srgb, var(--ml-bg-0) 22%, transparent) 100%
-  );
+html[data-home="true"] .ml-atmosphere__wash {
+  background: color-mix(in srgb, var(--ml-canvas, var(--ml-bg-0)) 68%, transparent);
 }
 
 @keyframes ml-home-fade-up {
@@ -613,8 +609,8 @@ html[data-home="true"] .ml-atmosphere__veil {
 }
 
 .font-display {
-  font-family: var(--font-display), Georgia, "Times New Roman", serif;
-  letter-spacing: -0.015em;
+  font-family: var(--font-body), system-ui, sans-serif;
+  letter-spacing: -0.02em;
   color: var(--ml-text);
 }
 

@@ -1,18 +1,18 @@
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/app/AppShell";
-import { getAppSessionState } from "@/lib/auth/app-session";
+import { requireAppSession } from "@/lib/auth/require-app-session";
 import { HeaderAuthFromSession } from "@/components/ui/HeaderAuth";
 
 /**
  * Real `/app` segment layout (not a route group).
- * Providers come from root AppSessionShell; this only adds app chrome + theme scope.
+ * Auth-only: middleware + requireAppSession — no anonymous product UI.
  */
 export default async function ApplicationLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  const session = await getAppSessionState();
+  const session = await requireAppSession();
 
   return (
     <AppShell

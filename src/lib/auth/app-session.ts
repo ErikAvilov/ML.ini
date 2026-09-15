@@ -102,6 +102,10 @@ export const getAppSessionState = cache(async (): Promise<AppSessionState> => {
           display_name: profile!.display_name ?? user.name,
         })
       );
+      // OAuth image lives on better_auth.user; profiles.avatar_url can lag/null.
+      if (!profile.avatar_url && user.image) {
+        profile = { ...profile, avatar_url: user.image };
+      }
     } else {
       profile = fallbackIdentity(user).profile;
     }

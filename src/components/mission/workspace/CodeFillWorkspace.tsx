@@ -79,19 +79,25 @@ export function CodeFillWorkspace({
 }: CodeFillWorkspaceProps) {
   const { messages, t } = useLocale();
   const isLogic = codeFillMode === "logic";
+  const isServiceAction = codeFillMode === "service-action";
   const runEnabled = canRun;
   const displayedMessage =
     running && runMode === "sequential" ? activeMessage : showcaseMessage;
   const allDone = !running && results.length === testCount && testCount > 0;
   const allPassed = allDone && results.every((r) => r.matchesExpected);
   const outcome = allDone ? (allPassed ? "success" : "failure") : "idle";
+  const messageLabel = isLogic
+    ? messages.logicFixtureLabel
+    : isServiceAction
+      ? messages.clientMessage
+      : messages.clientMessage;
 
   return (
     <div className="ml-mission-workspace-grid flex h-full min-h-0 min-w-0 flex-col">
       <div className="flex shrink-0 items-center gap-3 border-b border-ml-border bg-ml-surface-raised/80 px-3 py-2 sm:px-4">
         <p className="min-w-0 flex-1 truncate font-mono text-[length:var(--ml-text-sm)] text-ml-text-primary">
           <span className="mr-2 text-ml-text-muted">
-            {isLogic ? messages.logicFixtureLabel : messages.clientMessage}
+            {messageLabel}
           </span>
           {displayedMessage}
         </p>

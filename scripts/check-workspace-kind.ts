@@ -42,14 +42,16 @@ expect("mission-03", "prompt");
 expect("mission-04", "payload-repair");
 expect("mission-05", "code-fill", "logic");
 expect("mission-06", "code-fill", "ai-integration");
-expect("mission-07", "coming-soon");
-expect("mission-08", "coming-soon");
-expect("mission-09", "coming-soon");
-expect("mission-10", "coming-soon"); // boss placeholder, !playable
+expect("mission-07", "code-fill", "service-action");
+expect("mission-08", "pipeline");
+expect("mission-09", "pipeline");
+expect("mission-10", "boss");
 
 assert.equal(isPlaygroundWorkspace("prompt"), true);
 assert.equal(isPlaygroundWorkspace("payload-repair"), true);
 assert.equal(isPlaygroundWorkspace("code-fill"), true);
+assert.equal(isPlaygroundWorkspace("pipeline"), true);
+assert.equal(isPlaygroundWorkspace("boss"), true);
 assert.equal(isPlaygroundWorkspace("intro"), false);
 assert.equal(isPlaygroundWorkspace("coming-soon"), false);
 assert.equal(isPlaygroundWorkspace("unsupported"), false);

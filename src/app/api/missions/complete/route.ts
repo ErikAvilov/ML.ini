@@ -13,6 +13,8 @@ type Body = {
   instruction?: unknown;
   codeSource?: unknown;
   payloadRepairText?: unknown;
+  pipelineConnectionsJson?: unknown;
+  safetyConfigJson?: unknown;
   // Ignored if present — never trusted:
   userId?: unknown;
   xp?: unknown;
@@ -58,6 +60,8 @@ export async function POST(request: Request) {
       instruction: asString(body.instruction),
       codeSource: asString(body.codeSource),
       payloadRepairText: asString(body.payloadRepairText),
+      pipelineConnectionsJson: asString(body.pipelineConnectionsJson),
+      safetyConfigJson: asString(body.safetyConfigJson),
     });
   } catch (err) {
     const missingKey = err instanceof Error && err.message === "MISSING_KEY";

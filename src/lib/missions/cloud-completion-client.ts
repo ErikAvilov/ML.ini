@@ -2,6 +2,8 @@
 
 export const CODE_SOURCE_KEY = "mlini-code-src-v1:";
 export const PAYLOAD_REPAIR_TEXT_KEY = "mlini-payload-repair-text-v1:";
+export const PIPELINE_CONN_KEY = "mlini-pipeline-conn-v1:";
+export const SAFETY_CFG_KEY = "mlini-safety-cfg-v1:";
 
 export type CloudCompletionRequest = {
   missionId: string;
@@ -9,6 +11,8 @@ export type CloudCompletionRequest = {
   instruction?: string;
   codeSource?: string;
   payloadRepairText?: string;
+  pipelineConnectionsJson?: string;
+  safetyConfigJson?: string;
 };
 
 export type CloudCompletionSuccess = {
@@ -35,6 +39,8 @@ export type CloudCompletionResult =
 export function readSessionSolution(missionId: string): {
   codeSource?: string;
   payloadRepairText?: string;
+  pipelineConnectionsJson?: string;
+  safetyConfigJson?: string;
 } {
   if (typeof window === "undefined") return {};
   try {
@@ -43,7 +49,16 @@ export function readSessionSolution(missionId: string): {
     const payloadRepairText =
       sessionStorage.getItem(PAYLOAD_REPAIR_TEXT_KEY + missionId) ??
       undefined;
-    return { codeSource, payloadRepairText };
+    const pipelineConnectionsJson =
+      sessionStorage.getItem(PIPELINE_CONN_KEY + missionId) ?? undefined;
+    const safetyConfigJson =
+      sessionStorage.getItem(SAFETY_CFG_KEY + missionId) ?? undefined;
+    return {
+      codeSource,
+      payloadRepairText,
+      pipelineConnectionsJson,
+      safetyConfigJson,
+    };
   } catch {
     return {};
   }
@@ -62,6 +77,8 @@ export async function requestCloudCompletion(
         instruction: input.instruction,
         codeSource: input.codeSource,
         payloadRepairText: input.payloadRepairText,
+        pipelineConnectionsJson: input.pipelineConnectionsJson,
+        safetyConfigJson: input.safetyConfigJson,
       }),
     });
 
