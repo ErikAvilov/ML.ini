@@ -513,6 +513,8 @@ const common = {
     systemErrorLabel: "ERREUR SYSTÈME",
     systemErrorHelp:
       "Ce n’est pas un échec de ta solution. Réessaie dans un instant.",
+    systemErrorInvalidAiJson:
+      "La réponse du modèle n’était pas du JSON valide. Ce n’est pas une erreur de ton câblage — réessaie.",
     solutionFailedLabel: "SOLUTION À AJUSTER",
     shortcutsHelp: "Raccourcis : Ctrl/Cmd+Entrée = Run · Alt+←/→ = mission",
     runShortcutHint: "Ctrl/Cmd + Entrée",
@@ -1048,6 +1050,8 @@ const common = {
     systemErrorLabel: "SYSTEM ERROR",
     systemErrorHelp:
       "This is not a failure of your solution. Try again in a moment.",
+    systemErrorInvalidAiJson:
+      "The model response was not valid JSON. This is not a wiring error — try again.",
     solutionFailedLabel: "SOLUTION NEEDS WORK",
     shortcutsHelp: "Shortcuts: Ctrl/Cmd+Enter = Run · Alt+←/→ = mission",
     runShortcutHint: "Ctrl/Cmd + Enter",

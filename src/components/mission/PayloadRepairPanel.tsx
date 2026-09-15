@@ -19,6 +19,8 @@ interface PayloadRepairPanelProps {
   schema: StructuredOutputSchema;
   passed: boolean;
   onPassedChange: (passed: boolean) => void;
+  /** Highlight when tests passed but repair is still the blocking gate. */
+  emphasized?: boolean;
 }
 
 function messageForRepairFailure(
@@ -57,9 +59,19 @@ export function PayloadRepairPanel({
   schema,
   passed,
   onPassedChange,
+  emphasized = false,
 }: PayloadRepairPanelProps) {
   const { messages } = useLocale();
-  const [value, setValue] = useState(task.brokenPayload);
+  const [value, setValue] = useState(() => {
+    if (typeof window === "undefined") return task.brokenPayload;
+    try {
+      return (
+        sessionStorage.getItem(TEXT_PREFIX + missionId) ?? task.brokenPayload
+      );
+    } catch {
+      return task.brokenPayload;
+    }
+  });
   const [feedback, setFeedback] = useState<string | null>(null);
   const onPassedChangeRef = useRef(onPassedChange);
 
@@ -109,19 +121,31 @@ export function PayloadRepairPanel({
   }
 
   return (
-    <section className="ml-mission-callout-objective px-3 py-3">
+    <section
+      id="ml-payload-repair"
+      className={`ml-mission-callout-objective px-3 py-3 ${
+        emphasized
+          ? "border border-ml-state-active bg-[color-mix(in_srgb,var(--ml-state-active)_8%,transparent)] ring-1 ring-ml-state-active/40"
+          : ""
+      }`}
+    >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <p className="ml-mission-section-label text-ml-state-active">
           {task.title}
         </p>
         <p
           className={`font-mono text-[11px] tracking-[0.06em] uppercase ${
-            passed ? "text-ml-state-completed" : "text-ml-text-muted"
+            passed ? "text-ml-state-completed" : "text-ml-state-active"
           }`}
         >
           {passed ? `✓ ${task.passLabel}` : task.checkLabel}
         </p>
       </div>
+      {emphasized && !passed ? (
+        <p className="mt-2 text-[length:var(--ml-text-sm)] font-medium leading-snug text-ml-state-active">
+          {messages.payloadRepairRequired}
+        </p>
+      ) : null}
       <p className="mt-1.5 text-[length:var(--ml-text-sm)] leading-relaxed text-ml-text-body">
         {task.description}
       </p>

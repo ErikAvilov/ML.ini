@@ -56,6 +56,8 @@ export type MissionTestErrorKind =
   | "priority"
   | "value"
   | "json"
+  /** Provider/model instability — not a learner wiring failure. */
+  | "system"
   | null;
 
 export interface MissionHint {
@@ -590,6 +592,8 @@ export interface TestSuiteSummary {
   /** Affiché comme réplique Mira lorsque le feedback humain apporte quelque chose */
   feedbackSpeaker: "mira" | null;
   allPassed: boolean;
+  /** Provider/model format failure — not a learner wiring fail. */
+  hasSystemError?: boolean;
 }
 
 /** @deprecated Prefer string labels on ClassificationTest */

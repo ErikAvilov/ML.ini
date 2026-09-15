@@ -9,6 +9,7 @@ import {
   getApiMessages,
   resolveLocale,
 } from "@/i18n/messages/api";
+import { AI_INTEGRATION_JSON_SCHEMA } from "@/lib/missions/ai-integration-json";
 
 export const runtime = "nodejs";
 
@@ -16,6 +17,8 @@ interface ClassifyBody {
   instruction?: string;
   message?: string;
   locale?: string;
+  /** Mission 06: ask provider for application/json (schema when supported). */
+  expectJson?: boolean;
 }
 
 export async function POST(request: Request) {
@@ -34,6 +37,7 @@ export async function POST(request: Request) {
   const msg = getApiMessages(locale);
   const instruction = body.instruction?.trim() ?? "";
   const message = body.message?.trim() ?? "";
+  const expectJson = body.expectJson === true;
 
   if (!instruction) {
     return NextResponse.json(
@@ -63,6 +67,14 @@ export async function POST(request: Request) {
     const { text: output } = await completeChat({
       maxOutputTokens: 1024,
       signal: controller.signal,
+      ...(expectJson
+        ? {
+            jsonSchema: AI_INTEGRATION_JSON_SCHEMA as unknown as Record<
+              string,
+              unknown
+            >,
+          }
+        : {}),
       messages: [
         { role: "system", content: msg.pedagogicalConstraints },
         {

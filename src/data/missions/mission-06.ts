@@ -10,9 +10,25 @@ const COMPARE_VALUE = "URGENT";
 
 const INSTRUCTION_EN = `Classify the customer message using the Veyra support policy.
 
-Return only valid JSON with exactly:
-- sentiment: POSITIVE, NEUTRAL or NEGATIVE
-- priority: URGENT or NORMAL
+Return ONLY one valid JSON object.
+
+The JSON object must contain exactly these two fields:
+
+{
+  "sentiment": "NEGATIVE",
+  "priority": "URGENT"
+}
+
+Allowed values:
+
+- "sentiment": "POSITIVE", "NEUTRAL", or "NEGATIVE"
+- "priority": "URGENT" or "NORMAL"
+
+Do not return Markdown.
+Do not use code fences.
+Do not add explanations.
+Do not return text before or after the JSON.
+The response must start with { and end with }.
 
 URGENT:
 - duplicate payment
@@ -32,9 +48,25 @@ Emotion alone never determines priority.`;
 
 const INSTRUCTION_FR = `Classe le message client selon la politique support Veyra.
 
-Renvoie uniquement du JSON valide avec exactement :
-- sentiment : POSITIVE, NEUTRAL ou NEGATIVE
-- priority : URGENT ou NORMAL
+Renvoie UNIQUEMENT un objet JSON valide.
+
+L’objet JSON doit contenir exactement ces deux champs :
+
+{
+  "sentiment": "NEGATIVE",
+  "priority": "URGENT"
+}
+
+Valeurs autorisées :
+
+- "sentiment": "POSITIVE", "NEUTRAL" ou "NEGATIVE"
+- "priority": "URGENT" ou "NORMAL"
+
+Pas de Markdown.
+Pas de fences de code.
+Pas d’explications.
+Pas de texte avant ou après le JSON.
+La réponse doit commencer par { et finir par }.
 
 URGENT :
 - paiement en double

@@ -76,6 +76,16 @@ export async function POST(request: Request) {
   }
 
   if (!validation.ok) {
+    if (validation.code === "system_error") {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: validation.code,
+          kind: "system",
+        },
+        { status: 503 }
+      );
+    }
     const status =
       validation.code === "unknown_mission" ||
       validation.code === "not_playable"

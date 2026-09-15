@@ -11,6 +11,9 @@ import { onBetterAuthUserCreated } from "@/lib/integrations/user-created";
  * Creating the pool / adapter at import time crashes the build when
  * DATABASE_URL is missing (or floods Neon with parallel workers).
  *
+ * Proxy must be callable and support `in` checks — `toNextJsHandler` does
+ * `"handler" in auth ? auth.handler(req) : auth(req)`.
+ *
  * Must export `auth` for the Better Auth CLI (`--config`).
  * Server-only by convention — do not import from Client Components.
  */
@@ -25,7 +28,6 @@ function createAuth() {
       "https://mlini.dev",
       ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
     ],
-    // Surface OAuth failures (e.g. email_not_found) on the MLINI auth page.
     onAPIError: {
       errorURL: "/auth",
     },
@@ -34,8 +36,6 @@ function createAuth() {
         generateId: "uuid",
       },
     },
-    // OAuth-only accounts: allow delete without password when session is present.
-    // cookieCache: avoid a Neon round-trip on every RSC navigation (signed cookie).
     session: {
       freshAge: 0,
       cookieCache: {
@@ -48,19 +48,12 @@ function createAuth() {
         enabled: true,
       },
     },
-    // Do not auto-merge Google + GitHub solely because emails match.
     account: {
       accountLinking: {
         enabled: true,
         disableImplicitLinking: true,
       },
     },
-    /**
-     * user.create.after runs after the DB transaction commits
-     * (queueAfterTransactionHook) — so the Neon trigger's
-     * integration_events.user.created row is already durable.
-     * Webhook failures must never fail signup.
-     */
     databaseHooks: {
       user: {
         create: {
@@ -89,8 +82,6 @@ function createAuth() {
             github: {
               clientId: process.env.GITHUB_CLIENT_ID,
               clientSecret: process.env.GITHUB_CLIENT_SECRET,
-              // Better Auth defaults already include read:user + user:email.
-              // Do not add broader scopes (no repo access).
             },
           }
         : {}),
@@ -112,12 +103,33 @@ function getAuth(): AuthInstance {
   return globalForAuth.__mliniBetterAuth;
 }
 
-export const auth: AuthInstance = new Proxy({} as AuthInstance, {
-  get(_target, prop, _receiver) {
-    const instance = getAuth();
-    const value = Reflect.get(instance, prop, instance);
-    return typeof value === "function"
-      ? (value as (...args: unknown[]) => unknown).bind(instance)
-      : value;
-  },
-});
+/** Callable target so `typeof` / `auth(req)` paths work with toNextJsHandler. */
+function authCallable(
+  ...args: Parameters<AuthInstance["handler"]>
+): ReturnType<AuthInstance["handler"]> {
+  return getAuth().handler(...args);
+}
+
+export const auth: AuthInstance = new Proxy(
+  authCallable as unknown as AuthInstance,
+  {
+    get(_target, prop) {
+      if (prop === "then") return undefined;
+      const instance = getAuth();
+      const value = Reflect.get(instance, prop, instance);
+      return typeof value === "function"
+        ? (value as (...fnArgs: unknown[]) => unknown).bind(instance)
+        : value;
+    },
+    has(_target, prop) {
+      return prop === "handler" || prop in getAuth();
+    },
+    apply(_target, _thisArg, argArray) {
+      return Reflect.apply(
+        authCallable,
+        undefined,
+        argArray as Parameters<typeof authCallable>
+      );
+    },
+  }
+);

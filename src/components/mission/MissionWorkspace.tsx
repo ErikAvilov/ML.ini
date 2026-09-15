@@ -392,6 +392,7 @@ function MissionSession({
       return false;
     }
   });
+  const [repairGateActive, setRepairGateActive] = useState(false);
   const [codeFillPassed, setCodeFillPassed] = useState(() => {
     if (!mission.codeFill) return true;
     if (typeof window === "undefined") return false;
@@ -528,18 +529,23 @@ function MissionSession({
       ? mission.boss.promptSchema
       : mission.outputSchema;
 
-  async function runClassify(message: string) {
+  async function runClassify(message: string, opts?: { retry?: boolean }) {
     const instructionForCall =
       isAiIntegration && mission.codeFill?.mode === "ai-integration"
         ? mission.codeFill.providedInstruction
         : instructionRef.current;
+    const instruction =
+      opts?.retry && isAiIntegration
+        ? `${instructionForCall}\n\nCRITICAL RETRY — previous response was not valid JSON.\nReturn ONLY one JSON object. Start with { and end with }.\nNo Markdown. No code fences. No prose.`
+        : instructionForCall;
     const res = await fetch("/api/ai/classify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        instruction: instructionForCall,
+        instruction,
         message,
         locale,
+        expectJson: isAiIntegration,
       }),
     });
     const data = (await res.json()) as { output?: string; error?: string };
@@ -634,7 +640,6 @@ function MissionSession({
       });
 
       if (result.ok) {
-        router.refresh();
         return true;
       }
 
@@ -642,14 +647,14 @@ function MissionSession({
         return true;
       }
 
-      // Validation already passed in the playground — treat server mismatch /
-      // persist errors as infrastructure, not player failure.
+      // Do not unlock the next mission until cloud persistence succeeds —
+      // optimistic unlock was wiped on remount and left Mission 05 locked.
       setCloudSaveError(
         result.kind === "validation"
           ? messages.cloudConfirmFailed
           : messages.cloudSaveFailed
       );
-      return true;
+      return false;
     } finally {
       cloudSavingRef.current = false;
       setCloudSaving(false);
@@ -661,11 +666,18 @@ function MissionSession({
       return;
     }
     if (mission.payloadRepair && !repairPassedRef.current) {
+      setRepairGateActive(true);
       setFeedback(messages.payloadRepairRequired);
       setFeedbackSpeaker("mira");
       setMobileTab("brief");
+      queueMicrotask(() => {
+        document
+          .getElementById("ml-payload-repair")
+          ?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
       return;
     }
+    setRepairGateActive(false);
     if (mission.codeFill && !codeFillPassedRef.current) {
       setFeedback(messages.codeFillRequired);
       setFeedbackSpeaker("mira");
@@ -684,8 +696,11 @@ function MissionSession({
       setMobileTab("workspace");
       return;
     }
-    await persistCloudAfterPass();
+    const persisted = await persistCloudAfterPass();
+    if (!persisted) return;
     grantMissionSuccess();
+    // After toast/celebration state is committed — stable provider key keeps them mounted.
+    router.refresh();
   }
 
   function persistBossStep(next: number) {
@@ -757,7 +772,7 @@ function MissionSession({
     }
   }
 
-  function handleDevComplete() {
+  async function handleDevComplete() {
     if (process.env.NODE_ENV !== "development" || runningRef.current) return;
     setMobileTab("workspace");
     setSystemError(null);
@@ -765,7 +780,26 @@ function MissionSession({
     setFeedbackSpeaker(null);
     setRunning(false);
     setStage("idle");
+    // Seed a valid repair payload so cloud persist can succeed for M04.
+    if (mission.payloadRepair) {
+      const valid = `{\n  "sentiment": "NEGATIVE",\n  "priority": "URGENT"\n}`;
+      try {
+        sessionStorage.setItem(`mlini-payload-repair-v1:${mission.id}`, "1");
+        sessionStorage.setItem(
+          `mlini-payload-repair-text-v1:${mission.id}`,
+          valid
+        );
+      } catch {
+        /* ignore */
+      }
+      repairPassedRef.current = true;
+      setRepairPassed(true);
+      setRepairGateActive(false);
+    }
+    const persisted = await persistCloudAfterPass();
+    if (!persisted) return;
     grantMissionSuccess();
+    router.refresh();
   }
 
   function priorityFromLogicFixture(message: string): string {
@@ -914,9 +948,15 @@ function MissionSession({
           await wait(120);
           evaluated = evaluatePipelineTest(test);
         } else if (isAiIntegration) {
-          const output = await runClassify(test.message);
+          // One model call; one controlled retry if JSON is malformed.
+          let output = await runClassify(test.message);
           setLiveOutput(output);
           evaluated = evaluateAiIntegrationTest(output, test);
+          if (evaluated.errorKind === "system") {
+            output = await runClassify(test.message, { retry: true });
+            setLiveOutput(output);
+            evaluated = evaluateAiIntegrationTest(output, test);
+          }
         } else {
           const output = await runClassify(test.message);
           setLiveOutput(output);
@@ -941,6 +981,10 @@ function MissionSession({
       const summary = summarizeSuite(collected, locale);
       setFeedback(summary.feedback);
       setFeedbackSpeaker(summary.feedbackSpeaker);
+
+      if (summary.hasSystemError) {
+        setSystemError(messages.systemErrorInvalidAiJson);
+      }
 
       if (summary.allPassed) {
         if (isBossPrompt) {
@@ -1095,6 +1139,22 @@ function MissionSession({
             outputSchema
           );
         });
+
+        // One controlled retry for malformed model JSON (Mission 06 only).
+        if (isAiIntegration) {
+          const malformed = collected.filter((r) => r.errorKind === "system");
+          for (const result of malformed) {
+            const test = tests.find((t) => t.id === result.testId);
+            if (!test) continue;
+            const output = await runClassify(test.message, { retry: true });
+            byId.set(test.id, output);
+          }
+          if (malformed.length > 0) {
+            collected = tests.map((test) =>
+              evaluateAiIntegrationTest(byId.get(test.id) ?? "", test)
+            );
+          }
+        }
       }
 
       const last =
@@ -1109,6 +1169,10 @@ function MissionSession({
       const summary = summarizeSuite(collected, locale);
       setFeedback(summary.feedback);
       setFeedbackSpeaker(summary.feedbackSpeaker);
+
+      if (summary.hasSystemError) {
+        setSystemError(messages.systemErrorInvalidAiJson);
+      }
 
       if (summary.allPassed) {
         if (isBossPrompt) {
@@ -1138,7 +1202,11 @@ function MissionSession({
   function onRepairPassedChange(passed: boolean) {
     setRepairPassed(passed);
     repairPassedRef.current = passed;
-    if (!passed || !mission.payloadRepair) return;
+    if (!passed || !mission.payloadRepair) {
+      if (!passed) setRepairGateActive(true);
+      return;
+    }
+    setRepairGateActive(false);
     const latest = resultsRef.current;
     if (
       latest.length !== tests.length ||
@@ -1269,6 +1337,7 @@ function MissionSession({
               outputSchema={outputSchema}
               repairPassed={repairPassed}
               onRepairPassedChange={onRepairPassedChange}
+              repairGateActive={repairGateActive}
             />
           )}
         </aside>

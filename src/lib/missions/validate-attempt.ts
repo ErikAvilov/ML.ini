@@ -1,11 +1,11 @@
 import "server-only";
 
 import { classifyBatchItems } from "@/lib/ai-batch-classify";
+import { classifyAiIntegrationSuite } from "@/lib/missions/classify-ai-integration";
 import { resolveCanonicalMission } from "@/lib/missions/canonical";
 import { DEFAULT_LOCALE, isLocale, type Locale } from "@/i18n/config";
 import {
   evaluateAiIntegrationFill,
-  evaluateAiIntegrationRun,
   evaluateCodeFillTask,
   evaluateLogicRoute,
   evaluateMissionTest,
@@ -44,7 +44,9 @@ export type MissionAttemptFailure =
   | "unknown_mission"
   | "not_playable"
   | "missing_solution"
-  | "validation_failed";
+  | "validation_failed"
+  /** Provider/model format failure — not a learner wiring fail. */
+  | "system_error";
 
 export type MissionAttemptResult =
   | { ok: true; missionId: string }
@@ -90,6 +92,7 @@ export async function validateMissionAttempt(
       mission.outputSchema
     );
     if (!repair.ok) return { ok: false, code: "validation_failed" };
+    // Payload-repair missions still require the instruction suite below.
   }
 
   const fill = mission.codeFill;
@@ -131,21 +134,21 @@ export async function validateMissionAttempt(
     if (!source.trim()) return { ok: false, code: "missing_solution" };
     const { values } = extractAiIntegrationFillFromSource(source);
     const fillOk = evaluateAiIntegrationFill(values, fill.blanks);
+    // Wrong wiring → learner FAIL, zero model calls.
     if (!fillOk.ok) return { ok: false, code: "validation_failed" };
 
-    const { results } = await classifyBatchItems({
+    const collected = await classifyAiIntegrationSuite({
       instruction: fill.providedInstruction,
-      tests: tests.map((t) => ({ testId: t.id, message: t.message })),
+      tests,
+      locale,
+      compareValue: fill.compareValue,
+      trueRoute: fill.trueRoute,
+      falseRoute: fill.falseRoute,
     });
-    const byId = new Map(results.map((r) => [r.testId, r.rawOutput] as const));
-    const collected = tests.map((test) =>
-      evaluateAiIntegrationRun(byId.get(test.id) ?? "", test, {
-        compareValue: fill.compareValue,
-        trueRoute: fill.trueRoute,
-        falseRoute: fill.falseRoute,
-      })
-    );
     const summary = summarizeSuite(collected, locale);
+    if (summary.hasSystemError) {
+      return { ok: false, code: "system_error" };
+    }
     return summary.allPassed
       ? { ok: true, missionId: mission.id }
       : { ok: false, code: "validation_failed" };
@@ -253,21 +256,26 @@ export async function validateMissionAttempt(
   const instruction = input.instruction?.trim() ?? "";
   if (!instruction) return { ok: false, code: "missing_solution" };
 
-  const { results } = await classifyBatchItems({
-    instruction,
-    tests: tests.map((t) => ({ testId: t.id, message: t.message })),
-  });
-  const byId = new Map(results.map((r) => [r.testId, r.rawOutput] as const));
-  const collected = tests.map((test) =>
-    evaluateMissionTest(
-      byId.get(test.id) ?? "",
-      test,
-      mission.allowedOutputs ?? [],
-      mission.outputSchema
-    )
-  );
-  const summary = summarizeSuite(collected, locale);
-  return summary.allPassed
-    ? { ok: true, missionId: mission.id }
-    : { ok: false, code: "validation_failed" };
+  // One retry: AI classification is non-deterministic; Mission 04 was unlocking
+  // client-side while cloud persist failed on a flaky re-grade.
+  let collected: ClassificationResult[] = [];
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const { results } = await classifyBatchItems({
+      instruction,
+      tests: tests.map((t) => ({ testId: t.id, message: t.message })),
+    });
+    const byId = new Map(results.map((r) => [r.testId, r.rawOutput] as const));
+    collected = tests.map((test) =>
+      evaluateMissionTest(
+        byId.get(test.id) ?? "",
+        test,
+        mission.allowedOutputs ?? [],
+        mission.outputSchema
+      )
+    );
+    if (summarizeSuite(collected, locale).allPassed) {
+      return { ok: true, missionId: mission.id };
+    }
+  }
+  return { ok: false, code: "validation_failed" };
 }

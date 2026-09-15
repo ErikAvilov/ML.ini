@@ -159,6 +159,32 @@ const badJson = evaluateAiIntegrationRun(
 );
 assert.equal(badJson.matchesExpected, false);
 assert.equal(badJson.jsonOk, false);
+assert.equal(badJson.errorKind, "system");
+
+const proseKv = evaluateAiIntegrationRun(
+  "sentiment: NEGATIVE\npriority: URGENT",
+  { id: "t1", message: "x", expected: "HUMAN_REVIEW" },
+  {
+    compareValue: "URGENT",
+    trueRoute: "HUMAN_REVIEW",
+    falseRoute: "STANDARD_QUEUE",
+  }
+);
+assert.equal(proseKv.errorKind, "system");
+assert.equal(proseKv.matchesExpected, false);
+
+const fenced = evaluateAiIntegrationRun(
+  '```json\n{"sentiment":"NEGATIVE","priority":"URGENT"}\n```',
+  { id: "t1", message: "x", expected: "HUMAN_REVIEW" },
+  {
+    compareValue: "URGENT",
+    trueRoute: "HUMAN_REVIEW",
+    falseRoute: "STANDARD_QUEUE",
+  }
+);
+assert.equal(fenced.matchesExpected, true);
+assert.equal(fenced.normalized, "HUMAN_REVIEW");
+assert.equal(fenced.jsonOk, true);
 
 // --- Mission 07 service-action ---
 const goodSource = `

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, X, Loader2, Maximize2, Minimize2 } from "lucide-react";
+import { Check, X, Loader2, Maximize2, Minimize2, AlertCircle } from "lucide-react";
 import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import { useLocale } from "@/i18n/locale-context";
 import { LEAD } from "@/data/narrative/canon";
@@ -39,6 +39,7 @@ export function TestResults({
   const [openRow, setOpenRow] = useState<number | null>(null);
 
   const passed = results.filter((r) => r.matchesExpected).length;
+  const hasSystemError = results.some((r) => r.errorKind === "system");
   const done = results.length === total && total > 0 && !running;
   const hasResults = results.length > 0;
   const showExpanded = expanded && !running && hasResults;
@@ -67,6 +68,7 @@ export function TestResults({
           !result &&
           (batchRunning || (running && runMode !== "batch" && currentIndex === i));
         const isOpen = showExpanded || activeOpenRow === i;
+        const isSystem = result?.errorKind === "system";
 
         let statusLabel: string = messages.testPending;
         if (isRunning) {
@@ -75,6 +77,8 @@ export function TestResults({
             : messages.testRunning;
         } else if (result?.matchesExpected) {
           statusLabel = messages.testPass;
+        } else if (isSystem) {
+          statusLabel = messages.systemErrorLabel;
         } else if (result) {
           statusLabel = messages.testFail;
         }
@@ -82,23 +86,29 @@ export function TestResults({
         const received = result
           ? result.isValidCategory
             ? result.normalized ?? result.raw
-            : messages.formatInvalid
+            : isSystem
+              ? messages.systemErrorInvalidAiJson
+              : messages.formatInvalid
           : null;
 
         return (
           <li key={i}>
             <button
               type="button"
-              disabled={!result || running}
+              // React 19 SSR emits disabled="" ; disabled={true} false-positives on hydrate.
+              disabled={Boolean(!result || running)}
+              suppressHydrationWarning
               onClick={() => toggleRow(i, Boolean(result))}
               className={`flex w-full items-start gap-2.5 border px-2.5 py-2 text-left transition duration-150 ${
                 result?.matchesExpected
                   ? "border-[color-mix(in_srgb,var(--ml-state-completed)_28%,transparent)] bg-[color-mix(in_srgb,var(--ml-state-completed)_10%,transparent)]"
-                  : result
-                    ? "border-[color-mix(in_srgb,var(--ml-state-error)_28%,transparent)] bg-[color-mix(in_srgb,var(--ml-state-error)_10%,transparent)]"
-                    : isRunning
-                      ? "border-ml-border-accent bg-ml-surface-1"
-                      : "border-ml-border bg-ml-bg-1/40"
+                  : isSystem
+                    ? "border-[color-mix(in_srgb,var(--ml-state-active)_28%,transparent)] bg-[color-mix(in_srgb,var(--ml-state-active)_10%,transparent)]"
+                    : result
+                      ? "border-[color-mix(in_srgb,var(--ml-state-error)_28%,transparent)] bg-[color-mix(in_srgb,var(--ml-state-error)_10%,transparent)]"
+                      : isRunning
+                        ? "border-ml-border-accent bg-ml-surface-1"
+                        : "border-ml-border bg-ml-bg-1/40"
               } ${
                 result && !running
                   ? "cursor-pointer hover:border-ml-border-strong hover:bg-ml-surface-hover/40"
@@ -106,10 +116,13 @@ export function TestResults({
               }`}
               style={{ borderRadius: "var(--ml-frame-radius)" }}
               aria-expanded={result ? isOpen : undefined}
+              aria-disabled={Boolean(!result || running) || undefined}
             >
               <span className="mt-0.5 shrink-0">
                 {result?.matchesExpected ? (
                   <Check className="h-4 w-4 text-ml-success" />
+                ) : isSystem ? (
+                  <AlertCircle className="h-4 w-4 text-ml-state-active" />
                 ) : result ? (
                   <X className="h-4 w-4 text-ml-danger" />
                 ) : isRunning ? (
@@ -127,11 +140,13 @@ export function TestResults({
                     className={`text-[length:var(--ml-text-xs)] ${
                       result?.matchesExpected
                         ? "text-ml-success"
-                        : result
-                          ? "text-ml-danger"
-                          : isRunning
-                            ? "text-ml-accent"
-                            : "text-ml-text-muted"
+                        : isSystem
+                          ? "text-ml-state-active"
+                          : result
+                            ? "text-ml-danger"
+                            : isRunning
+                              ? "text-ml-accent"
+                              : "text-ml-text-muted"
                     }`}
                   >
                     {statusLabel}
@@ -372,12 +387,22 @@ export function TestResults({
   const feedbackBlock = feedback && !running && (
     <div
       className={`mt-3 border-l-2 pl-3 text-[length:var(--ml-text-sm)] leading-snug text-ml-text-body ${
-        passed === total ? "border-ml-success" : "border-ml-reward"
+        passed === total
+          ? "border-ml-success"
+          : hasSystemError
+            ? "border-ml-state-active"
+            : "border-ml-reward"
       }`}
     >
       {passed < total && (
-        <p className="mb-1.5 font-mono text-[length:var(--ml-text-xs)] tracking-[0.14em] text-ml-reward uppercase">
-          {messages.solutionFailedLabel}
+        <p
+          className={`mb-1.5 font-mono text-[length:var(--ml-text-xs)] tracking-[0.14em] uppercase ${
+            hasSystemError ? "text-ml-state-active" : "text-ml-reward"
+          }`}
+        >
+          {hasSystemError
+            ? messages.systemErrorLabel
+            : messages.solutionFailedLabel}
         </p>
       )}
       {feedbackSpeaker === "mira" && (

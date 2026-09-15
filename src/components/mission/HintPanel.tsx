@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Lightbulb, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useLocale } from "@/i18n/locale-context";
@@ -30,13 +30,22 @@ export function HintPanel({
   hideHeader = false,
 }: HintPanelProps) {
   const { locale, messages, t } = useLocale();
-  const [revealed, setRevealed] = useState(() =>
-    typeof window !== "undefined" ? loadHintRevealCount(missionId) : 0
-  );
+  // SSR + first client paint must match (always 0). Restore session after mount.
+  const [revealed, setRevealed] = useState(0);
   const [aiHint, setAiHint] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const skipNextSave = useRef(true);
 
   useEffect(() => {
+    skipNextSave.current = true;
+    setRevealed(loadHintRevealCount(missionId));
+  }, [missionId]);
+
+  useEffect(() => {
+    if (skipNextSave.current) {
+      skipNextSave.current = false;
+      return;
+    }
     saveHintRevealCount(missionId, revealed);
   }, [missionId, revealed]);
 

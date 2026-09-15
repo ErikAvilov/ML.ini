@@ -767,8 +767,20 @@ export function evaluateLogicRoute(
 }
 
 /**
+ * Strip trivial model wrappers (```json fences) before json.loads pedagogy.
+ * Does not invent JSON from KEY: VALUE prose.
+ */
+export function stripModelJsonWrappers(raw: string): string {
+  let text = raw.trim();
+  const fenced = /^```(?:json)?\s*\r?\n?([\s\S]*?)\r?\n?```$/i.exec(text);
+  if (fenced) text = fenced[1].trim();
+  return text;
+}
+
+/**
  * Mission 06 RUN: model returns JSON → read priority → route.
  * Passes when the derived route matches `test.expected`.
+ * Malformed model JSON is a SYSTEM error (not a learner wiring fail).
  */
 export function evaluateAiIntegrationRun(
   raw: string,
@@ -781,7 +793,7 @@ export function evaluateAiIntegrationRun(
   }
 ): ClassificationResult {
   const priorityKey = opts.priorityKey ?? "priority";
-  const trimmed = raw.trim();
+  const trimmed = stripModelJsonWrappers(raw);
   let priority: string | null = null;
   let jsonOk = false;
 
@@ -809,9 +821,8 @@ export function evaluateAiIntegrationRun(
       expected: test.expected,
       message: test.message,
       testId: test.id,
-      failHint: test.failHints?.format ?? test.failHint,
       jsonOk: false,
-      errorKind: "format",
+      errorKind: "system",
     };
   }
 
@@ -978,7 +989,10 @@ export function buildFeedback(
   locale: Locale
 ): { feedback: string; feedbackSpeaker: "mira" | null } {
   const messages = getCommonMessages(locale);
-  const invalid = results.filter((r) => !r.isValidCategory);
+  const systemFails = results.filter((r) => r.errorKind === "system");
+  const invalid = results.filter(
+    (r) => !r.isValidCategory && r.errorKind !== "system"
+  );
   const wrong = results.filter((r) => r.isValidCategory && !r.matchesExpected);
   const passed = results.filter((r) => r.matchesExpected).length;
   const total = results.length;
@@ -986,6 +1000,14 @@ export function buildFeedback(
   if (passed === total) {
     return {
       feedback: messages.feedbackAllPassed,
+      feedbackSpeaker: null,
+    };
+  }
+
+  // Provider format flakiness — never frame as learner FAIL.
+  if (systemFails.length > 0) {
+    return {
+      feedback: messages.systemErrorInvalidAiJson,
       feedbackSpeaker: null,
     };
   }
@@ -1136,6 +1158,7 @@ export function summarizeSuite(
 ): TestSuiteSummary {
   const passed = results.filter((r) => r.matchesExpected).length;
   const total = results.length;
+  const hasSystemError = results.some((r) => r.errorKind === "system");
   const { feedback, feedbackSpeaker } = buildFeedback(results, locale);
 
   return {
@@ -1144,7 +1167,8 @@ export function summarizeSuite(
     results,
     feedback,
     feedbackSpeaker,
-    allPassed: passed === total && total > 0,
+    allPassed: passed === total && total > 0 && !hasSystemError,
+    hasSystemError,
   };
 }
 

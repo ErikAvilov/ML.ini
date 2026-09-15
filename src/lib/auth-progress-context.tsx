@@ -47,6 +47,8 @@ function normalizeInitial(initial: AuthProgressState): AuthProgressState {
 /**
  * Must receive a server-resolved initialState so the first client render
  * matches SSR (no anonymous flash, no local XP while authenticated).
+ * Do not remount this provider on XP/completion — that killed success toasts.
+ * In-mission updates go through patchCloudProgress; full reload re-boots from SSR.
  */
 export function AuthProgressProvider({
   initialState,

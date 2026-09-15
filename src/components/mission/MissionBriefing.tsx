@@ -30,6 +30,7 @@ interface MissionBriefingProps {
   outputSchema?: StructuredOutputSchema;
   repairPassed?: boolean;
   onRepairPassedChange?: (passed: boolean) => void;
+  repairGateActive?: boolean;
 }
 
 export function MissionBriefing({
@@ -45,6 +46,7 @@ export function MissionBriefing({
   outputSchema,
   repairPassed = false,
   onRepairPassedChange,
+  repairGateActive = false,
 }: MissionBriefingProps) {
   const { messages } = useLocale();
   const objectiveText = briefing.objectiveText ?? objective;
@@ -141,6 +143,7 @@ export function MissionBriefing({
           schema={outputSchema}
           passed={repairPassed}
           onPassedChange={onRepairPassedChange}
+          emphasized={repairGateActive && !repairPassed}
         />
       )}
 

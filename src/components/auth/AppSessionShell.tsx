@@ -19,14 +19,14 @@ function toAuthProgressState(
 
 /**
  * Server shell: Better Auth + cloud progression once.
- * Chrome belongs to route-group shells (public / utility / app) — not here.
+ * Key is user-stable — never remount on XP/completion or success toasts vanish.
  */
 export async function AppSessionShell({ children }: { children: ReactNode }) {
   const session = await getAppSessionState();
   const initialState = toAuthProgressState(session);
   const providerKey =
     session.status === "authenticated"
-      ? `auth:${session.identity.userId}:${session.cloudProgress.xp}`
+      ? `auth:${session.identity.userId}`
       : "anonymous";
 
   return (
