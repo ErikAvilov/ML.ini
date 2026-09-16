@@ -3,8 +3,7 @@
 import { usePathname } from "next/navigation";
 
 /**
- * Subtle cartographic atmosphere for public marketing surfaces only.
- * App / utility / mission shells stay opaque Editorial canvas.
+ * Optional public canvas wash. Decorative grids/textures removed — sober canvas only.
  */
 export function SiteAtmosphere() {
   const pathname = usePathname() ?? "";
@@ -14,10 +13,5 @@ export function SiteAtmosphere() {
     pathname.startsWith("/terms");
   if (!publicSurface) return null;
 
-  return (
-    <div className="ml-atmosphere" aria-hidden>
-      <div className="ml-atmosphere__grid" />
-      <div className="ml-atmosphere__wash" />
-    </div>
-  );
+  return <div className="ml-atmosphere" aria-hidden />;
 }

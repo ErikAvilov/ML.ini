@@ -97,7 +97,6 @@ export function MissionPath({
       </div>
 
       <div className="relative min-h-[560px] overflow-x-auto rounded-ml-lg border border-ml-border bg-ml-surface-1">
-        <div className="map-grid pointer-events-none absolute inset-0" aria-hidden />
         <div className="relative mx-auto flex min-h-[558px] min-w-[760px] max-w-[940px] flex-col justify-center px-10 py-10">
           {intro && (
             <div className="relative z-10 mb-16 flex justify-center">

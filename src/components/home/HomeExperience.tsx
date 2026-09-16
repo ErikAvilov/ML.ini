@@ -64,29 +64,6 @@ export function HomeExperience() {
 
   return (
     <div className="relative overflow-x-clip">
-      <div
-        className="pointer-events-none absolute inset-0 -z-10"
-        aria-hidden
-        style={{
-          backgroundImage: [
-            "radial-gradient(ellipse 70% 50% at 50% -10%, color-mix(in srgb, var(--ml-state-active) 12%, transparent), transparent 55%)",
-            "radial-gradient(ellipse 40% 35% at 92% 28%, color-mix(in srgb, var(--ml-state-completed) 6%, transparent), transparent 70%)",
-            "linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--ml-surface-1) 28%, transparent) 42%, transparent 100%)",
-          ].join(", "),
-        }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.2]"
-        aria-hidden
-        style={{
-          backgroundImage:
-            "linear-gradient(color-mix(in srgb, var(--ml-border) 55%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--ml-border) 55%, transparent) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-          maskImage:
-            "radial-gradient(ellipse 80% 55% at 50% 22%, black 15%, transparent 72%)",
-        }}
-      />
-
       {/* Hero */}
       <section className="relative mx-auto grid min-h-[calc(100dvh-4rem)] max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-14 lg:px-8 lg:py-20">
         <div className="max-w-[34rem]">
@@ -120,14 +97,6 @@ export function HomeExperience() {
 
         {/* Path Preview — canvas-integrated, not a dashboard card */}
         <div className="relative ml-home-fade-up min-h-[18rem] pl-2 sm:pl-4">
-          <div
-            className="pointer-events-none absolute -inset-x-4 -inset-y-6 -z-10 opacity-50"
-            aria-hidden
-            style={{
-              backgroundImage:
-                "radial-gradient(ellipse 70% 80% at 30% 40%, color-mix(in srgb, var(--ml-surface-1) 55%, transparent), transparent 70%)",
-            }}
-          />
           <p className="font-mono text-[10px] tracking-[0.14em] text-ml-text-muted uppercase">
             {messages.homePathPreviewLabel}
           </p>
@@ -336,14 +305,6 @@ export function HomeExperience() {
 
         {/* Final CTA */}
         <section className="relative py-6 text-center sm:py-10">
-          <div
-            className="pointer-events-none absolute inset-x-0 top-1/2 -z-10 h-40 -translate-y-1/2 opacity-60"
-            aria-hidden
-            style={{
-              backgroundImage:
-                "radial-gradient(ellipse 55% 90% at 50% 50%, color-mix(in srgb, var(--ml-state-active) 12%, transparent), transparent 70%)",
-            }}
-          />
           <h2 className="font-display text-[clamp(1.75rem,4vw,2.6rem)] font-semibold tracking-tight text-ml-text-primary">
             {messages.homeFinalTitle}
           </h2>

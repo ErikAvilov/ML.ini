@@ -265,16 +265,6 @@ export function SkillTreeView() {
             aria-label={messages.skillsCanvasLabel}
           >
             <div
-              className="pointer-events-none absolute inset-0 opacity-[0.35]"
-              style={{
-                backgroundImage:
-                  "radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--ml-accent) 6%, transparent), transparent 55%), radial-gradient(color-mix(in srgb, var(--ml-secondary) 10%, transparent) 1px, transparent 1px)",
-                backgroundSize: "auto, 22px 22px",
-              }}
-              aria-hidden
-            />
-
-            <div
               ref={worldRef}
               className="absolute left-1/2 top-1/2 origin-center will-change-transform"
               style={{

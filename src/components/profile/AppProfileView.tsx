@@ -137,15 +137,6 @@ export function AppProfileView({ identity = null }: AppProfileViewProps) {
               className={`${surface} relative overflow-hidden p-5 sm:p-6`}
               style={{ borderRadius: "var(--ml-frame-radius-lg)" }}
             >
-              <div
-                className="pointer-events-none absolute inset-0 opacity-[0.035]"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(to right, var(--ml-border) 1px, transparent 1px), linear-gradient(to bottom, var(--ml-border) 1px, transparent 1px)",
-                  backgroundSize: "24px 24px",
-                }}
-                aria-hidden
-              />
               <div className="relative flex flex-col gap-5 sm:flex-row sm:items-start">
                 <div className="relative mx-auto w-fit shrink-0 pb-3 sm:mx-0">
                   <div
