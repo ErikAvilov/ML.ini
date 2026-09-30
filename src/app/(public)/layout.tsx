@@ -17,7 +17,7 @@ export default async function PublicLayout({
 
   return (
     <div
-      data-theme="editorial-cartographic"
+      data-theme="stitch"
       className="ml-public min-h-0 flex-1 overflow-y-auto bg-ml-canvas text-ml-text-body"
     >
       <PublicHeader

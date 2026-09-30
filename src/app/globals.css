@@ -79,6 +79,10 @@
   --ml-frame-radius: 5px;
   --ml-frame-radius-lg: 8px;
 
+  /* Overlay / elevation (dark default; stitch remaps) */
+  --ml-scrim: color-mix(in srgb, #000000 55%, transparent);
+  --ml-shadow-float: 0 12px 40px rgba(0, 0, 0, 0.45);
+
   /* --- Type scale --- */
   --ml-text-xs: 0.8125rem; /* 13px — HUD min */
   --ml-text-sm: 0.875rem; /* 14px */
@@ -303,6 +307,135 @@ button:disabled,
   --danger: var(--ml-state-error);
 }
 
+/*
+ * Stitch / Mlini Studio — product light theme (design-reference/stitch).
+ * Semantic: amber = active progress; emerald = completed; slate = primary CTA/text.
+ */
+[data-theme="stitch"] {
+  --ml-canvas: #f8f9ff;
+  --ml-surface-raised: #ffffff;
+  --ml-surface-inset: #eff4ff;
+  --ml-surface-elevated: #ffffff;
+  --ml-text-primary: #0b1c30;
+  --ml-text-secondary-sem: #45474c;
+  --ml-state-active: #d97706;
+  --ml-state-active-hover: #b45309;
+  --ml-state-completed: #059669;
+  --ml-state-conceptual: #545f73;
+  --ml-state-error: #ba1a1a;
+
+  --ml-primary: #1e293b;
+  --ml-primary-hover: #334155;
+  --ml-on-primary: #ffffff;
+  --ml-scrim: color-mix(in srgb, #0b1c30 42%, transparent);
+  --ml-shadow-float: 0 12px 40px -8px rgba(15, 23, 42, 0.14);
+
+  --ml-bg-0: var(--ml-canvas);
+  --ml-bg-1: var(--ml-surface-inset);
+  --ml-surface-1: var(--ml-surface-raised);
+  --ml-surface-2: var(--ml-surface-elevated);
+  --ml-surface-hover: #f1f5f9;
+  --ml-surface-warm: #fafaf9;
+  --ml-text: var(--ml-text-primary);
+  --ml-text-body: #475569;
+  --ml-text-secondary: var(--ml-text-secondary-sem);
+  --ml-text-muted: #64748b;
+  --ml-text-inverse: #ffffff;
+  --ml-text-on-primary: var(--ml-on-primary);
+  --ml-border: #e2e8f0;
+  --ml-border-strong: #cbd5e1;
+  --ml-accent: var(--ml-state-active);
+  --ml-accent-muted: var(--ml-state-active-hover);
+  --ml-accent-soft: color-mix(in srgb, var(--ml-state-active) 12%, transparent);
+  --ml-accent-bright: #f59e0b;
+  --ml-secondary: var(--ml-state-conceptual);
+  --ml-secondary-muted: #64748b;
+  --ml-secondary-soft: color-mix(in srgb, var(--ml-state-conceptual) 10%, transparent);
+  --ml-success: var(--ml-state-completed);
+  --ml-success-soft: #ecfdf5;
+  --ml-danger: var(--ml-state-error);
+  --ml-danger-soft: #ffdad6;
+  --ml-warning: var(--ml-state-active);
+  --ml-reward: var(--ml-state-active);
+  --ml-reward-soft: color-mix(in srgb, var(--ml-state-active) 12%, transparent);
+  --ml-reward-muted: var(--ml-state-active-hover);
+  --ml-node-active: var(--ml-state-active);
+  --ml-node-completed: var(--ml-state-completed);
+  --ml-node-locked: #cbd5e1;
+  --ml-connection-completed: color-mix(in srgb, var(--ml-state-completed) 42%, transparent);
+  --ml-border-accent: color-mix(in srgb, var(--ml-state-active) 45%, transparent);
+  --ml-frame-focus: var(--ml-border-accent);
+  --ml-frame-radius: 4px;
+  --ml-frame-radius-lg: 8px;
+  --ml-text-base: 0.875rem;
+  --ml-leading-body: 1.571;
+
+  --background: var(--ml-canvas);
+  --foreground: var(--ml-text-primary);
+  --ink: var(--ml-canvas);
+  --panel: var(--ml-surface-raised);
+  --panel-elevated: var(--ml-surface-elevated);
+  --line: var(--ml-border);
+  --fog: var(--ml-text-primary);
+  --mist: var(--ml-text-body);
+  --signal: var(--ml-state-active);
+  --danger: var(--ml-state-error);
+  --amber: var(--ml-state-active);
+}
+
+[data-theme="stitch"] .ml-btn-primary {
+  background-color: var(--ml-primary);
+  color: var(--ml-on-primary);
+  border: 1px solid #0f172a;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+[data-theme="stitch"] .ml-btn-primary:hover {
+  background-color: var(--ml-primary-hover);
+}
+
+[data-theme="stitch"] .ml-btn-primary:active {
+  transform: scale(0.995);
+}
+
+[data-theme="stitch"] .ml-btn-secondary {
+  background-color: var(--ml-surface-raised);
+  color: var(--ml-text-primary);
+  border: 1px solid var(--ml-border);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+[data-theme="stitch"] .ml-btn-secondary:hover {
+  background-color: #f8fafc;
+  border-color: var(--ml-border-strong);
+}
+
+[data-theme="stitch"] .ml-card {
+  background-color: var(--ml-surface-raised);
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-frame-radius-lg);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+}
+
+[data-theme="stitch"] .ml-home-stage {
+  background-color: var(--ml-surface-raised);
+  border: 1px solid var(--ml-border);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 24px -4px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="stitch"] .ml-home-rule {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--ml-border) 20%,
+    color-mix(in srgb, var(--ml-state-active) 55%, var(--ml-border)) 50%,
+    var(--ml-border) 80%,
+    transparent 100%
+  );
+}
+
 /* Shell surfaces: Inter body, Jakarta headings */
 .ml-app,
 .ml-public,
@@ -357,7 +490,23 @@ button:disabled,
   );
 }
 
-/* Mission — solid technical surfaces */
+[data-theme="stitch"] .ml-world-active-surface,
+[data-theme="stitch"] .ml-kingdom-path-surface,
+[data-theme="stitch"] .ml-kingdom-current-surface {
+  background-color: var(--ml-surface-raised);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+}
+
+[data-theme="stitch"] .ml-world-active-surface {
+  border-color: color-mix(in srgb, var(--ml-state-active) 40%, var(--ml-border));
+}
+
+[data-theme="stitch"] .ml-mission-learn {
+  border-right-color: var(--ml-border);
+  box-shadow: inset -1px 0 0 transparent;
+}
+
+/* Mission — Stitch surfaces (raised cards on light canvas) */
 .ml-mission-learn {
   background-color: var(--ml-surface-raised, var(--ml-bg-1));
 }

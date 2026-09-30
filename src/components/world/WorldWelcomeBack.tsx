@@ -65,7 +65,7 @@ export function WorldWelcomeBack({
   return (
     <div
       role="status"
-      className="fixed inset-x-3 bottom-3 z-50 mx-auto w-[min(100%,22rem)] border border-ml-border bg-ml-surface-1 p-4 shadow-[0_8px_24px_color-mix(in_srgb,black_35%,transparent)] sm:inset-x-auto sm:right-4 sm:bottom-4 sm:mx-0"
+      className="fixed inset-x-3 bottom-3 z-50 mx-auto w-[min(100%,22rem)] border border-ml-border bg-ml-surface-1 p-4 shadow-[var(--ml-shadow-float)] sm:inset-x-auto sm:right-4 sm:bottom-4 sm:mx-0"
       style={{ borderRadius: "var(--ml-frame-radius-lg)" }}
     >
       {isNewLearner ? (

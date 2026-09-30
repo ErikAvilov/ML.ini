@@ -21,10 +21,10 @@ export function AppNavItem({ href, label, match }: AppNavItemProps) {
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={`rounded-sm px-2.5 py-1.5 text-[length:var(--ml-text-sm)] font-medium transition-colors duration-150 ease-out focus-visible:outline-none ${
+      className={`rounded-lg px-3 py-1.5 text-[length:var(--ml-text-sm)] font-medium transition-colors duration-150 ease-out focus-visible:outline-none ${
         active
-          ? "bg-[color-mix(in_srgb,var(--ml-state-active)_16%,transparent)] text-ml-text-primary"
-          : "text-ml-text-muted hover:text-ml-text-primary"
+          ? "border-b-2 border-ml-state-active bg-ml-surface-inset text-ml-text-primary"
+          : "border-b-2 border-transparent text-ml-text-muted hover:bg-ml-surface-inset/70 hover:text-ml-text-primary"
       }`}
     >
       {label}

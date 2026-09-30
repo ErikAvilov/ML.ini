@@ -239,7 +239,7 @@ export function AuthUserMenu({ identity }: AuthUserMenuProps) {
           aria-labelledby={`${menuId}-trigger`}
           tabIndex={-1}
           onKeyDown={onMenuKeyDown}
-          className="absolute right-0 z-50 mt-2 w-[16.5rem] origin-top-right animate-[ml-menu-in_120ms_ease-out] border border-ml-border-strong bg-ml-surface-1 py-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.45)]"
+          className="absolute right-0 z-50 mt-2 w-[16.5rem] origin-top-right animate-[ml-menu-in_120ms_ease-out] border border-ml-border-strong bg-ml-surface-1 py-1.5 shadow-[var(--ml-shadow-float)]"
           style={{ borderRadius: "var(--ml-frame-radius-lg)" }}
         >
           <div className="flex items-start gap-3 px-3 pb-2.5 pt-1.5">

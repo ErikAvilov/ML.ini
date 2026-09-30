@@ -109,7 +109,7 @@ function SuccessToastCard({
       transition={{ duration: SLIDE_S, ease: [0.22, 1, 0.36, 1] }}
     >
       <div
-        className="pointer-events-auto overflow-hidden border border-[color-mix(in_srgb,var(--ml-reward)_40%,var(--ml-border))] bg-ml-surface-1/95 shadow-[0_12px_40px_color-mix(in_srgb,var(--ml-bg-0)_55%,transparent)] backdrop-blur-md"
+        className="pointer-events-auto overflow-hidden border border-[color-mix(in_srgb,var(--ml-reward)_40%,var(--ml-border))] bg-ml-surface-1/95 shadow-[var(--ml-shadow-float)] backdrop-blur-md"
         style={{ borderRadius: "var(--ml-frame-radius)" }}
       >
         <div className="p-4">

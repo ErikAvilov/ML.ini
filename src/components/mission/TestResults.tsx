@@ -523,7 +523,7 @@ export function TestResults({
       <AnimatePresence>
         {showExpanded && (
           <m.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-[color-mix(in_srgb,var(--ml-bg-0)_88%,transparent)] p-4 backdrop-blur-md"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--ml-scrim)] p-4 backdrop-blur-md"
             initial={reduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={reduceMotion ? undefined : { opacity: 0 }}

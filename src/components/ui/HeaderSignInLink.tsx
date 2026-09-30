@@ -12,7 +12,7 @@ export function HeaderSignInLink() {
   return (
     <Link
       href={`/auth?next=${encodeURIComponent(next)}`}
-      className="inline-flex cursor-pointer items-center border border-ml-border-strong bg-ml-surface-1 px-2.5 py-1.5 font-mono text-[11px] tracking-[0.08em] text-ml-text uppercase transition hover:border-ml-accent hover:bg-ml-surface-hover hover:text-ml-accent"
+      className="inline-flex cursor-pointer items-center border border-ml-border-strong bg-ml-surface-raised px-3 py-1.5 text-[length:var(--ml-text-sm)] font-medium text-ml-text-primary transition hover:bg-ml-surface-hover"
       style={{ borderRadius: "var(--ml-frame-radius)" }}
     >
       {messages.authSignIn}

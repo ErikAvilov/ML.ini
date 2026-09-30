@@ -15,8 +15,8 @@ export function BrandLogo({
   const inner = (
     <span className={`inline-flex items-center gap-2.5 ${className}`}>
       <MliniEmblem size={compact ? 28 : 32} />
-      <span className="font-display text-[length:var(--ml-text-lg)] font-semibold tracking-[0.04em] text-ml-text">
-        MLINI
+      <span className="font-display text-[length:var(--ml-text-lg)] font-semibold tracking-tight text-ml-text">
+        Mlini
       </span>
     </span>
   );

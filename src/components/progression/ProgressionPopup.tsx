@@ -126,8 +126,8 @@ export function ProgressionPopup({
         aria-labelledby={titleId}
         className={`relative w-full max-w-[460px] max-h-[min(90vh,640px)] overflow-y-auto border bg-ml-surface-1 ${
           prestige
-            ? "border-[color-mix(in_srgb,var(--ml-reward)_55%,var(--ml-border))] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.75),0_0_28px_-6px_color-mix(in_srgb,var(--ml-reward)_18%,transparent)]"
-            : "border-ml-border shadow-[0_24px_48px_-12px_rgba(0,0,0,0.7)]"
+            ? "border-[color-mix(in_srgb,var(--ml-reward)_55%,var(--ml-border))] shadow-[var(--ml-shadow-float)]"
+            : "border-ml-border shadow-[var(--ml-shadow-float)]"
         }`}
         style={{ borderRadius: "var(--ml-frame-radius-lg)" }}
         initial={reduceMotion ? false : { opacity: 0, scale: 0.96, y: 8 }}

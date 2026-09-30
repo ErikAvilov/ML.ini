@@ -27,7 +27,7 @@ export function AppHeader({ authSlot }: AppHeaderProps) {
     : 0;
 
   return (
-    <header className="relative z-30 shrink-0 border-b border-ml-border bg-[color-mix(in_srgb,var(--ml-canvas)_92%,transparent)]">
+    <header className="relative z-30 shrink-0 border-b border-ml-border bg-ml-surface-raised">
       <div className="flex h-14 w-full items-center justify-between gap-4 px-3 sm:px-6 lg:px-8">
         <div className="flex min-w-0 items-center gap-6 lg:gap-10">
           <BrandLogo href="/app" compact />
@@ -51,7 +51,7 @@ export function AppHeader({ authSlot }: AppHeaderProps) {
         <div className="flex items-center gap-3 sm:gap-4">
           {xp && (
             <div
-              className="hidden items-center gap-2.5 border border-ml-border bg-ml-surface-1 px-2.5 py-1.5 sm:flex"
+              className="hidden items-center gap-2.5 border border-ml-border bg-ml-surface-inset px-2.5 py-1.5 sm:flex"
               style={{ borderRadius: "var(--ml-frame-radius)" }}
               aria-label={messages.levelShort.replace(
                 "{level}",

@@ -13,10 +13,10 @@ export async function UtilityShell({ children }: { children: ReactNode }) {
 
   return (
     <div
-      data-theme="editorial-cartographic"
+      data-theme="stitch"
       className="ml-utility flex min-h-0 flex-1 flex-col bg-ml-canvas text-ml-text-body"
     >
-      <header className="shrink-0 border-b border-ml-border">
+      <header className="shrink-0 border-b border-ml-border bg-ml-surface-raised">
         <div className="mx-auto flex h-12 w-full max-w-lg items-center justify-between px-4 sm:px-6">
           <BrandLogo href="/" compact />
           <Link

@@ -66,7 +66,7 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      data-theme="editorial-cartographic"
+      data-theme="stitch"
       className={`${body.variable} ${display.variable} ${mono.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="relative flex h-dvh flex-col overflow-hidden bg-ml-canvas text-ml-text-body">

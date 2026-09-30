@@ -8,10 +8,10 @@ export function PublicFooter() {
   const { messages } = useLocale();
 
   return (
-    <footer className="shrink-0 border-t border-ml-border bg-[color-mix(in_srgb,var(--ml-canvas)_94%,transparent)]">
-      <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
-        <p className="font-mono text-[11px] tracking-[0.08em] text-ml-text-muted uppercase">
-          MLINI
+    <footer className="shrink-0 border-t border-ml-border bg-ml-surface-raised">
+      <div className="mx-auto flex w-full max-w-[1440px] flex-wrap items-center justify-between gap-3 px-4 py-5 sm:px-6 lg:px-10">
+        <p className="text-[length:var(--ml-text-xs)] text-ml-text-muted">
+          © {new Date().getFullYear()} Mlini
         </p>
         <nav
           aria-label={messages.legalNavLabel}
@@ -20,14 +20,14 @@ export function PublicFooter() {
           <Link
             href={LEGAL_PATHS.privacy}
             prefetch={false}
-            className="text-ml-text-muted underline-offset-2 transition hover:text-ml-state-active hover:underline focus-visible:outline-none"
+            className="text-ml-text-muted underline-offset-2 transition hover:text-ml-text-primary hover:underline focus-visible:outline-none"
           >
             {messages.legalPrivacy}
           </Link>
           <Link
             href={LEGAL_PATHS.terms}
             prefetch={false}
-            className="text-ml-text-muted underline-offset-2 transition hover:text-ml-state-active hover:underline focus-visible:outline-none"
+            className="text-ml-text-muted underline-offset-2 transition hover:text-ml-text-primary hover:underline focus-visible:outline-none"
           >
             {messages.legalTerms}
           </Link>

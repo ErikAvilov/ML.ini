@@ -1,126 +1,126 @@
 ---
-name: Technical Expedition System
+name: Mlini Studio
 colors:
-  surface: '#0f1414'
-  surface-dim: '#0f1414'
-  surface-bright: '#353a3a'
-  surface-container-lowest: '#0a0f0f'
-  surface-container-low: '#171c1d'
-  surface-container: '#1b2021'
-  surface-container-high: '#262b2b'
-  surface-container-highest: '#313636'
-  on-surface: '#dfe3e3'
-  on-surface-variant: '#bcc9ca'
-  inverse-surface: '#dfe3e3'
-  inverse-on-surface: '#2c3131'
-  outline: '#879394'
-  outline-variant: '#3d494a'
-  surface-tint: '#6bd6e1'
-  primary: '#6bd6e1'
-  on-primary: '#00363b'
-  primary-container: '#269fa9'
-  on-primary-container: '#002f33'
-  inverse-primary: '#006970'
-  secondary: '#a7cdd2'
-  on-secondary: '#0d3639'
-  secondary-container: '#2a4f53'
-  on-secondary-container: '#99bfc3'
-  tertiary: '#ffb689'
-  on-tertiary: '#512300'
-  tertiary-container: '#ce7d46'
-  on-tertiary-container: '#471e00'
-  error: '#ffb4ab'
-  on-error: '#690005'
-  error-container: '#93000a'
-  on-error-container: '#ffdad6'
-  primary-fixed: '#89f3fd'
-  primary-fixed-dim: '#6bd6e1'
-  on-primary-fixed: '#002022'
-  on-primary-fixed-variant: '#004f55'
-  secondary-fixed: '#c2eaee'
-  secondary-fixed-dim: '#a7cdd2'
-  on-secondary-fixed: '#002022'
-  on-secondary-fixed-variant: '#274c50'
-  tertiary-fixed: '#ffdbc8'
-  tertiary-fixed-dim: '#ffb689'
-  on-tertiary-fixed: '#321300'
-  on-tertiary-fixed-variant: '#733502'
-  background: '#0f1414'
-  on-background: '#dfe3e3'
-  surface-variant: '#313636'
+  surface: '#f8f9ff'
+  surface-dim: '#cbdbf5'
+  surface-bright: '#f8f9ff'
+  surface-container-lowest: '#ffffff'
+  surface-container-low: '#eff4ff'
+  surface-container: '#e5eeff'
+  surface-container-high: '#dce9ff'
+  surface-container-highest: '#d3e4fe'
+  on-surface: '#0b1c30'
+  on-surface-variant: '#45474c'
+  inverse-surface: '#213145'
+  inverse-on-surface: '#eaf1ff'
+  outline: '#75777d'
+  outline-variant: '#c5c6cd'
+  surface-tint: '#545f73'
+  primary: '#091426'
+  on-primary: '#ffffff'
+  primary-container: '#1e293b'
+  on-primary-container: '#8590a6'
+  inverse-primary: '#bcc7de'
+  secondary: '#904d00'
+  on-secondary: '#ffffff'
+  secondary-container: '#fe932c'
+  on-secondary-container: '#663500'
+  tertiary: '#00190e'
+  on-tertiary: '#ffffff'
+  tertiary-container: '#00301f'
+  on-tertiary-container: '#24a375'
+  error: '#ba1a1a'
+  on-error: '#ffffff'
+  error-container: '#ffdad6'
+  on-error-container: '#93000a'
+  primary-fixed: '#d8e3fb'
+  primary-fixed-dim: '#bcc7de'
+  on-primary-fixed: '#111c2d'
+  on-primary-fixed-variant: '#3c475a'
+  secondary-fixed: '#ffdcc3'
+  secondary-fixed-dim: '#ffb77d'
+  on-secondary-fixed: '#2f1500'
+  on-secondary-fixed-variant: '#6e3900'
+  tertiary-fixed: '#85f8c4'
+  tertiary-fixed-dim: '#68dba9'
+  on-tertiary-fixed: '#002114'
+  on-tertiary-fixed-variant: '#005137'
+  background: '#f8f9ff'
+  on-background: '#0b1c30'
+  surface-variant: '#d3e4fe'
 typography:
   headline-xl:
-    fontFamily: Playfair Display
+    fontFamily: Plus Jakarta Sans
     fontSize: 40px
-    fontWeight: '600'
+    fontWeight: '700'
     lineHeight: 48px
-    letterSpacing: -0.01em
+    letterSpacing: -0.03em
   headline-xl-mobile:
-    fontFamily: Playfair Display
-    fontSize: 28px
-    fontWeight: '600'
-    lineHeight: 36px
-    letterSpacing: 0em
+    fontFamily: Plus Jakarta Sans
+    fontSize: 30px
+    fontWeight: '700'
+    lineHeight: 38px
+    letterSpacing: -0.025em
   headline-lg:
-    fontFamily: Playfair Display
+    fontFamily: Plus Jakarta Sans
     fontSize: 30px
     fontWeight: '600'
     lineHeight: 38px
-    letterSpacing: 0em
+    letterSpacing: -0.02em
   headline-lg-mobile:
-    fontFamily: Playfair Display
+    fontFamily: Plus Jakarta Sans
     fontSize: 24px
     fontWeight: '600'
     lineHeight: 32px
-    letterSpacing: 0em
+    letterSpacing: -0.015em
   headline-md:
-    fontFamily: Playfair Display
+    fontFamily: Plus Jakarta Sans
     fontSize: 22px
     fontWeight: '600'
     lineHeight: 28px
-    letterSpacing: 0.01em
-  title-sm:
+    letterSpacing: -0.015em
+  headline-sm:
     fontFamily: Plus Jakarta Sans
-    fontSize: 16px
+    fontSize: 18px
     fontWeight: '600'
     lineHeight: 24px
-    letterSpacing: 0.01em
+    letterSpacing: -0.01em
   body-lg:
-    fontFamily: Plus Jakarta Sans
+    fontFamily: Inter
     fontSize: 16px
     fontWeight: '400'
     lineHeight: 26px
-    letterSpacing: 0em
+    letterSpacing: -0.005em
   body-md:
-    fontFamily: Plus Jakarta Sans
+    fontFamily: Inter
     fontSize: 14px
     fontWeight: '400'
     lineHeight: 22px
     letterSpacing: 0em
   body-sm:
-    fontFamily: Plus Jakarta Sans
+    fontFamily: Inter
+    fontSize: 13px
+    fontWeight: '400'
+    lineHeight: 18px
+    letterSpacing: 0.005em
+  label-md:
+    fontFamily: Inter
+    fontSize: 13px
+    fontWeight: '500'
+    lineHeight: 16px
+    letterSpacing: 0.01em
+  label-sm:
+    fontFamily: Inter
+    fontSize: 11px
+    fontWeight: '600'
+    lineHeight: 14px
+    letterSpacing: 0.05em
+  code-sm:
+    fontFamily: JetBrains Mono
     fontSize: 12px
     fontWeight: '400'
     lineHeight: 18px
-    letterSpacing: 0.01em
-  label-code:
-    fontFamily: JetBrains Mono
-    fontSize: 13px
-    fontWeight: '500'
-    lineHeight: 20px
     letterSpacing: 0em
-  label-metric:
-    fontFamily: JetBrains Mono
-    fontSize: 11px
-    fontWeight: '600'
-    lineHeight: 16px
-    letterSpacing: 0.08em
-  label-badge:
-    fontFamily: JetBrains Mono
-    fontSize: 10px
-    fontWeight: '700'
-    lineHeight: 14px
-    letterSpacing: 0.12em
 rounded:
   sm: 0.125rem
   DEFAULT: 0.25rem
@@ -129,112 +129,114 @@ rounded:
   xl: 0.75rem
   full: 9999px
 spacing:
-  space-2xs: 0.25rem
-  space-xs: 0.5rem
-  space-sm: 0.75rem
+  gutter: 1.5rem
+  gutter-mobile: 1rem
+  margin: 2.5rem
+  margin-mobile: 1rem
+  space-xs: 0.25rem
+  space-sm: 0.5rem
   space-md: 1rem
   space-lg: 1.5rem
-  space-xl: 2rem
-  space-2xl: 3rem
-  gutter-mobile: 1rem
-  gutter-desktop: 1.5rem
-  panel-gap: 1rem
-  max-content-width: 90rem
+  space-xl: 2.5rem
 ---
 
 ## Brand & Style
 
-This design system establishes a visual language centered on **Technical Fantasy and Rigorous Exploration**. Built for engineers mastering machine learning and systems architecture, it evokes the solemn wonder of an ancient cartographer’s atlas fused with the uncompromising precision of modern technical instruments. It intentionally rejects the ephemeral cliches of contemporary generative AI interfaces—such as synthetic neon purples, amorphous floating orbs, and hyper-rounded, weightless glass sheets.
+The design system establishes a focused, executive-caliber learning environment tailored for technical practitioners, founders, and knowledge professionals. Departing from the saturated blues, dark neon glows, and synthetic AI motifs common in technical tooling, this aesthetic draws inspiration from high-grade publication design, architectural blueprints, and elite operating utilities like Linear and Stripe Docs.
 
-Instead, the aesthetic draws upon:
-- **Aged Mineral Plaster & Deep Basalt Surfaces:** Grounded, opaque surfaces that provide tangible weight, visual permanence, and comfortable low-strain contrast.
-- **Cartographic Precision & Adventure Tooling:** Sharp architectural lines, fine filigree dividers, coordinate markers, and geometric diamond/rhombic nodes that treat learning pathways like charting uncharted archipelagos.
-- **Deliberate Tactility:** Crisp bevels, subtle chiseled border accents, mechanical corner notches, and structured panels that feel physically constructed rather than digitally rendered.
-
-The interface cultivates intense focus, discipline, and scholarly prestige, transforming code execution and model training into a momentous expedition across complex cognitive territory.
+### Visual Character
+- **Restrained & Authoritative:** Confidence through rigorous whitespace, crisp 1-pixel structural boundaries, and disciplined contrast rather than decorative flair.
+- **Editorial Utility:** Complex curriculums, analytical dashboards, and deep technical documentation are structured with precise optical hierarchy, making deep focus effortless.
+- **Subtle Materiality:** The interface favors dry, tactile paper-and-slate surfaces. Elements rely on razor-thin perimeter boundaries, whisper-soft neutral fills, and focused amber focal points.
 
 ## Colors
 
-The color system operates on an absolute dark mineral substrate, maintaining strict chromatic restraint to ensure that interactive cues command instant recognition and historical weight.
+The palette is engineered around neutral tonalities: graphite, slate, cool zinc, and bone white. It eliminates high-chroma primary hues in favor of purposeful, contextual accents that convey status and deliberate action.
 
-### Palette Roles & Distribution
-
-- **Base Void (`#737878`):** Deep abyssal slate acting as the canvas backdrop, screen margins, and low-priority gutters.
-- **Primary Panel Layer (`#05929c`):** Grounded mineral surface used for primary application panels, navigation docks, and code viewports.
-- **Elevated Surface (`#587d81`):** Raised interactive containers, inspection drawers, and module cards.
-- **Structural Outlines (`#737878`):** Fine structural linework, panel borders, and coordinate grid lines.
-- **Text Ivory (`#EEE8DA`):** Warm parchment-tinted typography providing high-contrast readability without the sterile harshness of pure `#FFFFFF`.
-- **Secondary Slate (`#587d81`):** Muted navigational labels, inactive node links, and technical metadata.
-- **Primary Teal (`#05929c`):** The engine of active discovery. Signifies executable actions, passing test suites, pipeline throughput, active nodes, and completed milestones.
-- **Prestige Accent (`#E48F57`):** Used exclusively for high-tier milestone achievements, final architecture convergence, and boss-level evaluations. Never used for utility buttons or decorative filler.
-- **Diagnostic Ochre & Crimson:** Diagnostic states utilize an oxidized clay rust (`#D45D5D`) for pipeline failures and an amber beacon (`#E5A93C`) for latency/memory warnings.
+### Palette Architecture
+- **Primary (`#1E293B` - Deep Slate Graphite):** Used for key structural anchors, high-contrast CTA backgrounds, primary headers, and definitive iconography.
+- **Secondary (`#D97706` / `#F59E0B` - Restrained Warm Amber / Brass):** Denotes active progress markers, highlighted learning milestones, actionable insights, and live focus rings. Used sparely to direct cognitive attention.
+- **Tertiary (`#059669` - Forest Emerald):** Exclusively reserved for validated mastery, completed course units, certified achievements, and positive delta values.
+- **Neutral Foundation:**
+  - **Canvas Base:** `#FAFAF9` (Soft warm zinc-tinted paper white)
+  - **Surface Elevated:** `#FFFFFF` (Pure crisp white for card layers and tables)
+  - **Border / Divider:** `#E2E8F0` (Default subtle structural edge) and `#CBD5E1` (Interactive border focus)
+  - **Muted Body Text:** `#475569` (Charcoal slate for prolonged reading ease)
+  - **Subtle Wash:** `#F1F5F9` (Hover states and nested module backdrops)
 
 ## Typography
 
-The typographical hierarchy balances historical authority with industrial-grade runtime clarity using a strict three-tier classification:
+The typographic hierarchy pairs the structured geometry of **Plus Jakarta Sans** for headlines with the neutral, hyper-legible ergonomics of **Inter** for reading surfaces, controls, and micro-copy. **JetBrains Mono** is introduced strictly for literal code snippets, numerical IDs, telemetry values, and algorithmic outputs.
 
-1. **Title & Banner Typography (Playfair Display):** Used for realm headers, module codices, milestone achievements, and major system titles. It lends an authoritative, legendary cadence to the learning narrative without compromising structural alignment.
-2. **Operational Text (Plus Jakarta Sans):** Used for architecture descriptions, contextual instructions, conversational guides, and interactive button states. Neutral, warm, and highly legible across dense interfaces.
-3. **Machine & Telemetry (JetBrains Mono):** Bound to source code, vector dimensions, loss calculations, latency trackers, and terminal feeds. All uppercase metrics are tracked with widened letter spacing (`0.08em` to `0.12em`) to mirror calibrated telemetry readouts.
+### Editorial Guidelines
+- **Optical Tightening:** Large editorial headers leverage negative letter tracking (`-0.02em` to `-0.03em`) to impart an authoritative, published finish.
+- **Reading Rhythm:** Body text maintains a relaxed 1.6x leading (`body-lg`) in instructional environments to minimize fatigue during long study sessions.
+- **Label Case:** Micro-labels (`label-sm`) use subtle uppercase with expanded letter-spacing (`+0.05em`) strictly when functioning as category tags or metadata descriptors.
 
 ## Layout & Spacing
 
-The layout model is governed by an architectural fixed-pane philosophy paired with a structured 12-column grid for scrollable workspaces. Learning screens mimic high-density mission control desks rather than open marketing surfaces.
+The layout is grounded in a disciplined 12-column grid anchored by a 4px/8px incremental spacing rhythm. It utilizes generous negative space to elevate conceptual density without inducing visual strain.
 
-### Layout Philosophy
-
-- **Stationary Canvas Paneling:** The primary interface uses a non-scrolling viewport composition split into three core functional zones:
-  1. *Navigation / Graph Codex (Left Rail or Top Horizon)*
-  2. *Interactive Workbench / Code & System Graph (Center Stage)*
-  3. *Telemetry / Verification & Execution Logs (Right Rail or Bottom Tray)*
-- **Micro-Grid & Dividers:** Whitespace is disciplined and bounded. Elements do not float arbitrarily in negative space; they are compartmentalized within framed mineral panels linked by `1px` structural borders (`#737878`).
-- **Responsive Adaptations:**
-  - **Desktop (≥ 1280px):** Multi-pane split architecture with expandable drawer systems and synchronized viewports.
-  - **Tablet (768px - 1279px):** Collapsible codex drawer with persistent side-by-side workspace and execution console.
-  - **Mobile (< 768px):** Strict single-column stack utilizing a segment switcher (Codex | Graph | Terminal) anchored to a persistent bottom telemetry strip.
+### Viewport Adaptations
+- **Desktop (1280px+):** Fixed max-container widths (1200px or 1440px wide canvas) framed by `margin: 2.5rem`, using a 12-column layout with `gutter: 1.5rem`. Side-by-side split panes support simultaneous reading and interactive exercise evaluation.
+- **Tablet (768px - 1023px):** 8-column layout with `margin: 1.5rem`. Secondary meta rails collapse into contextual sheet overlays or horizontal stacks below core content.
+- **Mobile (Below 768px):** 4-column fluid stack with strict `margin-mobile: 1rem` and `gutter-mobile: 1rem`. Component-internal padding condenses from `space-lg` to `space-md` to preserve horizontal text scanning space.
 
 ## Elevation & Depth
 
-This system avoids floating drop-shadows and blurred backdrops in favor of **Tonal Mineral Layering** and **Chiseled Structural Outlines**.
+Visual hierarchy is expressed through precise line boundaries and subtle tonal stacking rather than heavy shadows or dramatic elevations.
 
-### Stacking Hierarchy
-
-- **Substratum (`#737878`):** Background abyss. Zero elevation.
-- **Tier 1 - Ground Panels (`#05929c`):** Primary panel layer bounded by a `1px` continuous border of `#737878`.
-- **Tier 2 - Operational Blocks (`#587d81`):** Active card surfaces, selected code containers, and hovering controls. They use a dual-border effect: a `1px` exterior stroke of `#737878` paired with an inset top highlight of `1px solid rgba(238, 232, 218, 0.05)`.
-- **Tier 3 - Floating Modals & System Palettes (`#587d81`):** Deep directional grounding using an ambient non-diffuse shadow: `0px 8px 0px 0px rgba(0, 0, 0, 0.45)`, reinforced with a full `#737878` border.
-
-### Decorative Depth Motifs
-
-- **Corner Notch Accents:** Key structural panels feature 45-degree chamfered top-right or dual corners, revealing the deep void layer underneath.
-- **Cartographic Registration Crosses:** Fine `5px` crosshairs (`+`) rendered in `#737878` sit at intersecting borders of compound panels.
+### Elevation Principles
+- **Low-Contrast Perimeter Borders:** Surfaces sit on crisp 1-pixel borders (`#E2E8F0` on light mode). Elevation changes do not invoke dark blurry drops, maintaining a clean architectural sheet feel.
+- **Tonal Stepping:**
+  - **Level 0 (Canvas):** `#FAFAF9` (Background foundation).
+  - **Level 1 (Default Containers):** `#FFFFFF` bordered by `#E2E8F0`.
+  - **Level 2 (Dropdowns, Floating Overlays, Modals):** `#FFFFFF` paired with an ultra-diffused micro shadow: `0 4px 20px -2px rgba(15, 23, 42, 0.05)`, edged by a 1px border (`#CBD5E1`).
+- **No Heavy Blurs:** Avoid intense frosted-glass blurs or multi-colored glow halos. State shifts are communicated through border tone shifts (e.g., `#E2E8F0` transitioning to `#1E293B` or `#D97706`).
 
 ## Shapes
 
-The shape system is strictly architectural and tactile. Soft pill buttons and expansive bubbly corners are prohibited.
+The design system adopts a **Soft (`1`)** shape language. Curves are engineered to remain understated and crisp, preventing elements from looking toy-like while easing the sharp technical severity of standard data consoles.
 
-- **Base Radius:** Elements enforce a disciplined `4px` corner radius (`0.25rem`), extending to a maximum of `6px` (`0.375rem`) for massive structural viewports.
-- **Geometric Nodes & Gems:** System progress indicators, map nodes, and milestone markers take the form of geometric diamonds (rhombuses rotated 45 degrees) or regular hexagons. Active nodes retain hard angular facets.
-- **Notched Mineral Frames:** Primary reward panels and code terminal headers utilize an explicit `6px` diagonal cut-corner (chamfer) styled via clip-paths to reinforce stone masonry and expedition instrument casings.
+### Geometric Rules
+- **Base Components (Inputs, Buttons, Badges):** 0.25rem (4px) corner radius, preserving a tailored, precise edge.
+- **Cards & Content Blocks:** 0.5rem (8px) corner radius, providing adequate structural containment for nested content.
+- **Dialogs & Code Consoles:** 0.75rem (12px) maximum radius.
+- **Strict Prohibition:** Full pill buttons (`border-radius: 9999px`) are forbidden for primary actions, permitted exclusively for small tabular status markers.
 
 ## Components
 
 ### Buttons
-- **Primary (Execution & Action):** Solid `#05929c` fill with `#EEE8DA` bold sans-serif text. On hover, shifts to high-luminosity teal. Press state introduces an inset `1px` dark shadow. Border radius is locked to `4px`.
-- **Secondary (Exploration & Tools):** Background of `#587d81` with a `1px` border of `#737878` and `#EEE8DA` text. On hover, the border changes and the background brightens.
-- **Prestige / Boss Milestone:** Reserved for sovereign challenge submissions. Bordered in `#E48F57` with text in `#E48F57` and a dark tinted background (`rgba(228, 143, 87, 0.08)`). Glows with an ambient `0 0 12px rgba(228, 143, 87, 0.2)` upon readiness.
+- **Primary:** Solid `#1E293B` background, `#FFFFFF` text, 0.25rem radius, 1px solid `#0F172A`. Hover transitions to `#334155`. Subtle active compression (`transform: scale(0.995)`). No drop shadows.
+- **Secondary:** `#FFFFFF` background with 1px border `#E2E8F0`, `#1E293B` text. Hover state updates border to `#CBD5E1` and background to `#F8FAFC`.
+- **Tertiary / Ghost:** Transparent fill, `#475569` text. Hover shifts background to `#F1F5F9` and text to `#0F172A`.
+- **Accent Action:** Warm amber outline or solid (`#D97706`) reserved only for critical forward progression or purchase checkout flows.
 
-### Inputs & Code Fields
-- **Terminal & Parameter Inputs:** Background `#737878` inset into `#05929c` panels. Border is `1px solid #737878`. Font is `JetBrains Mono` sized at `13px`. Placeholder text rendered in muted `#587d81`. Focus state triggers a crisp `1px solid #05929c` outline without outer glow rings.
+### Cards & Module Containers
+- Solid `#FFFFFF` fill, 1px uniform border `#E2E8F0`, 0.5rem radius, padded with `space-lg` (24px).
+- Interactive cards (e.g., course chapters) feature a border change to `#94A3B8` on hover without translation jumps or float shadows.
+- Headers within cards contain clear separation using a single 1px divider border at the bottom edge.
 
-### Checkboxes & Binary Selectors
-- **Form Controls:** Checkboxes are squared (`3px` radius) or diamond-oriented (`rhombus`) indicators. The unchecked state has a `#737878` surface with a `#737878` border; checked state turns solid `#05929c` with an `#EEE8DA` chiseled check icon.
+### Input Fields
+- Crisp `#FFFFFF` surface, 1px border `#CBD5E1`, 0.25rem corner radius, font size `14px` (`body-md`).
+- Focus state: Subtle 1px ring in `#1E293B` or `#D97706` (for learning inputs) with zero multi-pixel spread or cyber glow.
+- Placeholder text: Neutral `#94A3B8`.
 
-### Chips & Badges
-- **Telemetry Chips:** Rectangular frames with `2px` radiuses. Font is `JetBrains Mono` (`10px` uppercase). Background is `#05929c` bordered with `#737878`. Status indicators display a preceding `4px` solid diamond dot in `#05929c` (active) or `#E48F57` (legendary).
+### Chips & Metadata Badges
+- 0.25rem radius, height of 24px, typography set to `label-sm`.
+- **Default/Neutral:** `#F1F5F9` fill, `#475569` text, no border.
+- **Achievement/Complete:** `#ECFDF5` fill, `#047857` text, 1px border `#A7F3D0`.
+- **Active Progress:** `#FFFBEB` fill, `#B45309` text, 1px border `#FDE68A`.
 
-### Cards & System Canvases
-- **Architecture Module Card:** Structured box with a `#05929c` body and a top header strip separated by a hairline divider (`#737878`). The header holds the module name in `Playfair Display` alongside a monospace parameter footprint. Hovering yields an instantaneous border illumination.
+### Checkboxes & Radio Controls
+- 16px square (checkbox) or circle (radio), 1px border `#CBD5E1` on `#FFFFFF`.
+- Checked state: `#1E293B` fill featuring a precise 1.5px white geometric checkmark or central dot.
+- Completed curriculum checklists swap active check fill to Forest Emerald (`#059669`).
 
-### Knowledge Graph Nodes (Platform-Specific)
-- **Interactive System Graph:** Interconnected nodes use diamond primitives linked by orthogonal `1px` lines. Incomplete paths are dashed `#737878`; active paths burn solid `#05929c`; conquered sovereign nodes gleam in faceted `#E48F57`.
+### Lists & Curriculum Navigation
+- Multi-tier structured hierarchy. Row items framed by hairline dividers (`#F1F5F9`), utilizing hover transitions (`background: #F8FAFC`).
+- Left-rail indicator: A 2px amber (`#D97706`) vertical bar denotes current lesson position.
+
+### Specialized EdTech Components
+- **Code Reference Blocks:** Monospaced text block set against `#0F172A` with subdued syntax tokens; includes clean 1px border `#1E293B` and an understated header indicating execution path or language.
+- **Milestone Progress Trackers:** Hairline progress tracks (4px height) with light slate backings (`#E2E8F0`) and solid warm amber (`#D97706`) progress indicators. Upon module completion, the entire track transitions seamlessly to forest emerald (`#059669`).

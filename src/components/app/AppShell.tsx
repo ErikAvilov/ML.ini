@@ -21,7 +21,7 @@ export function AppShell({ children, authSlot }: AppShellProps) {
 
   return (
     <div
-      data-theme="editorial-cartographic"
+      data-theme="stitch"
       className="ml-app flex min-h-full flex-1 flex-col bg-ml-canvas"
     >
       {!missionFocus && <AppHeader authSlot={authSlot} />}
